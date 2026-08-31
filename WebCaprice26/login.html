@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portal Siswa dan Dashboard Kelas X Rekayasa Perangkat Lunak 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>Portal Siswa & Dashboard — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Beranda</a></li>
+          <li><a href="struktur.html" class="nav-link">Struktur</a></li>
+          <li><a href="jadwal.html" class="nav-link">Jadwal</a></li>
+          <li><a href="galeri.html" class="nav-link">Galeri</a></li>
+          <li><a href="proyek.html" class="nav-link">Projek</a></li>
+          <li><a href="prestasi.html" class="nav-link">Prestasi</a></li>
+          <li><a href="bukutamu.html" class="nav-link">Buku Tamu</a></li>
+          <li><a href="lab-game.html" class="nav-link">RPL Lab</a></li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <section class="section">
+      <div class="container">
+        <!-- LOGIN CARD -->
+        <div class="login-container animate-on-scroll" id="portal-login-card">
+          <div class="logo-badge" style="width: 55px; height: 55px; font-size: 1.6rem; margin: 0 auto 1.25rem auto;">X</div>
+          <h2 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem;">Portal Siswa <span>Caprice 26</span></h2>
+          <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+            Akses dashboard tugas, pengumuman internal, dan materi pembelajaran X RPL 1.
+          </p>
+
+          <button id="btn-fingerprint-login" class="fingerprint-btn" aria-label="Login Biometrik">
+            👆
+          </button>
+          <p style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">
+            Sentuh Sensor Sidik Jari untuk Masuk Otomatis
+          </p>
+        </div>
+
+        <!-- SIMULATED DASHBOARD PANEL -->
+        <div class="dashboard-panel" id="portal-dashboard-panel">
+          <div class="section-header">
+            <span class="section-badge">Dashboard Siswa Aktif</span>
+            <h2 class="section-title">Selamat Datang, <span>Siswa Caprice 26</span>!</h2>
+            <p class="section-desc">Berikut rekap status kegiatan belajar, tugas aktif, dan pengumuman kelas X RPL 1 SMKN 1 Probolinggo.</p>
+          </div>
+
+          <!-- Quick Stat Cards -->
+          <div class="stats-grid" style="margin-bottom: 2.5rem;">
+            <div class="stat-card">
+              <div class="stat-icon">📈</div>
+              <div class="stat-number">100%</div>
+              <div class="stat-label">Tingkat Kehadiran</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">📝</div>
+              <div class="stat-number">4</div>
+              <div class="stat-label">Tugas Aktif Minggu Ini</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon">💻</div>
+              <div class="stat-number">95.8</div>
+              <div class="stat-label">Rata-Rata Nilai Praktek</div>
+            </div>
+          </div>
+
+          <!-- Announcements Grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
+            <div class="glass-card">
+              <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary);">📢 Pengumuman Penting</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
+                <li style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                  <strong>Ujian Praktik PWPB (HTML/CSS & JS)</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-muted);">Akan diadakan hari Senin depan di Lab RPL 1. Harap siapkan source code projek masing-masing.</p>
+                </li>
+                <li style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
+                  <strong>Iuran Uang Kas Mingguan</strong>
+                  <p style="font-size: 0.85rem; color: var(--text-muted);">Pembayaran kas sebesar Rp5.000 ke Bendahara Natasya / Adeleo setiap hari Rabu.</p>
+                </li>
+              </ul>
+            </div>
+
+            <div class="glass-card">
+              <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--secondary);">📚 Modul & Materi Pembelajaran</h3>
+              <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Dasar Pemrograman Web & Desain Responsif (PDF)...')">
+                  📥 Unduh Modul PWPB (PDF)
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Manajemen Basis Data MySQL (PDF)...')">
+                  📥 Unduh Modul Basis Data (PDF)
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Algoritma & Struktur Data Python (PDF)...')">
+                  📥 Unduh Modul Python Dasar (PDF)
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div style="text-align: center; margin-top: 3rem;">
+            <button class="btn btn-outline" onclick="location.reload()">Kunci & Keluar Portal 🔒</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; Portal Keamanan Siswa X RPL 1.</div>
+        <div><span>Session Encrypted &bull; SMKN 1 Probolinggo</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="main.js"></script>
+</body>
+</html>

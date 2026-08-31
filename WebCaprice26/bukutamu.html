@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Buku Tamu dan Wall of Wishes Kelas X RPL 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>Buku Tamu & Suara Siswa — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link">Beranda</a></li>
+          <li><a href="struktur.html" class="nav-link">Struktur</a></li>
+          <li><a href="jadwal.html" class="nav-link">Jadwal</a></li>
+          <li><a href="galeri.html" class="nav-link">Galeri</a></li>
+          <li><a href="proyek.html" class="nav-link">Projek</a></li>
+          <li><a href="prestasi.html" class="nav-link">Prestasi</a></li>
+          <li><a href="bukutamu.html" class="nav-link active">Buku Tamu</a></li>
+          <li><a href="lab-game.html" class="nav-link">RPL Lab</a></li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Suara Komunitas</span>
+          <h2 class="section-title">Buku Tamu & <span>Wall of Wishes</span></h2>
+          <p class="section-desc">Tinggalkan jejak, kata-kata penyemangat, kenangan manis, atau pesan kebersamaan untuk seluruh keluarga besar Caprice 26!</p>
+        </div>
+
+        <div class="guestbook-wrapper">
+          <!-- FORM KOLOM KIRI -->
+          <div class="guestbook-form-card animate-on-scroll">
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">✍️ Tulis Pesan Anda</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+              Pesan Anda akan langsung tampil di dinding kenangan Caprice Team.
+            </p>
+
+            <div id="gb-alert" style="display:none; background: var(--success-bg); border: 1px solid var(--success); color: var(--success); padding: 0.75rem 1rem; border-radius: var(--radius-sm); font-size: 0.88rem; margin-bottom: 1.25rem;"></div>
+
+            <form id="guestbook-form">
+              <div class="form-group">
+                <label for="gb-name">Nama / Panggilan <span style="color:var(--error);">*</span></label>
+                <input type="text" id="gb-name" class="form-control" placeholder="Contoh: Caesar / Teman Kelas Lain" required maxlength="60">
+              </div>
+
+              <div class="form-group">
+                <label for="gb-category">Kategori Pesan</label>
+                <select id="gb-category" class="form-control">
+                  <option value="Semangat">🔥 Semangat & Motivasi</option>
+                  <option value="Nostalgia">✨ Kenangan Indah</option>
+                  <option value="Doa">🤲 Doa & Harapan</option>
+                  <option value="Curhat RPL">💻 Curhat Coding & Bug</option>
+                  <option value="Pesan">💬 Salam Persahabatan</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="gb-message">Isi Pesan <span style="color:var(--error);">*</span></label>
+                <textarea id="gb-message" class="form-control" rows="4" placeholder="Tuliskan ucapan, kenangan, atau pesan untuk X RPL 1..." required maxlength="500"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Kirim Pesan Sekarang 🚀
+              </button>
+            </form>
+          </div>
+
+          <!-- STREAM PESAN KOLOM KANAN -->
+          <div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+              <h3 style="font-size: 1.35rem; font-weight: 800;">💬 Dinding Pesan Terbaru</h3>
+              <span class="quick-tag" style="font-size: 0.8rem;">Live Updates</span>
+            </div>
+
+            <div class="guestbook-feed" id="guestbook-feed">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; Buku Tamu & Suara Siswa X RPL 1.</div>
+        <div><span>Pesan Tersimpan Aman</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Website Resmi Kelas X Rekayasa Perangkat Lunak 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo. Portal kenangan, struktur, galeri, proyek, dan karya teknologi.">
+  <meta name="keywords" content="Kelas X RPL 1, Caprice 26, SMK Negeri 1 Probolinggo, Web Developer, Coding Siswa, Rekayasa Perangkat Lunak">
+  <meta name="author" content="Caprice Team 26">
+  <title>Caprice 26 — Kelas X RPL 1 | SMK Negeri 1 Kota Probolinggo</title>
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Background Canvas & Ambient Orbs -->
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+  <div class="glow-orb glow-orb-3"></div>
+
+  <!-- Custom Cursor -->
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+
+  <!-- Top Scroll Progress Bar -->
+  <div id="scroll-progress"></div>
+
+  <!-- HEADER & NAVBAR -->
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="index.html" class="nav-link active">Beranda</a></li>
+          <li><a href="struktur.html" class="nav-link">Struktur</a></li>
+          <li><a href="jadwal.html" class="nav-link">Jadwal</a></li>
+          <li><a href="galeri.html" class="nav-link">Galeri</a></li>
+          <li><a href="proyek.html" class="nav-link">Projek</a></li>
+          <li><a href="prestasi.html" class="nav-link">Prestasi</a></li>
+          <li><a href="bukutamu.html" class="nav-link">Buku Tamu</a></li>
+          <li><a href="lab-game.html" class="nav-link">RPL Lab</a></li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Sound Toggle -->
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara" title="Efek Suara">🔊</button>
+
+          <!-- Theme Dark/Light Toggle -->
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema Gelap/Terang" title="Tema">🌙</button>
+
+          <!-- Color Accent Picker -->
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen" title="Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;" title="Electric Indigo"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;" title="Cyber Cyan"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;" title="Emerald Matrix"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;" title="Neon Pink"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;" title="Sunset Amber"></span>
+            </div>
+          </div>
+
+          <!-- Portal Siswa Link Button -->
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <!-- Mobile Hamburger Toggle -->
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO SECTION -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-badge animate-on-scroll">
+            <span class="pulse-dot"></span> Official Website &bull; SMK Negeri 1 Kota Probolinggo
+          </div>
+
+          <h1 class="hero-title animate-on-scroll delay-1">
+            Selamat Datang di <br>
+            <span class="gradient-text">Kelas X RPL 1</span>
+          </h1>
+
+          <div class="typewriter-wrapper animate-on-scroll delay-2">
+            <span id="typewriter-text" class="typewriter-text"></span>
+          </div>
+
+          <p class="section-desc animate-on-scroll delay-2" style="max-width: 680px; margin: 0 auto 2rem auto;">
+            Satu angkatan, beribu baris kode, sejuta cerita tak terlupakan. Ruang kreativitas, kolaborasi, dan inovasi generasi penerus rekayasa perangkat lunak.
+          </p>
+
+          <div class="hero-buttons animate-on-scroll delay-3">
+            <a href="struktur.html" class="btn btn-primary btn-glow">Jelajahi Anggota 👥</a>
+            <a href="proyek.html" class="btn btn-outline">Lihat Karya Kami 💻</a>
+            <a href="lab-game.html" class="btn btn-secondary">Mainkan Kuis RPL 🎮</a>
+          </div>
+
+          <div class="hero-quick-tags animate-on-scroll delay-3">
+            <div class="quick-tag"><span class="quick-tag-icon">⚡</span> 38 Siswa Berbakat</div>
+            <div class="quick-tag"><span class="quick-tag-icon">💻</span> Web, Mobile & IoT</div>
+            <div class="quick-tag"><span class="quick-tag-icon">🏆</span> Prestasi Unggulan</div>
+            <div class="quick-tag"><span class="quick-tag-icon">🔥</span> Solidaritas Tanpa Batas</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STATS OVERVIEW SECTION -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="container">
+        <div class="stats-grid animate-on-scroll">
+          <div class="stat-card tilt-card">
+            <div class="stat-icon">👨‍💻</div>
+            <div class="stat-number">38</div>
+            <div class="stat-label">Total Anggota Siswa</div>
+          </div>
+          <div class="stat-card tilt-card delay-1">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-number">3</div>
+            <div class="stat-label">Tahun Kebersamaan</div>
+          </div>
+          <div class="stat-card tilt-card delay-2">
+            <div class="stat-icon">🏆</div>
+            <div class="stat-number">12+</div>
+            <div class="stat-label">Penghargaan & Prestasi</div>
+          </div>
+          <div class="stat-card tilt-card delay-3">
+            <div class="stat-icon">🚀</div>
+            <div class="stat-number">25+</div>
+            <div class="stat-label">Projek Coding Selesai</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGES HUB / MENU UTAMA MULTI-PAGE -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Jelajahi Portal</span>
+          <h2 class="section-title">Eksplorasi Seluruh <span>Halaman Caprice 26</span></h2>
+          <p class="section-desc">Pusat informasi lengkap mulai dari profil organisasi, jadwal pelajaran aktif, showcase portofolio, hingga buku tamu dan mini-game interaktif.</p>
+        </div>
+
+        <div class="pages-hub-grid">
+          <!-- Card 1: Struktur -->
+          <a href="struktur.html" class="page-card animate-on-scroll">
+            <div>
+              <span class="page-card-icon">👥</span>
+              <h3 class="page-card-title">Struktur Organisasi & Siswa</h3>
+              <p class="page-card-desc">Bagan pengurus inti, divisi IT, serta direktori lengkap profil 38 siswa beserta minat keahlian coding masing-masing.</p>
+            </div>
+            <span class="page-card-link">Buka Struktur &rarr;</span>
+          </a>
+
+          <!-- Card 2: Jadwal -->
+          <a href="jadwal.html" class="page-card animate-on-scroll delay-1">
+            <div>
+              <span class="page-card-icon">📅</span>
+              <h3 class="page-card-title">Jadwal Pelajaran & Piket</h3>
+              <p class="page-card-desc">Pelacak jadwal pelajaran aktif harian real-time (WIB), daftar mata pelajaran produktif, dan regu piket kebersihan kelas.</p>
+            </div>
+            <span class="page-card-link">Buka Jadwal &rarr;</span>
+          </a>
+
+          <!-- Card 3: Galeri -->
+          <a href="galeri.html" class="page-card animate-on-scroll delay-2">
+            <div>
+              <span class="page-card-icon">📸</span>
+              <h3 class="page-card-title">Galeri Kenangan & Video</h3>
+              <p class="page-card-desc">Koleksi dokumentasi foto momen studi tour, perayaan ulang tahun kelas, classmeeting, praktikum lab, dan video kenangan.</p>
+            </div>
+            <span class="page-card-link">Buka Galeri &rarr;</span>
+          </a>
+
+          <!-- Card 4: Proyek -->
+          <a href="proyek.html" class="page-card animate-on-scroll">
+            <div>
+              <span class="page-card-icon">💻</span>
+              <h3 class="page-card-title">Showcase Projek & Coding</h3>
+              <p class="page-card-desc">Pameran karya aplikasi web, game interaktif, bot otomasi, dan program buatan siswa X RPL 1 lengkap dengan live demo.</p>
+            </div>
+            <span class="page-card-link">Buka Portofolio &rarr;</span>
+          </a>
+
+          <!-- Card 5: Prestasi -->
+          <a href="prestasi.html" class="page-card animate-on-scroll delay-1">
+            <div>
+              <span class="page-card-icon">🏆</span>
+              <h3 class="page-card-title">Prestasi & Trophy Room</h3>
+              <p class="page-card-desc">Garis waktu pencapaian membanggakan, kejuaraan lomba LKS, hackathon, kompetisi akademik, dan piala kelas.</p>
+            </div>
+            <span class="page-card-link">Buka Prestasi &rarr;</span>
+          </a>
+
+          <!-- Card 6: Buku Tamu -->
+          <a href="bukutamu.html" class="page-card animate-on-scroll delay-2">
+            <div>
+              <span class="page-card-icon">✍️</span>
+              <h3 class="page-card-title">Buku Tamu & Suara Siswa</h3>
+              <p class="page-card-desc">Dinding pesan interaktif untuk menyampaikan salam, kesan, pesan motivasi, dan apresiasi dengan reaksi emoji.</p>
+            </div>
+            <span class="page-card-link">Tulis Pesan &rarr;</span>
+          </a>
+
+          <!-- Card 7: RPL Lab Game -->
+          <a href="lab-game.html" class="page-card animate-on-scroll">
+            <div>
+              <span class="page-card-icon">🎮</span>
+              <h3 class="page-card-title">RPL Lab & Mini-Games</h3>
+              <p class="page-card-desc">Uji ketangkasan sintaks coding dengan kuis interaktif berhadiah skor dan tantangan tes kecepatan mengetik kode (Typing Test).</p>
+            </div>
+            <span class="page-card-link">Mainkan Game &rarr;</span>
+          </a>
+
+          <!-- Card 8: Kontak -->
+          <a href="kontak.html" class="page-card animate-on-scroll delay-1">
+            <div>
+              <span class="page-card-icon">📍</span>
+              <h3 class="page-card-title">Kontak & Lokasi Sekolah</h3>
+              <p class="page-card-desc">Formulir kirim pesan resmi, denah peta lokasi SMKN 1 Probolinggo, kanal media sosial, dan pusat bantuan tanya-jawab (FAQ).</p>
+            </div>
+            <span class="page-card-link">Hubungi Kami &rarr;</span>
+          </a>
+
+          <!-- Card 9: Portal Siswa -->
+          <a href="login.html" class="page-card animate-on-scroll delay-2" style="border-color: rgba(var(--primary-rgb), 0.4);">
+            <div>
+              <span class="page-card-icon">🔐</span>
+              <h3 class="page-card-title">Portal Siswa & Dashboard</h3>
+              <p class="page-card-desc">Simulasi portal login keamanan biometrik siswa untuk melihat papan pengumuman tugas, absensi, dan catatan rahasia kelas.</p>
+            </div>
+            <span class="page-card-link" style="color:var(--accent);">Masuk Portal &rarr;</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- MOTIVASI & QUOTE BANNER -->
+    <section class="section" style="padding-top: 1rem;">
+      <div class="container">
+        <div class="glass-card animate-on-scroll" style="text-align: center; padding: 3.5rem 2rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(236, 72, 153, 0.08));">
+          <div style="font-size: 2.8rem; margin-bottom: 1rem;">💡</div>
+          <h3 style="font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem;">&ldquo;Talk is cheap. Show me the code.&rdquo;</h3>
+          <p style="color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto 1.75rem auto;">
+            Setiap baris kode yang kita tulis hari ini adalah fondasi inovasi digital masa depan bangsa.
+          </p>
+          <span style="font-weight: 700; color: var(--primary); font-size: 0.95rem;">&mdash; Caprice Team 26 &bull; X RPL 1</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="index.html" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <span class="logo-badge">X</span>
+            <span class="logo-text">RPL 1</span>
+            <span class="logo-sub">Caprice 26</span>
+          </a>
+          <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 1.5rem;">
+            Website resmi Kelas X Rekayasa Perangkat Lunak 1 SMK Negeri 1 Kota Probolinggo. Memupuk kebersamaan dan mengukir prestasi di bidang teknologi informasi.
+          </p>
+          <div style="display: flex; gap: 0.75rem;">
+            <span class="quick-tag">📍 Probolinggo, Jatim</span>
+            <span class="quick-tag">💻 RPL SMKN 1</span>
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Navigasi Utama</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html">Beranda</a></li>
+            <li><a href="struktur.html">Struktur Organisasi</a></li>
+            <li><a href="jadwal.html">Jadwal Pelajaran</a></li>
+            <li><a href="galeri.html">Galeri Foto</a></li>
+            <li><a href="proyek.html">Showcase Projek</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Fitur Interaktif</h4>
+          <ul class="footer-links-list">
+            <li><a href="prestasi.html">Prestasi & Piala</a></li>
+            <li><a href="bukutamu.html">Buku Tamu</a></li>
+            <li><a href="lab-game.html">RPL Quiz Game</a></li>
+            <li><a href="kontak.html">Kontak & FAQ</a></li>
+            <li><a href="login.html">Portal Siswa</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Sekolah</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem;">
+            <strong>SMK Negeri 1 Kota Probolinggo</strong><br>
+            Jl. Mastrip No.357, Kanigaran, Kota Probolinggo, Jawa Timur 67219
+          </p>
+          <a href="kontak.html" class="btn btn-outline btn-sm" style="width: 100%;">Lihat Lokasi & Peta 🗺️</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 <strong>Caprice Team 26 &bull; Kelas X RPL 1</strong>. Dibuat dengan cinta <span style="color:#ec4899;">&hearts;</span> oleh siswa RPL.
+        </div>
+        <div>
+          <span>Mode: Multi-Page Web Caprice 26</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Back to top button -->
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+
+  <script src="main.js"></script>
+</body>
+</html>
