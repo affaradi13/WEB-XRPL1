@@ -51,17 +51,19 @@
 
         <div class="glass-card dash-card">
           <h3 class="dash-card-title">Daftar Pengguna (Contoh)</h3>
-          <table class="dash-table">
-            <thead>
-              <tr><th>Nama</th><th>Identifier</th><th>Role</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              <tr><td>Super Admin Caprice</td><td>super@caprice26.id</td><td><span class="tech-badge">Super Admin</span></td><td><span class="tech-badge">Aktif</span></td></tr>
-              <tr><td>Admin Operasional</td><td>admin@caprice26.id</td><td><span class="tech-badge">Admin</span></td><td><span class="tech-badge">Aktif</span></td></tr>
-              <tr><td>Operator Harian</td><td>operator@caprice26.id</td><td><span class="tech-badge">Operator</span></td><td><span class="tech-badge">Aktif</span></td></tr>
-              <tr><td>Viewer Data</td><td>viewer@caprice26.id</td><td><span class="tech-badge">Viewer</span></td><td><span class="tech-badge">Aktif</span></td></tr>
-            </tbody>
-          </table>
+          <div class="dash-table-container">
+            <table class="dash-table">
+              <thead>
+                <tr><th>Nama</th><th>Identifier</th><th>Role</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Super Admin Caprice</td><td>super@caprice26.id</td><td><span class="tech-badge">Super Admin</span></td><td><span class="tech-badge">Aktif</span></td></tr>
+                <tr><td>Admin Operasional</td><td>admin@caprice26.id</td><td><span class="tech-badge">Admin</span></td><td><span class="tech-badge">Aktif</span></td></tr>
+                <tr><td>Operator Harian</td><td>operator@caprice26.id</td><td><span class="tech-badge">Operator</span></td><td><span class="tech-badge">Aktif</span></td></tr>
+                <tr><td>Viewer Data</td><td>viewer@caprice26.id</td><td><span class="tech-badge">Viewer</span></td><td><span class="tech-badge">Aktif</span></td></tr>
+              </tbody>
+            </table>
+          </div>
           <p class="auth-sub" style="margin-top:1rem;">⚠️ Aksi <code>user.create/update/delete</code> hanya untuk Super Admin (FR-09). Admin hanya diberi akses <code>user.view</code> terbatas pada scope organisasi.</p>
         </div>
       </main>
