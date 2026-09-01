@@ -552,34 +552,69 @@ function initSchedule() {
   const contents = document.querySelectorAll(".schedule-day-content");
   if (!tabs.length) return;
 
+  function switchTab(dayKey) {
+    const targetTab = Array.from(tabs).find((t) => t.getAttribute("data-day") === dayKey);
+    if (!targetTab) return;
+    tabs.forEach((t) => t.classList.remove("active"));
+    contents.forEach((c) => (c.style.display = "none"));
+    targetTab.classList.add("active");
+    const activeContent = document.getElementById(`schedule-${dayKey}`);
+    if (activeContent) activeContent.style.display = "flex";
+  }
+
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {
-      tabs.forEach((t) => t.classList.remove("active"));
-      contents.forEach((c) => (c.style.display = "none"));
-
-      tab.classList.add("active");
       const target = tab.getAttribute("data-day");
-      const activeContent = document.getElementById(`schedule-${target}`);
-      if (activeContent) activeContent.style.display = "flex";
+      switchTab(target);
       soundFX.play("click");
     });
   });
 
-  const now = new Date();
-  const options = { timeZone: "Asia/Jakarta", hour: "numeric", minute: "numeric", weekday: "long" };
-  const formatter = new Intl.DateTimeFormat("id-ID", options);
-  const parts = formatter.formatToParts(now);
-  const dayName = parts.find((p) => p.type === "weekday")?.value || "";
+  function updateLiveTracker() {
+    const now = new Date();
+    const clockEl = document.getElementById("live-clock");
+    const liveTrackerText = document.getElementById("live-tracker-info");
 
-  const liveTrackerText = document.getElementById("live-tracker-info");
-  if (liveTrackerText) {
-    const hours = now.getHours();
-    if (hours >= 7 && hours < 15) {
-      liveTrackerText.innerHTML = `<strong>Kegiatan Belajar Sedang Berlangsung</strong> &bull; Hari ini: <strong>${dayName}</strong>`;
-    } else {
-      liveTrackerText.innerHTML = `<strong>Waktu Istirahat / Belajar Mandiri</strong> &bull; Sampai jumpa di kelas besok!`;
+    const timeString = now.toLocaleTimeString("id-ID", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZone: "Asia/Jakarta",
+    });
+
+    const dayName = now.toLocaleDateString("id-ID", {
+      weekday: "long",
+      timeZone: "Asia/Jakarta",
+    });
+
+    if (clockEl) {
+      clockEl.innerHTML = `${dayName}, ${timeString} WIB`;
+    }
+
+    if (liveTrackerText) {
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+      const isWeekday = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"].includes(dayName);
+
+      if (isWeekday && totalMinutes >= 6 * 60 + 45 && totalMinutes <= 15 * 60 + 20) {
+        liveTrackerText.innerHTML = `<strong>Kegiatan Belajar Sedang Berlangsung</strong> &bull; Hari ini: <strong>${dayName}</strong>`;
+      } else if (isWeekday && totalMinutes > 15 * 60 + 20 && totalMinutes <= 17 * 60) {
+        liveTrackerText.innerHTML = `<strong>Kegiatan Ekstrakurikuler / Belajar Mandiri</strong> &bull; Hari ini: <strong>${dayName}</strong>`;
+      } else {
+        liveTrackerText.innerHTML = `<strong>Waktu Istirahat / Belajar Mandiri</strong> &bull; Sampai jumpa di kelas besok!`;
+      }
     }
   }
+
+  // Auto switch tab ke hari ini (Senin - Jumat)
+  const todayName = new Date().toLocaleDateString("id-ID", { weekday: "long", timeZone: "Asia/Jakarta" }).toLowerCase();
+  if (["senin", "selasa", "rabu", "kamis", "jumat"].includes(todayName)) {
+    switchTab(todayName);
+  }
+
+  updateLiveTracker();
+  setInterval(updateLiveTracker, 1000);
 }
 
 // ==========================================================================
