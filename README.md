@@ -83,11 +83,6 @@ Website.CapriceTeam/
 │   ├── login.html        # Portal siswa & dashboard biometrik
 │   ├── style.css         # Desain sistem visual, efek 3D & neon
 │   └── main.js           # Engine interaktif, partikel & synth suara
-├── index.html            # Landing page root
-├── login.html            # Redirect portal login
-├── style.css             # Style landing page root
-├── main.js               # Backend Node.js murni
-├── main.py               # Backend Python 3 murni
 └── README.md             # Dokumentasi lengkap proyek
 ```
 
