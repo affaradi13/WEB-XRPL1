@@ -141,14 +141,17 @@
           <details class="auth-demo" id="demo-accounts">
             <summary>Akun demo untuk uji peran</summary>
             <div class="auth-demo-list">
+              <button type="button" class="auth-demo-item" data-role="super">
+                <strong>Super Admin</strong><span>super@caprice26.id / super123</span>
+              </button>
               <button type="button" class="auth-demo-item" data-role="admin">
                 <strong>Admin</strong><span>admin@caprice26.id / admin123</span>
               </button>
-              <button type="button" class="auth-demo-item" data-role="manager">
-                <strong>Manager</strong><span>manager@caprice26.id / manager123</span>
+              <button type="button" class="auth-demo-item" data-role="operator">
+                <strong>Operator</strong><span>operator@caprice26.id / operator123</span>
               </button>
-              <button type="button" class="auth-demo-item" data-role="staff">
-                <strong>Staff</strong><span>staff@caprice26.id / staff123</span>
+              <button type="button" class="auth-demo-item" data-role="viewer">
+                <strong>Viewer</strong><span>viewer@caprice26.id / viewer123</span>
               </button>
               <button type="button" class="auth-demo-item" data-role="inactive">
                 <strong>Akun Nonaktif</strong><span>nonaktif@caprice26.id / pass123</span>
@@ -195,6 +198,10 @@
   </main>
 
   <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/middleware.js"></script>
+  <script src="js/auth-login.js"></script>
   <script src="main.js"></script>
 </body>
 </html>
