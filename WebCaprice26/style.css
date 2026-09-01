@@ -675,6 +675,7 @@ button, input, select, textarea {
 
 .section-title span {
   background: linear-gradient(135deg, var(--primary), var(--accent));
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -785,6 +786,7 @@ button, input, select, textarea {
 .hero-title .gradient-text {
   background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 50%, var(--accent) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
@@ -948,6 +950,7 @@ button, input, select, textarea {
   line-height: 1;
   background: linear-gradient(135deg, var(--text-main), var(--primary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
 }
@@ -2005,6 +2008,7 @@ button, input, select, textarea {
 .auth-brand-title span {
   background: linear-gradient(135deg, var(--primary), var(--accent));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -2759,9 +2763,35 @@ button, input, select, textarea {
   color: var(--text-dim);
 }
 
+/* Container tabel responsive dengan horizontal scrolling */
+.dash-table-container {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 0.5rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary) rgba(255, 255, 255, 0.05);
+}
+
+.dash-table-container::-webkit-scrollbar {
+  height: 6px;
+}
+
+.dash-table-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 4px;
+}
+
+.dash-table-container::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 4px;
+}
+
 /* Tabel dashboard */
 .dash-table {
   width: 100%;
+  min-width: 520px;
   border-collapse: collapse;
   font-size: 0.92rem;
 }
@@ -2770,6 +2800,7 @@ button, input, select, textarea {
   text-align: left;
   padding: 0.7rem 0.9rem;
   border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
 }
 .dash-table th {
   color: var(--text-dim);
@@ -2814,10 +2845,18 @@ code {
   .dash-content {
     padding: 1.25rem;
   }
+  .dash-card {
+    padding: 1.1rem;
+  }
   .dash-user-name {
     display: none;
   }
   .dash-table {
-    font-size: 0.8rem;
+    font-size: 0.82rem;
+    min-width: 500px;
+  }
+  .dash-table th,
+  .dash-table td {
+    padding: 0.6rem 0.75rem;
   }
 }
