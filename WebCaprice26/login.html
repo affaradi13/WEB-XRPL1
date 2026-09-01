@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Portal Siswa dan Dashboard Kelas X Rekayasa Perangkat Lunak 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
-  <title>Portal Siswa & Dashboard — Caprice 26 | Kelas X RPL 1</title>
-  
+  <meta name="description" content="Masuk ke Portal & Dashboard Caprice 26 — Kelas X Rekayasa Perangkat Lunak 1 SMK Negeri 1 Kota Probolinggo.">
+  <title>Masuk — Portal Caprice 26 | Kelas X RPL 1</title>
+
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,146 +22,177 @@
   <div class="custom-cursor-ring"></div>
   <div id="scroll-progress"></div>
 
-  <header class="site-header">
-    <nav class="navbar" aria-label="Navigasi Utama">
-      <a href="index.html" class="logo">
-        <span class="logo-badge">X</span>
-        <span class="logo-text">RPL 1</span>
-        <span class="logo-sub">Caprice 26</span>
-      </a>
+  <!-- ================= AUTH SPLIT LAYOUT ================= -->
+  <main class="auth-main" id="auth-main">
 
-      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
-        <ul class="nav-links">
-          <li><a href="index.html" class="nav-link">Beranda</a></li>
-          <li><a href="struktur.html" class="nav-link">Struktur</a></li>
-          <li><a href="jadwal.html" class="nav-link">Jadwal</a></li>
-          <li><a href="galeri.html" class="nav-link">Galeri</a></li>
-          <li><a href="proyek.html" class="nav-link">Projek</a></li>
-          <li><a href="prestasi.html" class="nav-link">Prestasi</a></li>
-          <li><a href="bukutamu.html" class="nav-link">Buku Tamu</a></li>
-          <li><a href="lab-game.html" class="nav-link">RPL Lab</a></li>
-          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
-        </ul>
+    <!-- Error / maintenance banner (from server) -->
+    <div class="auth-alert-banner" id="auth-alert-banner" role="alert" hidden></div>
 
-        <div class="nav-actions">
-          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
-          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
-          <div class="accent-dropdown">
-            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
-            <div class="accent-palette-menu" id="accent-palette-menu">
-              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
-              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
-              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
-              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
-              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+    <div class="auth-shell">
+
+      <!-- BRAND PANEL (decorative, desktop) -->
+      <aside class="auth-brand-panel" aria-hidden="true">
+        <a href="index.html" class="logo auth-logo">
+          <span class="logo-badge">X</span>
+          <span class="logo-text">RPL 1</span>
+          <span class="logo-sub">Caprice 26</span>
+        </a>
+
+        <div class="auth-brand-content">
+          <span class="section-badge">Portal Resmi Kelas</span>
+          <h1 class="auth-brand-title">Selamat datang di <span>Caprice 26</span></h1>
+          <p class="auth-brand-sub">Satu visi, seribu baris kode, sejuta kenangan. Akses dashboard sesuai peranmu dalam keluarga X Rekayasa Perangkat Lunak 1.</p>
+
+          <div class="auth-brand-feats">
+            <div class="auth-feat">
+              <span class="auth-feat-icon">🛡️</span>
+              <span><strong>Aman.</strong> Sesi terenkripsi dan dilindungi.</span>
+            </div>
+            <div class="auth-feat">
+              <span class="auth-feat-icon">⚡</span>
+              <span><strong>Cepat.</strong> Masuk dan langsung bekerja.</span>
+            </div>
+            <div class="auth-feat">
+              <span class="auth-feat-icon">🧭</span>
+              <span><strong>Terorganisir.</strong> Menu sesuai peran Anda.</span>
             </div>
           </div>
-          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
-        </div>
-      </div>
-
-      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-        <span class="hamburger-bar"></span>
-      </button>
-    </nav>
-  </header>
-
-  <main style="padding-top: 5rem;">
-    <section class="section">
-      <div class="container">
-        <!-- LOGIN CARD -->
-        <div class="login-container animate-on-scroll" id="portal-login-card">
-          <div class="logo-badge" style="width: 55px; height: 55px; font-size: 1.6rem; margin: 0 auto 1.25rem auto;">X</div>
-          <h2 style="font-size: 1.85rem; font-weight: 800; margin-bottom: 0.5rem;">Portal Siswa <span>Caprice 26</span></h2>
-          <p style="font-size: 0.92rem; color: var(--text-muted); margin-bottom: 1.5rem;">
-            Akses dashboard tugas, pengumuman internal, dan materi pembelajaran X RPL 1.
-          </p>
-
-          <button id="btn-fingerprint-login" class="fingerprint-btn" aria-label="Login Biometrik">
-            👆
-          </button>
-          <p style="font-size: 0.85rem; color: var(--primary); font-weight: 700;">
-            Sentuh Sensor Sidik Jari untuk Masuk Otomatis
-          </p>
         </div>
 
-        <!-- SIMULATED DASHBOARD PANEL -->
-        <div class="dashboard-panel" id="portal-dashboard-panel">
-          <div class="section-header">
-            <span class="section-badge">Dashboard Siswa Aktif</span>
-            <h2 class="section-title">Selamat Datang, <span>Siswa Caprice 26</span>!</h2>
-            <p class="section-desc">Berikut rekap status kegiatan belajar, tugas aktif, dan pengumuman kelas X RPL 1 SMKN 1 Probolinggo.</p>
-          </div>
+        <p class="auth-brand-footer">© 2026 Caprice Team 26 &bull; SMKN 1 Kota Probolinggo</p>
+      </aside>
 
-          <!-- Quick Stat Cards -->
-          <div class="stats-grid" style="margin-bottom: 2.5rem;">
-            <div class="stat-card">
-              <div class="stat-icon">📈</div>
-              <div class="stat-number">100%</div>
-              <div class="stat-label">Tingkat Kehadiran</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">📝</div>
-              <div class="stat-number">4</div>
-              <div class="stat-label">Tugas Aktif Minggu Ini</div>
-            </div>
-            <div class="stat-card">
-              <div class="stat-icon">💻</div>
-              <div class="stat-number">95.8</div>
-              <div class="stat-label">Rata-Rata Nilai Praktek</div>
-            </div>
-          </div>
+      <!-- FORM PANEL -->
+      <section class="auth-form-panel" id="auth-form-panel">
 
-          <!-- Announcements Grid -->
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2rem;">
-            <div class="glass-card">
-              <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--primary);">📢 Pengumuman Penting</h3>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 1rem;">
-                <li style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
-                  <strong>Ujian Praktik PWPB (HTML/CSS & JS)</strong>
-                  <p style="font-size: 0.85rem; color: var(--text-muted);">Akan diadakan hari Senin depan di Lab RPL 1. Harap siapkan source code projek masing-masing.</p>
-                </li>
-                <li style="padding-bottom: 0.75rem; border-bottom: 1px solid var(--border-color);">
-                  <strong>Iuran Uang Kas Mingguan</strong>
-                  <p style="font-size: 0.85rem; color: var(--text-muted);">Pembayaran kas sebesar Rp5.000 ke Bendahara Natasya / Adeleo setiap hari Rabu.</p>
-                </li>
-              </ul>
-            </div>
+        <!-- ============ VIEW: LOGIN CARD ============ -->
+        <div class="auth-card" id="view-login">
+          <a href="index.html" class="logo auth-mobile-logo">
+            <span class="logo-badge">X</span>
+            <span class="logo-text">RPL 1</span>
+            <span class="logo-sub">Caprice 26</span>
+          </a>
 
-            <div class="glass-card">
-              <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--secondary);">📚 Modul & Materi Pembelajaran</h3>
-              <div style="display:flex; flex-direction:column; gap:0.75rem;">
-                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Dasar Pemrograman Web & Desain Responsif (PDF)...')">
-                  📥 Unduh Modul PWPB (PDF)
-                </button>
-                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Manajemen Basis Data MySQL (PDF)...')">
-                  📥 Unduh Modul Basis Data (PDF)
-                </button>
-                <button class="btn btn-outline btn-sm" onclick="soundFX.play('success'); alert('Mengunduh Modul: Algoritma & Struktur Data Python (PDF)...')">
-                  📥 Unduh Modul Python Dasar (PDF)
-                </button>
+          <span class="section-badge">Login</span>
+          <h1 class="auth-heading">Masuk ke akun Anda</h1>
+          <p class="auth-sub">Gunakan kredensial Anda untuk melanjutkan ke dashboard.</p>
+
+          <!-- System alert (error / session expired / account inactive) -->
+          <div class="auth-alert auth-alert-error" id="login-alert" role="alert" hidden></div>
+
+          <form id="login-form" novalidate>
+            <div class="auth-field-group" id="fld-identifier">
+              <label class="auth-label" for="login-identifier">Email atau username</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">✉️</span>
+                <input
+                  class="auth-input"
+                  type="text"
+                  id="login-identifier"
+                  name="identifier"
+                  placeholder="contoh: user@caprice26.id"
+                  autocomplete="username"
+                  spellcheck="false"
+                />
               </div>
+              <p class="auth-error-msg" id="err-identifier" role="alert"></p>
             </div>
-          </div>
 
-          <div style="text-align: center; margin-top: 3rem;">
-            <button class="btn btn-outline" onclick="location.reload()">Kunci & Keluar Portal 🔒</button>
-          </div>
+            <div class="auth-field-group" id="fld-password">
+              <label class="auth-label" for="login-password">Password</label>
+              <div class="auth-input-wrap">
+                <span class="auth-input-icon" aria-hidden="true">🔒</span>
+                <input
+                  class="auth-input"
+                  type="password"
+                  id="login-password"
+                  name="password"
+                  placeholder="Masukkan password"
+                  autocomplete="current-password"
+                />
+                <button
+                  type="button"
+                  class="auth-visibility-toggle"
+                  id="toggle-password"
+                  aria-label="Tampilkan password"
+                  aria-pressed="false"
+                >👁</button>
+              </div>
+              <p class="auth-error-msg" id="err-password" role="alert"></p>
+            </div>
+
+            <div class="auth-options-row">
+              <label class="auth-checkbox">
+                <input type="checkbox" id="remember-me" name="rememberMe" />
+                <span>Ingat saya</span>
+              </label>
+              <a href="#" class="auth-link" id="forgot-link">Lupa password?</a>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-submit" id="login-submit">
+              <span class="btn-label">Masuk</span>
+              <span class="btn-spinner" aria-hidden="true"></span>
+            </button>
+          </form>
+
+          <p class="auth-help">Butuh bantuan? <a href="kontak.html" class="auth-link">Hubungi kami</a></p>
+
+          <!-- Demo accounts (for review/testing only, remove for production) -->
+          <details class="auth-demo" id="demo-accounts">
+            <summary>Akun demo untuk uji peran</summary>
+            <div class="auth-demo-list">
+              <button type="button" class="auth-demo-item" data-role="admin">
+                <strong>Admin</strong><span>admin@caprice26.id / admin123</span>
+              </button>
+              <button type="button" class="auth-demo-item" data-role="manager">
+                <strong>Manager</strong><span>manager@caprice26.id / manager123</span>
+              </button>
+              <button type="button" class="auth-demo-item" data-role="staff">
+                <strong>Staff</strong><span>staff@caprice26.id / staff123</span>
+              </button>
+              <button type="button" class="auth-demo-item" data-role="inactive">
+                <strong>Akun Nonaktif</strong><span>nonaktif@caprice26.id / pass123</span>
+              </button>
+              <button type="button" class="auth-demo-item" data-role="locked">
+                <strong>Akun Terkunci</strong><span>terkunci@caprice26.id / pass123</span>
+              </button>
+            </div>
+          </details>
         </div>
-      </div>
-    </section>
-  </main>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-bottom">
-        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; Portal Keamanan Siswa X RPL 1.</div>
-        <div><span>Session Encrypted &bull; SMKN 1 Probolinggo</span></div>
-      </div>
+        <!-- ============ VIEW: UNAUTHORIZED ============ -->
+        <div class="auth-card auth-status-card" id="view-unauthorized" hidden>
+          <span class="auth-status-icon">🚫</span>
+          <span class="section-badge">Akses Ditolak</span>
+          <h1 class="auth-heading">Anda tidak memiliki akses</h1>
+          <p class="auth-sub">Anda berhasil masuk, tetapi tidak memiliki izin untuk membuka halaman ini.</p>
+          <div class="auth-status-info" id="unauth-role-info"></div>
+          <button class="btn btn-primary auth-submit" id="unauth-back">Kembali ke dashboard</button>
+          <button class="btn btn-outline auth-secondary-btn" id="unauth-logout">Keluar</button>
+        </div>
+
+        <!-- ============ VIEW: ACCOUNT INACTIVE / LOCKED ============ -->
+        <div class="auth-card auth-status-card" id="view-account-inactive" hidden>
+          <span class="auth-status-icon" id="inactive-icon">⏸️</span>
+          <span class="section-badge">Status Akun</span>
+          <h1 class="auth-heading" id="inactive-title">Akun belum dapat digunakan</h1>
+          <p class="auth-sub" id="inactive-desc">Akun Anda belum aktif atau sedang dikunci sementara.</p>
+          <button class="btn btn-outline auth-secondary-btn" id="inactive-contact">Hubungi administrator</button>
+          <button class="btn btn-primary auth-submit" id="inactive-back">Kembali ke login</button>
+        </div>
+
+        <!-- ============ VIEW: SESSION EXPIRED ============ -->
+        <div class="auth-card auth-status-card" id="view-session-expired" hidden>
+          <span class="auth-status-icon">⏰</span>
+          <span class="section-badge">Sesi Berakhir</span>
+          <h1 class="auth-heading">Sesi Anda telah berakhir</h1>
+          <p class="auth-sub">Silakan masuk kembali untuk melanjutkan pekerjaan Anda.</p>
+          <button class="btn btn-primary auth-submit" id="session-back">Masuk kembali</button>
+        </div>
+
+      </section>
     </div>
-  </footer>
+  </main>
 
   <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
   <script src="main.js"></script>
