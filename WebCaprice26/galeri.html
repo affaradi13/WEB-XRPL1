@@ -33,13 +33,23 @@
       <div class="nav-menu-wrapper" id="nav-menu-wrapper">
         <ul class="nav-links">
           <li><a href="index.html" class="nav-link">Beranda</a></li>
-          <li><a href="struktur.html" class="nav-link">Struktur</a></li>
-          <li><a href="jadwal.html" class="nav-link">Jadwal</a></li>
-          <li><a href="galeri.html" class="nav-link active">Galeri</a></li>
-          <li><a href="proyek.html" class="nav-link">Projek</a></li>
-          <li><a href="prestasi.html" class="nav-link">Prestasi</a></li>
-          <li><a href="bukutamu.html" class="nav-link">Buku Tamu</a></li>
-          <li><a href="lab-game.html" class="nav-link">RPL Lab</a></li>
+          <li class="nav-item-dropdown">
+            <a href="lab-game.html" class="nav-link nav-dropdown-toggle active" id="rpl-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span>RPL Lab</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="nav-dropdown-menu" aria-labelledby="rpl-dropdown-btn">
+              <li><a href="lab-game.html" class="dropdown-item"><span class="dropdown-icon">🎮</span> RPL Lab & Games</a></li>
+              <li><a href="proyek.html" class="dropdown-item"><span class="dropdown-icon">💻</span> Showcase Projek</a></li>
+              <li><a href="struktur.html" class="dropdown-item"><span class="dropdown-icon">👥</span> Struktur Organisasi</a></li>
+              <li><a href="jadwal.html" class="dropdown-item"><span class="dropdown-icon">📅</span> Jadwal Pelajaran</a></li>
+              <li><a href="galeri.html" class="dropdown-item active"><span class="dropdown-icon">🖼️</span> Galeri Foto</a></li>
+              <li><a href="prestasi.html" class="dropdown-item"><span class="dropdown-icon">🏆</span> Prestasi</a></li>
+              <li><a href="bukutamu.html" class="dropdown-item"><span class="dropdown-icon">📖</span> Buku Tamu</a></li>
+            </ul>
+          </li>
           <li><a href="kontak.html" class="nav-link">Kontak</a></li>
         </ul>
 

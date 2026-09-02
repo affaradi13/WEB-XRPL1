@@ -450,11 +450,33 @@ function initMobileNav() {
   const menu = document.getElementById("nav-menu-wrapper");
   if (!toggle || !menu) return;
 
+  const isMobileNav = () => window.matchMedia("(max-width: 1080px)").matches;
+
+  const setBodyScroll = (lock) => {
+    if (lock && isMobileNav()) {
+      document.body.style.overflow = "hidden";
+      document.body.style.touchAction = "none";
+    } else {
+      document.body.style.overflow = "";
+      document.body.style.touchAction = "";
+    }
+  };
+
   const toggleMenu = () => {
     const isOpen = menu.classList.toggle("open");
     toggle.classList.toggle("open", isOpen);
     toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    setBodyScroll(isOpen);
     soundFX.play("click");
+  };
+
+  const closeMenu = () => {
+    if (menu.classList.contains("open")) {
+      menu.classList.remove("open");
+      toggle.classList.remove("open");
+      toggle.setAttribute("aria-expanded", "false");
+      setBodyScroll(false);
+    }
   };
 
   toggle.addEventListener("click", (e) => {
@@ -462,25 +484,64 @@ function initMobileNav() {
     toggleMenu();
   });
 
-  document.querySelectorAll(".nav-link").forEach((link) => {
-    link.addEventListener("click", () => {
-      if (menu.classList.contains("open")) {
-        toggleMenu();
+  // Dropdown toggle for RPL Lab
+  const dropdownParent = document.querySelector(".nav-item-dropdown");
+  const dropdownToggle = document.querySelector(".nav-dropdown-toggle");
+
+  if (dropdownToggle && dropdownParent) {
+    // If the active page is inside the dropdown, pre-open dropdown on mobile for clear context
+    if (dropdownParent.querySelector(".dropdown-item.active") && isMobileNav()) {
+      dropdownParent.classList.add("open");
+      dropdownToggle.setAttribute("aria-expanded", "true");
+    }
+
+    dropdownToggle.addEventListener("click", (e) => {
+      // In mobile view, toggle accordion dropdown smoothly
+      if (isMobileNav()) {
+        e.preventDefault();
+        e.stopPropagation();
+        const isOpen = dropdownParent.classList.toggle("open");
+        dropdownToggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
+        soundFX.play("click");
       }
+    });
+  }
+
+  // Regular links and dropdown item links close the mobile menu
+  document.querySelectorAll(".nav-link:not(.nav-dropdown-toggle), .dropdown-item").forEach((link) => {
+    link.addEventListener("click", () => {
+      closeMenu();
     });
   });
 
-  // Close when clicking outside menu
+  // Close when clicking outside menu or dropdown
   document.addEventListener("click", (e) => {
     if (menu.classList.contains("open") && !menu.contains(e.target) && !toggle.contains(e.target)) {
-      toggleMenu();
+      closeMenu();
+    }
+    if (dropdownParent && !dropdownParent.contains(e.target) && !isMobileNav()) {
+      dropdownParent.classList.remove("open");
+      if (dropdownToggle) dropdownToggle.setAttribute("aria-expanded", "false");
     }
   });
 
   // Close on Escape key
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && menu.classList.contains("open")) {
-      toggleMenu();
+    if (e.key === "Escape") {
+      closeMenu();
+      if (dropdownParent && !isMobileNav()) {
+        dropdownParent.classList.remove("open");
+        if (dropdownToggle) dropdownToggle.setAttribute("aria-expanded", "false");
+      }
+    }
+  });
+
+  // Handle window resize cleanly between mobile and desktop
+  window.addEventListener("resize", () => {
+    if (!isMobileNav()) {
+      closeMenu();
+      dropdownParent?.classList.remove("open");
+      dropdownToggle?.setAttribute("aria-expanded", "false");
     }
   });
 }
