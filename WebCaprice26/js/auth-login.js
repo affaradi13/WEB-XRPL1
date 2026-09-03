@@ -24,7 +24,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const visible = passInput.type === "text";
       passInput.type = visible ? "password" : "text";
       toggleBtn.setAttribute("aria-pressed", String(!visible));
-      toggleBtn.innerHTML = visible ? "👁" : "🙈";
+      toggleBtn.innerHTML = visible
+        ? '<span class="material-symbols-outlined">visibility</span>'
+        : '<span class="material-symbols-outlined">visibility_off</span>';
       toggleBtn.setAttribute("aria-label", visible ? "Tampilkan password" : "Sembunyikan password");
       if (window.soundFX) window.soundFX.play("click");
     });
