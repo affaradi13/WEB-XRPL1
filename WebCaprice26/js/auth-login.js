@@ -157,7 +157,7 @@ document.addEventListener("DOMContentLoaded", () => {
             target = returnUrl;
           }
         }
-        if (!target) target = "index.html";
+        if (!target) target = "../index.html";
 
         if (window.soundFX) window.soundFX.play("success");
         setTimeout(() => {
@@ -237,7 +237,7 @@ document.addEventListener("DOMContentLoaded", () => {
     unauthBack.addEventListener("click", () => {
       const u = auth.getUser();
       const d = u && middleware.defaultDashboardFor(u.role);
-      window.location.href = d || "index.html";
+      window.location.href = d || "../index.html";
     });
   }
   const unauthLogout = document.getElementById("unauth-logout");

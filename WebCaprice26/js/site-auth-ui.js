@@ -13,17 +13,22 @@ document.addEventListener("DOMContentLoaded", () => {
   if (!auth || !cfg) return;
 
   const user = auth.getUser();
-  const portalLink = document.querySelector('a[href="login.html"].btn');
+  const portalLink = document.querySelector('a[href*="login.html"].btn');
 
   if (!portalLink) return;
+
+  const isInPages = window.location.pathname.includes("/pages/") || window.location.pathname.endsWith("/pages");
 
   if (user) {
     const role = cfg.ROLES[user.role];
     const label = "Dashboard";
-    const target = role ? role.dashboard : "login.html";
+    const dashboardPage = role ? role.dashboard : "login.html";
+    const target = isInPages ? dashboardPage : `pages/${dashboardPage}`;
     portalLink.textContent = label;
     portalLink.href = target;
     portalLink.classList.remove("btn-primary");
     portalLink.classList.add("btn-secondary");
+  } else {
+    portalLink.href = isInPages ? "login.html" : "pages/login.html";
   }
 });

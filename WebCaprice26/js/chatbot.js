@@ -192,6 +192,14 @@
   };
 
   // --- NATURAL LANGUAGE & QUERY MATCHING ENGINE ---
+  function getPageLink(pageName) {
+    const isInPages = window.location.pathname.includes('/pages/') || window.location.pathname.endsWith('/pages');
+    if (pageName === 'index.html') {
+      return isInPages ? '../index.html' : 'index.html';
+    }
+    return isInPages ? pageName : `pages/${pageName}`;
+  }
+
   function getDayName(dayIndex) {
     const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
     return days[dayIndex] || 'senin';
@@ -203,7 +211,7 @@
     if (dayKey === 'sabtu' || dayKey === 'minggu') {
       return {
         isHoliday: true,
-        text: `🎉 **Hari ini (${dayKey.toUpperCase()}) adalah hari libur sekolah!** Tidak ada jadwal KBM aktif. Kamu bisa istirahat, belajar mandiri koding, atau mengasah skill di <a href="lab-game.html" class="chat-link">🎮 Lab Game RPL</a>.`
+        text: `🎉 **Hari ini (${dayKey.toUpperCase()}) adalah hari libur sekolah!** Tidak ada jadwal KBM aktif. Kamu bisa istirahat, belajar mandiri koding, atau mengasah skill di <a href="${getPageLink('lab-game.html')}" class="chat-link">🎮 Lab Game RPL</a>.`
       };
     }
     const schedule = KNOWLEDGE_BASE.jadwalPelajaran[dayKey];
@@ -211,7 +219,7 @@
     return {
       isHoliday: false,
       day: dayKey,
-      text: `📅 **Jadwal Pelajaran Hari Ini (${dayKey.toUpperCase()}):**\n` + schedule.map(s => `• ${s}`).join('\n') + `\n\n🔗 Lihat jadwal lengkap di <a href="jadwal.html" class="chat-link">Halaman Jadwal</a>.`
+      text: `📅 **Jadwal Pelajaran Hari Ini (${dayKey.toUpperCase()}):**\n` + schedule.map(s => `• ${s}`).join('\n') + `\n\n🔗 Lihat jadwal lengkap di <a href="${getPageLink('jadwal.html')}" class="chat-link">Halaman Jadwal</a>.`
     };
   }
 
@@ -247,22 +255,22 @@
 
     // 4. Jadwal Hari Tertentu (Senin - Jumat)
     if (q.includes('jadwal senin') || q.includes('hari senin')) {
-      return `📅 **Jadwal Pelajaran Hari SENIN:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.senin.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="jadwal.html" class="chat-link">Buka Jadwal Lengkap</a>`;
+      return `📅 **Jadwal Pelajaran Hari SENIN:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.senin.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Jadwal Lengkap</a>`;
     }
     if (q.includes('jadwal selasa') || q.includes('hari selasa')) {
-      return `📅 **Jadwal Pelajaran Hari SELASA:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.selasa.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="jadwal.html" class="chat-link">Buka Jadwal Lengkap</a>`;
+      return `📅 **Jadwal Pelajaran Hari SELASA:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.selasa.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Jadwal Lengkap</a>`;
     }
     if (q.includes('jadwal rabu') || q.includes('hari rabu')) {
-      return `📅 **Jadwal Pelajaran Hari RABU:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.rabu.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="jadwal.html" class="chat-link">Buka Jadwal Lengkap</a>`;
+      return `📅 **Jadwal Pelajaran Hari RABU:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.rabu.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Jadwal Lengkap</a>`;
     }
     if (q.includes('jadwal kamis') || q.includes('hari kamis')) {
-      return `📅 **Jadwal Pelajaran Hari KAMIS:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.kamis.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="jadwal.html" class="chat-link">Buka Jadwal Lengkap</a>`;
+      return `📅 **Jadwal Pelajaran Hari KAMIS:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.kamis.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Jadwal Lengkap</a>`;
     }
     if (q.includes('jadwal jumat') || q.includes('hari jumat') || q.includes('jum\'at')) {
-      return `📅 **Jadwal Pelajaran Hari JUMAT:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.jumat.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="jadwal.html" class="chat-link">Buka Jadwal Lengkap</a>`;
+      return `📅 **Jadwal Pelajaran Hari JUMAT:**\n` + KNOWLEDGE_BASE.jadwalPelajaran.jumat.map(s => `• ${s}`).join('\n') + `\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Jadwal Lengkap</a>`;
     }
     if (q.includes('jadwal') || q.includes('mata pelajaran') || q.includes('mapel')) {
-      return `📅 **Jadwal Pelajaran X RPL 1:**\nKamu bisa tanyakan jadwal spesifik, misalnya: *"jadwal senin"*, *"jadwal selasa"*, *"jadwal hari ini"*, atau klik tautan berikut:\n\n👉 <a href="jadwal.html" class="chat-link">Buka Halaman Jadwal Interaktif</a>`;
+      return `📅 **Jadwal Pelajaran X RPL 1:**\nKamu bisa tanyakan jadwal spesifik, misalnya: *"jadwal senin"*, *"jadwal selasa"*, *"jadwal hari ini"*, atau klik tautan berikut:\n\n👉 <a href="${getPageLink('jadwal.html')}" class="chat-link">Buka Halaman Jadwal Interaktif</a>`;
     }
 
     // 5. Istilah Khusus (LDR, JB, MCL, BREAK)
@@ -299,7 +307,7 @@
       return `🧹 **Petugas Piket & M.bg Hari JUMAT:**\n${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}`;
     }
     if (q.includes('piket') || q.includes('kebersihan')) {
-      return `🧹 **Daftar Piket & Pengambilan M.bg X RPL 1:**\n• **Senin:** ${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}\n• **Selasa:** ${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}\n• **Rabu:** ${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}\n• **Kamis:** ${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}\n• **Jumat:** ${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}\n\n🔗 <a href="jadwal.html" class="chat-link">Lihat Jadwal Piket di Website</a>`;
+      return `🧹 **Daftar Piket & Pengambilan M.bg X RPL 1:**\n• **Senin:** ${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}\n• **Selasa:** ${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}\n• **Rabu:** ${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}\n• **Kamis:** ${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}\n• **Jumat:** ${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Lihat Jadwal Piket di Website</a>`;
     }
 
     // 7. Pengurus Inti Kelas
@@ -316,40 +324,40 @@
       return `💰 **Bendahara X RPL 1:**\n• **Bendahara 1:** ${KNOWLEDGE_BASE.pengurus.bendahara1}\n• **Bendahara 2:** ${KNOWLEDGE_BASE.pengurus.bendahara2}\n\nBertanggung jawab atas pengelolaan kas kelas, transparansi laporan keuangan, dan logistik.`;
     }
     if (q.includes('pengurus') || q.includes('struktur')) {
-      return `🏛️ **Pengurus Inti X RPL 1 (Caprice 26):**\n• **Ketua:** ${KNOWLEDGE_BASE.pengurus.ketua}\n• **Wakil Ketua:** ${KNOWLEDGE_BASE.pengurus.wakil}\n• **Sekretaris 1:** ${KNOWLEDGE_BASE.pengurus.sekretaris1}\n• **Sekretaris 2:** ${KNOWLEDGE_BASE.pengurus.sekretaris2}\n• **Bendahara 1:** ${KNOWLEDGE_BASE.pengurus.bendahara1}\n• **Bendahara 2:** ${KNOWLEDGE_BASE.pengurus.bendahara2}\n\n🔗 <a href="struktur.html" class="chat-link">Lihat Bagan Struktur Lengkap</a>`;
+      return `🏛️ **Pengurus Inti X RPL 1 (Caprice 26):**\n• **Ketua:** ${KNOWLEDGE_BASE.pengurus.ketua}\n• **Wakil Ketua:** ${KNOWLEDGE_BASE.pengurus.wakil}\n• **Sekretaris 1:** ${KNOWLEDGE_BASE.pengurus.sekretaris1}\n• **Sekretaris 2:** ${KNOWLEDGE_BASE.pengurus.sekretaris2}\n• **Bendahara 1:** ${KNOWLEDGE_BASE.pengurus.bendahara1}\n• **Bendahara 2:** ${KNOWLEDGE_BASE.pengurus.bendahara2}\n\n🔗 <a href="${getPageLink('struktur.html')}" class="chat-link">Lihat Bagan Struktur Lengkap</a>`;
     }
 
     // 8. Pencarian Data 38 Siswa Berdasarkan Nama
     for (const st of KNOWLEDGE_BASE.studentsList) {
       const matchName = st.name.toLowerCase().includes(q) || (st.nick && q.includes(st.nick.toLowerCase()));
       if (matchName) {
-        return `👤 **Data Siswa X RPL 1:**\n• **Nomor Absen:** ${st.no < 10 ? '0' + st.no : st.no}\n• **Nama Lengkap:** ${st.name}\n• **Panggilan:** ${st.nick}\n• **Spesialisasi:** ${st.role}\n• **Skills:** ${st.skills}\n\n🔗 <a href="struktur.html" class="chat-link">Lihat di Direktori 38 Siswa</a>`;
+        return `👤 **Data Siswa X RPL 1:**\n• **Nomor Absen:** ${st.no < 10 ? '0' + st.no : st.no}\n• **Nama Lengkap:** ${st.name}\n• **Panggilan:** ${st.nick}\n• **Spesialisasi:** ${st.role}\n• **Skills:** ${st.skills}\n\n🔗 <a href="${getPageLink('struktur.html')}" class="chat-link">Lihat di Direktori 38 Siswa</a>`;
       }
     }
 
     // 9. Jumlah Siswa & Daftar 38 Siswa
     if (q.includes('berapa siswa') || q.includes('jumlah siswa') || q.includes('jumlah murid') || q.includes('38 siswa') || q.includes('38 anak') || q.includes('daftar siswa') || q.includes('semua siswa')) {
-      return `👥 Kelas **X RPL 1 (Caprice 26)** memiliki total **38 Siswa Aktif** dengan berbagai keahlian koding (Frontend, Backend, Mobile, UI/UX, Game Dev, DevOps & IoT).\n\nKamu bisa melihat profil lengkap seluruh 38 anak di <a href="struktur.html" class="chat-link">Direktori Siswa X RPL 1</a> atau ketik nama teman yang ingin kamu cari!`;
+      return `👥 Kelas **X RPL 1 (Caprice 26)** memiliki total **38 Siswa Aktif** dengan berbagai keahlian koding (Frontend, Backend, Mobile, UI/UX, Game Dev, DevOps & IoT).\n\nKamu bisa melihat profil lengkap seluruh 38 anak di <a href="${getPageLink('struktur.html')}" class="chat-link">Direktori Siswa X RPL 1</a> atau ketik nama teman yang ingin kamu cari!`;
     }
 
     // 10. Projek & Coding Lab
     if (q.includes('projek') || q.includes('project') || q.includes('aplikasi') || q.includes('karya')) {
-      return `💻 **Projek Unggulan X RPL 1:**\n1. **WebCaprice 26**: Portal kelas interaktif berbasis Glassmorphism, RBAC Admin, & Sound FX.\n2. **RPL Quiz & Lab Game**: Arena kuis koding interaktif dan game edukatif.\n3. **SI-KAS RPL**: Sistem manajemen kas kelas digital transparan.\n\n🔗 <a href="proyek.html" class="chat-link">Kunjungi Galeri Projek</a>`;
+      return `💻 **Projek Unggulan X RPL 1:**\n1. **WebCaprice 26**: Portal kelas interaktif berbasis Glassmorphism, RBAC Admin, & Sound FX.\n2. **RPL Quiz & Lab Game**: Arena kuis koding interaktif dan game edukatif.\n3. **SI-KAS RPL**: Sistem manajemen kas kelas digital transparan.\n\n🔗 <a href="${getPageLink('proyek.html')}" class="chat-link">Kunjungi Galeri Projek</a>`;
     }
     if (q.includes('game') || q.includes('lab game') || q.includes('kuis') || q.includes('main game')) {
-      return `🎮 **RPL Interactive Lab Game:**\nKamu bisa menguji kemampuan koding, bermain tebak sintaks, dan mengumpulkan skor tertinggi di lab game kami!\n\n👉 <a href="lab-game.html" class="chat-link">Mulai Main di Lab Game</a>`;
+      return `🎮 **RPL Interactive Lab Game:**\nKamu bisa menguji kemampuan koding, bermain tebak sintaks, dan mengumpulkan skor tertinggi di lab game kami!\n\n👉 <a href="${getPageLink('lab-game.html')}" class="chat-link">Mulai Main di Lab Game</a>`;
     }
     if (q.includes('prestasi') || q.includes('lomba') || q.includes('juara')) {
-      return `🏆 **Ruang Prestasi X RPL 1:**\nSiswa-siswi Caprice 26 aktif mengikuti berbagai kompetisi bidang Web Technologies, Competitive Programming, dan Game Development.\n\n🔗 <a href="prestasi.html" class="chat-link">Lihat Ruang Prestasi</a>`;
+      return `🏆 **Ruang Prestasi X RPL 1:**\nSiswa-siswi Caprice 26 aktif mengikuti berbagai kompetisi bidang Web Technologies, Competitive Programming, dan Game Development.\n\n🔗 <a href="${getPageLink('prestasi.html')}" class="chat-link">Lihat Ruang Prestasi</a>`;
     }
     if (q.includes('galeri') || q.includes('foto') || q.includes('kegiatan')) {
-      return `📸 **Galeri X RPL 1:**\nDokumentasi momen seru, praktikum lab komputer, kegiatan upacara, dan kebersamaan kelas tersimpan rapi di <a href="galeri.html" class="chat-link">Halaman Galeri</a>.`;
+      return `📸 **Galeri X RPL 1:**\nDokumentasi momen seru, praktikum lab komputer, kegiatan upacara, dan kebersamaan kelas tersimpan rapi di <a href="${getPageLink('galeri.html')}" class="chat-link">Halaman Galeri</a>.`;
     }
     if (q.includes('buku tamu') || q.includes('pesan') || q.includes('guestbook')) {
-      return `✍️ **Buku Tamu:**\nTinggalkan jejak, pesan motivasi, atau kesanmu untuk kelas X RPL 1 di <a href="bukutamu.html" class="chat-link">Halaman Buku Tamu</a>.`;
+      return `✍️ **Buku Tamu:**\nTinggalkan jejak, pesan motivasi, atau kesanmu untuk kelas X RPL 1 di <a href="${getPageLink('bukutamu.html')}" class="chat-link">Halaman Buku Tamu</a>.`;
     }
     if (q.includes('kontak') || q.includes('alamat') || q.includes('lokasi') || q.includes('sekolah')) {
-      return `📍 **Lokasi & Kontak:**\nSMK Negeri 1 Kota Probolinggo\nJurusan Rekayasa Perangkat Lunak (RPL)\n\n🔗 <a href="kontak.html" class="chat-link">Buka Halaman Kontak</a>`;
+      return `📍 **Lokasi & Kontak:**\nSMK Negeri 1 Kota Probolinggo\nJurusan Rekayasa Perangkat Lunak (RPL)\n\n🔗 <a href="${getPageLink('kontak.html')}" class="chat-link">Buka Halaman Kontak</a>`;
     }
 
     // 11. Tech Stack & Belajar Koding

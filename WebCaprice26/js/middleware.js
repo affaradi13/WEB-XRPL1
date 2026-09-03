@@ -58,6 +58,11 @@ window.CapriceMiddleware = (function () {
     return true;
   }
 
+  function resolvePage(page) {
+    const isInPages = window.location.pathname.includes("/pages/") || window.location.pathname.endsWith("/pages");
+    return isInPages ? page : `pages/${page}`;
+  }
+
   /**
    * Route guard utama.
    * Mengembalikan salah satu:
@@ -73,23 +78,23 @@ window.CapriceMiddleware = (function () {
     if (!user) {
       const current = window.location.pathname.split("/").pop() || "index.html";
       auth.setReturnUrl(current);
-      return { type: "redirect", to: "login.html" };
+      return { type: "redirect", to: resolvePage("login.html") };
     }
 
     // Akun tidak aktif / terkunci
     if (user.status !== "active") {
-      return { type: "redirect", to: "login.html?mode=inactive" };
+      return { type: "redirect", to: resolvePage("login.html?mode=inactive") };
     }
 
     // Role tidak dikenali
     const roles = cfg.getRoles();
     if (!roles[user.role]) {
-      return { type: "redirect", to: "unauthorized.html" };
+      return { type: "redirect", to: resolvePage("unauthorized.html") };
     }
 
     // Cek izin akses route
     if (!canAccessRoute(user, routeName)) {
-      return { type: "redirect", to: "forbidden.html" };
+      return { type: "redirect", to: resolvePage("forbidden.html") };
     }
 
     return { type: "ok" };
@@ -178,7 +183,7 @@ window.CapriceMiddleware = (function () {
     if (logoutBtn) {
       logoutBtn.addEventListener("click", () => {
         auth.logout();
-        window.location.href = "login.html";
+        window.location.href = resolvePage("login.html");
       });
     }
   }
