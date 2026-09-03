@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Sekretariat & Agenda — Caprice 26</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- Toast Container -->
+  <div class="caprice-toast-container" id="toast-container"></div>
+
+  <div class="dash-layout" id="dash-app">
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <a href="index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+      <p class="dash-nav-heading">Menu Akses</p>
+      <ul class="dash-nav-list" id="dashboard-nav-list"></ul>
+      <div class="dash-sidebar-footer">
+        <button class="btn btn-outline btn-sm" id="dash-logout">Keluar</button>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button class="nav-toggle" id="dash-nav-toggle" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <span class="section-badge">Sekretaris Kelas</span>
+        <div class="dash-user" id="dash-user-bar"></div>
+      </header>
+
+      <main class="dash-content">
+        <div class="dash-heading-row" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h1 class="dash-title">Administrasi & Agenda Kelas</h1>
+            <p class="auth-sub">Kelola notulensi rapat, agenda kegiatan kelas X RPL 1, dan jadwal piket.</p>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-primary btn-sm" id="btn-add-agenda" data-permission="agenda.create">
+              ➕ Buat Agenda / Notulen Baru
+            </button>
+          </div>
+        </div>
+
+        <!-- Secretariat Stats -->
+        <div class="stats-grid animate-on-scroll">
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-number" id="stat-total-agenda">6</div>
+            <div class="stat-label">Total Agenda & Notulen</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-number">2</div>
+            <div class="stat-label">Agenda Mendatang</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🧹</div>
+            <div class="stat-number">Kelompok 3</div>
+            <div class="stat-label">Piket Hari Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-number">100%</div>
+            <div class="stat-label">Kehadiran Siswa Hari Ini</div>
+          </div>
+        </div>
+
+        <!-- Agenda List Card -->
+        <div class="glass-card dash-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <h3 class="dash-card-title" style="margin-bottom:0;">📋 Daftar Agenda Kegiatan & Notulensi Rapat</h3>
+            <span class="tech-badge" id="agenda-count-badge">0 Agenda</span>
+          </div>
+
+          <div class="dash-table-container">
+            <table class="dash-table" id="agenda-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Judul Kegiatan / Rapat</th>
+                  <th>Kategori</th>
+                  <th>Hasil Notulensi / Ringkasan</th>
+                  <th>Penulis</th>
+                  <th style="text-align:right;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="agenda-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Agenda -->
+  <div class="caprice-modal-overlay" id="modal-agenda">
+    <div class="caprice-modal">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">📝 Buat Agenda / Notulensi Baru</h3>
+        <button class="caprice-modal-close" id="close-modal-agenda">&times;</button>
+      </div>
+      <form id="form-agenda">
+        <div class="caprice-modal-body">
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="agenda-title">Judul Kegiatan / Topik Rapat</label>
+            <input type="text" class="caprice-form-input" id="agenda-title" placeholder="contoh: Rapat Persiapan Classmeeting & Bazar" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="agenda-category">Kategori</label>
+            <select class="caprice-form-select" id="agenda-category" required>
+              <option value="Rapat Kelas">Rapat Kelas</option>
+              <option value="Kegiatan Sekolah">Kegiatan Sekolah</option>
+              <option value="Jadwal Piket">Jadwal Piket</option>
+              <option value="Tugas Kelompok">Tugas Kelompok</option>
+            </select>
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="agenda-date">Tanggal Pelaksanaan</label>
+            <input type="date" class="caprice-form-input" id="agenda-date" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="agenda-notes">Notulensi / Ringkasan Pembahasan</label>
+            <textarea class="caprice-form-input" id="agenda-notes" rows="4" placeholder="Tuliskan keputusan rapat atau detail agenda..." required></textarea>
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-agenda">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan Agenda</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/middleware.js"></script>
+  <script>
+    "use strict";
+    (function () {
+      const middleware = window.CapriceMiddleware;
+      const auth = window.CapriceAuth;
+
+      const result = middleware.guardRoute("dashboard-sekretaris.html");
+      if (result.type !== "ok") { window.location.replace(result.to); return; }
+
+      const currentUser = auth.getUser();
+      middleware.renderMenu(currentUser, "dashboard-nav-list");
+      middleware.renderUserBar(currentUser, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(currentUser);
+
+      const canDeleteAgenda = middleware.userHasPermission(currentUser, "agenda.delete");
+
+      const toggle = document.getElementById("dash-nav-toggle");
+      const sidebar = document.getElementById("dash-sidebar");
+      if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+
+      const AGENDAS_KEY = "caprice_agendas_v2";
+      function loadAgendas() {
+        try {
+          const raw = localStorage.getItem(AGENDAS_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return [
+          { id: "a-1", date: "2026-09-02", title: "Rapat Pembentukan Tim Lomba Web Desain", category: "Rapat Kelas", notes: "Menunjuk Ahmad dan Budi sebagai delegasi lomba SMK tingkat kota.", author: "sekretaris@caprice26.id" },
+          { id: "a-2", date: "2026-09-05", title: "Evaluasi Kas & Kebersihan Ruang Teori", category: "Rapat Kelas", notes: "Semua regu piket wajib membuang sampah sebelum pulang sekolah.", author: "sekretaris@caprice26.id" },
+          { id: "a-3", date: "2026-09-10", title: "Kunjungan Industri ke Studio Software", category: "Kegiatan Sekolah", notes: "Konfirmasi bus dan pakaian seragam praktik.", author: "wali@caprice26.id" },
+        ];
+      }
+
+      function saveAgendas(data) {
+        localStorage.setItem(AGENDAS_KEY, JSON.stringify(data));
+      }
+
+      function showToast(msg, type = "success") {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+        const toast = document.createElement("div");
+        toast.className = `caprice-toast toast-${type}`;
+        const icon = type === "success" ? "✅" : "ℹ️";
+        toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      function renderAgendas() {
+        const data = loadAgendas();
+        const tbody = document.getElementById("agenda-tbody");
+        document.getElementById("stat-total-agenda").textContent = data.length;
+        document.getElementById("agenda-count-badge").textContent = `${data.length} Agenda`;
+
+        if (tbody) {
+          tbody.innerHTML = data.map((a) => `
+            <tr>
+              <td>${a.date}</td>
+              <td><strong>${middleware.escapeHtml(a.title)}</strong></td>
+              <td><span class="tech-badge badge-admin">${middleware.escapeHtml(a.category)}</span></td>
+              <td style="max-width:320px; font-size:0.88rem; color:var(--text-muted);">${middleware.escapeHtml(a.notes)}</td>
+              <td><code style="font-size:0.8rem;">${middleware.escapeHtml(a.author)}</code></td>
+              <td style="text-align:right;">
+                ${canDeleteAgenda ? `
+                  <button class="btn btn-outline btn-sm btn-delete-agenda" data-id="${a.id}" style="padding:2px 6px; font-size:0.75rem; color:#f43f5e;">
+                    🗑️
+                  </button>
+                ` : '-'}
+              </td>
+            </tr>
+          `).join("");
+
+          tbody.querySelectorAll(".btn-delete-agenda").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const id = btn.getAttribute("data-id");
+              if (confirm("Hapus agenda ini?")) {
+                const updated = data.filter((item) => item.id !== id);
+                saveAgendas(updated);
+                auth.logAuditEvent("AGENDA_DELETE", `Menghapus agenda ID: ${id}`, currentUser, "Sukses");
+                showToast("Agenda berhasil dihapus.");
+                renderAgendas();
+              }
+            });
+          });
+        }
+      }
+
+      renderAgendas();
+
+      // Modal Add Agenda
+      const modal = document.getElementById("modal-agenda");
+      const btnAdd = document.getElementById("btn-add-agenda");
+      const closeM = document.getElementById("close-modal-agenda");
+      const cancelM = document.getElementById("cancel-modal-agenda");
+      const form = document.getElementById("form-agenda");
+
+      if (btnAdd && modal) {
+        btnAdd.addEventListener("click", () => {
+          modal.classList.add("active");
+          form.reset();
+          document.getElementById("agenda-date").value = new Date().toISOString().split("T")[0];
+        });
+      }
+
+      const hideModal = () => modal && modal.classList.remove("active");
+      if (closeM) closeM.addEventListener("click", hideModal);
+      if (cancelM) cancelM.addEventListener("click", hideModal);
+
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const title = document.getElementById("agenda-title").value.trim();
+          const category = document.getElementById("agenda-category").value;
+          const date = document.getElementById("agenda-date").value;
+          const notes = document.getElementById("agenda-notes").value.trim();
+
+          const list = loadAgendas();
+          list.unshift({
+            id: "a-" + Date.now().toString(36),
+            date: date,
+            title: title,
+            category: category,
+            notes: notes,
+            author: currentUser.identifier || currentUser.displayName,
+          });
+
+          saveAgendas(list);
+          auth.logAuditEvent("AGENDA_CREATE", `Membuat agenda: ${title}`, currentUser, "Sukses");
+          showToast("Agenda baru berhasil disimpan!");
+          hideModal();
+          renderAgendas();
+        });
+      }
+    })();
+  </script>
+  <script src="main.js"></script>
+</body>
+</html>

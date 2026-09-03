@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin — Caprice 26</title>
+  <title>Dashboard Ketua Kelas — Caprice 26</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,41 +37,57 @@
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
         </button>
-        <span class="section-badge">Admin</span>
+        <span class="section-badge">Ketua Kelas (Admin)</span>
         <div class="dash-user" id="dash-user-bar"></div>
       </header>
 
       <main class="dash-content">
         <div class="dash-heading-row">
           <div>
-            <h1 class="dash-title">Ringkasan Operasional</h1>
-            <p class="auth-sub">Kelola data bisnis dan tim sesuai cakupan organisasi Anda.</p>
+            <h1 class="dash-title">Ringkasan Operasional Kelas</h1>
+            <p class="auth-sub">Koordinasikan tim kelas X RPL 1, kelola peran anggota (Bendahara, Sekretaris, Anggota), dan pantau kemajuan kelas.</p>
           </div>
         </div>
 
         <div class="stats-grid animate-on-scroll">
-          <div class="stat-card"><div class="stat-icon">📦</div><div class="stat-number">120</div><div class="stat-label">Data Bisnis</div></div>
-          <div class="stat-card"><div class="stat-icon">📋</div><div class="stat-number">18</div><div class="stat-label">Laporan Bulan Ini</div></div>
-          <div class="stat-card"><div class="stat-icon">👥</div><div class="stat-number">12</div><div class="stat-label">Anggota Tim</div></div>
-          <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-number">94%</div><div class="stat-label">Kinerja</div></div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="stat-class-members">-</div>
+            <div class="stat-label">Siswa Terdaftar</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-number" id="stat-class-saldo">Rp 845.000</div>
+            <div class="stat-label">Saldo Kas Kelas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📋</div>
+            <div class="stat-number" id="stat-class-agenda">3</div>
+            <div class="stat-label">Agenda Aktif</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-number">98%</div>
+            <div class="stat-label">Kekompakan Kelas</div>
+          </div>
         </div>
 
         <div class="dash-grid-2">
           <div class="glass-card dash-card">
-            <h3 class="dash-card-title">📊 Ringkasan Tim</h3>
-            <ul class="dash-activity-list">
-              <li><span class="dash-activity-ok">✓</span> Target mingguan tercapai <em>Hari ini</em></li>
-              <li><span class="dash-activity-ok">✓</span> Laporan Q3 disetujui <em>Kemarin</em></li>
-              <li><span class="dash-activity-ok">✓</span> Data baru ditambahkan <em>2 hari lalu</em></li>
-            </ul>
+            <h3 class="dash-card-title">👥 Pengurus Inti Kelas</h3>
+            <div style="display:flex; flex-direction:column; gap:0.75rem;" id="core-officers-list">
+              <!-- Populated by JS -->
+            </div>
           </div>
 
           <div class="glass-card dash-card">
-            <h3 class="dash-card-title">⚡ Aksi Cepat</h3>
+            <h3 class="dash-card-title">⚡ Aksi Cepat Ketua Kelas</h3>
             <div class="dash-actions">
-              <a href="admin-users.html" class="btn btn-primary">Kelola Pengguna</a>
-              <a href="admin-audit-logs.html" class="btn btn-outline">Audit Log</a>
-              <a href="#" class="btn btn-outline" onclick="alert('Modul data bisnis (contoh resource) — PRD §3.2')">Data Bisnis</a>
+              <a href="admin-users.html" class="btn btn-primary">👥 Kelola & Atur Role Anggota</a>
+              <a href="dashboard-bendahara.html" class="btn btn-outline">💰 Pantau Kas & Iuran</a>
+              <a href="dashboard-sekretaris.html" class="btn btn-outline">📝 Agenda & Piket Kelas</a>
+              <a href="admin-roles.html" class="btn btn-outline">🛡️ Tinjau Matriks Hak Akses</a>
+              <a href="admin-audit-logs.html" class="btn btn-outline">📜 Log Keamanan</a>
             </div>
           </div>
         </div>
@@ -87,11 +103,38 @@
     (function () {
       const middleware = window.CapriceMiddleware;
       const auth = window.CapriceAuth;
+      const cfg = window.CAPRICE_CONFIG;
+
       const result = middleware.guardRoute("dashboard-admin.html");
       if (result.type !== "ok") { window.location.replace(result.to); return; }
+
       const user = auth.getUser();
       middleware.renderMenu(user, "dashboard-nav-list");
       middleware.renderUserBar(user, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(user);
+
+      const users = auth.getUsers();
+      document.getElementById("stat-class-members").textContent = `${users.length} Siswa`;
+
+      // Render Core Officers List
+      const officersContainer = document.getElementById("core-officers-list");
+      if (officersContainer) {
+        const roles = cfg.getRoles();
+        officersContainer.innerHTML = users.filter((u) => u.role !== "anggota").map((u) => {
+          const roleObj = roles[u.role] || { label: u.role };
+          const badgeClass = middleware.getRoleBadgeClass(u.role);
+          return `
+            <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.03); padding:0.75rem 1rem; border-radius:8px; border:1px solid rgba(255,255,255,0.06);">
+              <div>
+                <strong>${middleware.escapeHtml(u.displayName)}</strong>
+                <br><span style="font-size:0.78rem; color:var(--text-dim);">${u.identifier}</span>
+              </div>
+              <span class="tech-badge ${badgeClass}">${roleObj.label}</span>
+            </div>
+          `;
+        }).join("");
+      }
+
       const toggle = document.getElementById("dash-nav-toggle");
       const sidebar = document.getElementById("dash-sidebar");
       if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
@@ -100,3 +143,4 @@
   <script src="main.js"></script>
 </body>
 </html>
+

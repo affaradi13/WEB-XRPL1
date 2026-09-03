@@ -177,18 +177,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // ---- Demo account shortcuts ----
   const demoMap = {
-    super: "super@caprice26.id",
-    admin: "admin@caprice26.id",
-    operator: "operator@caprice26.id",
-    viewer: "viewer@caprice26.id",
+    wali: "wali@caprice26.id",
+    ketua: "ketua@caprice26.id",
+    bendahara: "bendahara@caprice26.id",
+    sekretaris: "sekretaris@caprice26.id",
+    siswa: "siswa@caprice26.id",
+    super: "wali@caprice26.id",
+    admin: "ketua@caprice26.id",
+    operator: "bendahara@caprice26.id",
+    viewer: "siswa@caprice26.id",
     inactive: "nonaktif@caprice26.id",
     locked: "terkunci@caprice26.id",
   };
   const passMap = {
+    wali: "super123",
+    ketua: "ketua123",
+    bendahara: "kas123",
+    sekretaris: "notulen123",
+    siswa: "siswa123",
     super: "super123",
-    admin: "admin123",
-    operator: "operator123",
-    viewer: "viewer123",
+    admin: "ketua123",
+    operator: "kas123",
+    viewer: "siswa123",
     inactive: "pass123",
     locked: "pass123",
   };

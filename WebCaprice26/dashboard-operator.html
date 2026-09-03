@@ -89,6 +89,7 @@
       const user = auth.getUser();
       middleware.renderMenu(user, "dashboard-nav-list");
       middleware.renderUserBar(user, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(user);
       const toggle = document.getElementById("dash-nav-toggle");
       const sidebar = document.getElementById("dash-sidebar");
       if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));

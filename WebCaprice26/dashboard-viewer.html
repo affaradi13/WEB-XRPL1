@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Viewer — Caprice 26</title>
+  <title>Portal Siswa (Anggota) — Caprice 26</title>
   <link rel="stylesheet" href="style.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -37,32 +37,67 @@
           <span class="hamburger-bar"></span>
           <span class="hamburger-bar"></span>
         </button>
-        <span class="section-badge">Viewer</span>
+        <span class="section-badge">Portal Anggota</span>
         <div class="dash-user" id="dash-user-bar"></div>
       </header>
 
       <main class="dash-content">
         <div class="dash-heading-row">
           <div>
-            <h1 class="dash-title">Ringkasan & Laporan</h1>
-            <p class="auth-sub">Akses baca data dan laporan — tanpa kemampuan mengubah data.</p>
+            <h1 class="dash-title">Portal Siswa X RPL 1</h1>
+            <p class="auth-sub">Selamat datang! Pantau transparansi uang kas kelas, jadwal piket, dan agenda kegiatan bersama.</p>
           </div>
         </div>
 
+        <!-- Class Quick Stats -->
         <div class="stats-grid animate-on-scroll">
-          <div class="stat-card"><div class="stat-icon">📊</div><div class="stat-number">45</div><div class="stat-label">Laporan Tersedia</div></div>
-          <div class="stat-card"><div class="stat-icon">📈</div><div class="stat-number">+12%</div><div class="stat-label">Pertumbuhan</div></div>
-          <div class="stat-card"><div class="stat-icon">🔍</div><div class="stat-number">8</div><div class="stat-label">Data Read-Only</div></div>
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-number">Rp 845.000</div>
+            <div class="stat-label">Saldo Kas Kelas Terkini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🧹</div>
+            <div class="stat-number">Regu 3</div>
+            <div class="stat-label">Jadwal Piket Hari Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-number">2 Kegiatan</div>
+            <div class="stat-label">Agenda Bulan Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">36 Siswa</div>
+            <div class="stat-label">Keluarga X RPL 1</div>
+          </div>
         </div>
 
-        <div class="glass-card dash-card">
-          <h3 class="dash-card-title">📑 Laporan Terbaru (Mode Baca)</h3>
-          <ul class="dash-activity-list">
-            <li><span class="dash-activity-ok">📄</span> Laporan Kinerja September <em>Baru</em></li>
-            <li><span class="dash-activity-ok">📄</span> Rekap Data Bulanan <em>01 Sep</em></li>
-            <li><span class="dash-activity-ok">📄</span> Statistik Pengguna <em>31 Agu</em></li>
-          </ul>
-          <p class="auth-sub" style="margin-top:1rem;">⚠️ Anda memiliki akses hanya-baca. Aksi edit tidak tersedia untuk role Viewer.</p>
+        <div class="dash-grid-2">
+          <!-- Class Transparency Feed -->
+          <div class="glass-card dash-card">
+            <h3 class="dash-card-title">💵 Transparansi Kas Terakhir</h3>
+            <ul class="dash-activity-list" id="student-kas-feed">
+              <li><span class="dash-activity-ok">📥</span> Iuran Kas Mingguan #1 — Rp 180.000 <em>(01 Sep)</em></li>
+              <li><span class="dash-activity-denied" style="background:rgba(239,68,68,0.2); color:#f87171;">📤</span> Beli spidol whiteboard — Rp 45.000 <em>(02 Sep)</em></li>
+              <li><span class="dash-activity-ok">📥</span> Saldo awal kas Agustus — Rp 710.000 <em>(25 Agu)</em></li>
+            </ul>
+            <p class="auth-sub" style="margin-top:1rem; font-size:0.8rem;">
+              💡 <em>Sebagai anggota, Anda memiliki akses baca untuk transparansi kas dan kegiatan kelas.</em>
+            </p>
+          </div>
+
+          <!-- Quick Navigation -->
+          <div class="glass-card dash-card">
+            <h3 class="dash-card-title">🚀 Navigasi Cepat Siswa</h3>
+            <div class="dash-actions">
+              <a href="admin-users.html" class="btn btn-primary">👥 Daftar Teman Sekelas</a>
+              <a href="jadwal.html" class="btn btn-secondary">📅 Jadwal Pelajaran & Piket</a>
+              <a href="proyek.html" class="btn btn-outline">💻 Portofolio Proyek</a>
+              <a href="galeri.html" class="btn btn-outline">📸 Galeri Kegiatan</a>
+              <a href="bukutamu.html" class="btn btn-outline">✍️ Buku Tamu / Aspirasi</a>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -81,6 +116,8 @@
       const user = auth.getUser();
       middleware.renderMenu(user, "dashboard-nav-list");
       middleware.renderUserBar(user, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(user);
+
       const toggle = document.getElementById("dash-nav-toggle");
       const sidebar = document.getElementById("dash-sidebar");
       if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
@@ -89,3 +126,4 @@
   <script src="main.js"></script>
 </body>
 </html>
+
