@@ -1,0 +1,585 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Jadwal Pelajaran dan Jadwal Piket Kelas X Rekayasa Perangkat Lunak 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>Jadwal Pelajaran & Piket — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="../index.html" class="nav-link">Beranda</a></li>
+          <li class="nav-item-dropdown">
+            <a href="lab-game.html" class="nav-link nav-dropdown-toggle active" id="rpl-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span>RPL Lab</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="nav-dropdown-menu" aria-labelledby="rpl-dropdown-btn">
+              <li><a href="lab-game.html" class="dropdown-item"><span class="dropdown-icon">🎮</span> RPL Lab & Games</a></li>
+              <li><a href="proyek.html" class="dropdown-item"><span class="dropdown-icon">💻</span> Showcase Projek</a></li>
+              <li><a href="struktur.html" class="dropdown-item"><span class="dropdown-icon">👥</span> Struktur Organisasi</a></li>
+              <li><a href="jadwal.html" class="dropdown-item active"><span class="dropdown-icon">📅</span> Jadwal Pelajaran</a></li>
+              <li><a href="galeri.html" class="dropdown-item"><span class="dropdown-icon">🖼️</span> Galeri Foto</a></li>
+              <li><a href="prestasi.html" class="dropdown-item"><span class="dropdown-icon">🏆</span> Prestasi</a></li>
+              <li><a href="bukutamu.html" class="dropdown-item"><span class="dropdown-icon">📖</span> Buku Tamu</a></li>
+            </ul>
+          </li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Jadwal Akademik</span>
+          <h2 class="section-title">Jadwal Pelajaran & <span>Piket Kelas</span></h2>
+          <p class="section-desc">Pantau jadwal harian kelas teori & praktikum Lab RPL serta susunan regu piket kebersihan kelas.</p>
+        </div>
+
+        <!-- REAL-TIME TRACKER CARD -->
+        <div class="schedule-live-tracker animate-on-scroll">
+          <div>
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.4rem;">
+              <span class="live-badge"><span class="pulse-dot" style="background:#ffffff;"></span> LIVE TIME</span>
+              <span style="font-weight: 700; font-size: 0.95rem;" id="live-clock">Zona Waktu: WIB (UTC+7)</span>
+            </div>
+            <p id="live-tracker-info" style="font-size: 1.1rem; color: var(--text-main);">
+              Memeriksa kegiatan kelas hari ini...
+            </p>
+          </div>
+          <div style="display:flex; gap:0.75rem;">
+            <button class="btn btn-outline btn-sm" onclick="window.print()">Cetak Jadwal 🖨️</button>
+            <a href="#piket-section" class="btn btn-primary btn-sm">Lihat Piket 🧹</a>
+          </div>
+        </div>
+
+        <!-- DAY TABS -->
+        <div class="schedule-tabs animate-on-scroll">
+          <button class="day-tab active" data-day="senin">Senin</button>
+          <button class="day-tab" data-day="selasa">Selasa</button>
+          <button class="day-tab" data-day="rabu">Rabu</button>
+          <button class="day-tab" data-day="kamis">Kamis</button>
+          <button class="day-tab" data-day="jumat">Jumat</button>
+        </div>
+
+        <!-- TIMELINE: SENIN -->
+        <div class="schedule-timeline schedule-day-content" id="schedule-senin">
+          <div class="schedule-item">
+            <div class="schedule-time">06.45 - 07.30</div>
+            <div>
+              <div class="schedule-subject">Upacara Bendera / Apel Pagi</div>
+              <div class="schedule-teacher">Lapangan Utama SMKN 1 Probolinggo</div>
+            </div>
+            <span class="schedule-type-badge">Rutin 🇮🇩</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">07.30 - 09.00</div>
+            <div>
+              <div class="schedule-subject">Projek IPA/S</div>
+              <div class="schedule-teacher">Ilmu Pengetahuan Alam & Sosial &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 🔬</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.00 - 09.15</div>
+            <div>
+              <div class="schedule-subject">Istirahat Pertama</div>
+              <div class="schedule-teacher">Refreshing & Snack Pagi</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat ☕</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.15 - 10.30</div>
+            <div>
+              <div class="schedule-subject">Projek IPA/S</div>
+              <div class="schedule-teacher">Ilmu Pengetahuan Alam & Sosial &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 🔬</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">10.35 - 11.45</div>
+            <div>
+              <div class="schedule-subject">Informatika & KKA</div>
+              <div class="schedule-teacher">Koding & Keterampilan Komputer &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Informatika 💻</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">11.45 - 12.25</div>
+            <div>
+              <div class="schedule-subject">Istirahat Kedua</div>
+              <div class="schedule-teacher">Sholat Dzuhur Berjamaah & Makan Siang &bull; Masjid Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat 🍱</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">12.25 - 13.35</div>
+            <div>
+              <div class="schedule-subject">Informatika & KKA</div>
+              <div class="schedule-teacher">Koding & Keterampilan Komputer &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Informatika 💻</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">13.35 - 15.20</div>
+            <div>
+              <div class="schedule-subject">Dasar PPLG</div>
+              <div class="schedule-teacher">Dasar-Dasar Pengembangan Perangkat Lunak & Gim &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Kejuruan RPL 🚀</span>
+          </div>
+        </div>
+
+        <!-- TIMELINE: SELASA -->
+        <div class="schedule-timeline schedule-day-content" id="schedule-selasa" style="display: none;">
+          <div class="schedule-item">
+            <div class="schedule-time">06.45 - 07.30</div>
+            <div>
+              <div class="schedule-subject">LDR (Literasi, Dhuha dan Recite)</div>
+              <div class="schedule-teacher">Pembiasaan Pagi &bull; Masjid / Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Pembiasaan 📖</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">07.30 - 09.00</div>
+            <div>
+              <div class="schedule-subject">Bahasa Inggris 1</div>
+              <div class="schedule-teacher">English Communication &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Bahasa 🌐</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.00 - 09.15</div>
+            <div>
+              <div class="schedule-subject">Istirahat Pertama</div>
+              <div class="schedule-teacher">Refreshing & Snack Pagi</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat ☕</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.15 - 10.30</div>
+            <div>
+              <div class="schedule-subject">Bahasa Inggris 1</div>
+              <div class="schedule-teacher">English Communication &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Bahasa 🌐</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">10.35 - 11.45</div>
+            <div>
+              <div class="schedule-subject">Sejarah</div>
+              <div class="schedule-teacher">Sejarah Indonesia & Kebudayaan &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 🏛️</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">11.45 - 12.25</div>
+            <div>
+              <div class="schedule-subject">Istirahat Kedua</div>
+              <div class="schedule-teacher">Sholat Dzuhur & Makan Siang &bull; Masjid Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat 🍱</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">12.25 - 13.00</div>
+            <div>
+              <div class="schedule-subject">BK 1 (Bimbingan Konseling)</div>
+              <div class="schedule-teacher">Bimbingan & Pengembangan Diri &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Bimbingan 🧭</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">13.00 - 14.45</div>
+            <div>
+              <div class="schedule-subject">Dasar PPLG</div>
+              <div class="schedule-teacher">Dasar-Dasar Pengembangan Perangkat Lunak & Gim &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Kejuruan RPL 🚀</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">14.45 - 15.20</div>
+            <div>
+              <div class="schedule-subject">MCL (Max Cleaning)</div>
+              <div class="schedule-teacher">Kebersihan Kelas & Lab &bull; Seluruh Siswa & Regu Piket</div>
+            </div>
+            <span class="schedule-type-badge">Kebersihan ✨</span>
+          </div>
+        </div>
+
+        <!-- TIMELINE: RABU -->
+        <div class="schedule-timeline schedule-day-content" id="schedule-rabu" style="display: none;">
+          <div class="schedule-item">
+            <div class="schedule-time">06.45 - 07.30</div>
+            <div>
+              <div class="schedule-subject">LDR (Literasi, Dhuha dan Recite)</div>
+              <div class="schedule-teacher">Pembiasaan Pagi &bull; Masjid / Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Pembiasaan 📖</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">07.30 - 09.00</div>
+            <div>
+              <div class="schedule-subject">PJOK</div>
+              <div class="schedule-teacher">Pendidikan Jasmani, Olahraga & Kesehatan &bull; Lapangan Olahraga</div>
+            </div>
+            <span class="schedule-type-badge">Olahraga 🏃‍♂️</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.00 - 09.15</div>
+            <div>
+              <div class="schedule-subject">Istirahat Pertama</div>
+              <div class="schedule-teacher">Refreshing & Ganti Pakaian Olahraga</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat ☕</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.15 - 11.45</div>
+            <div>
+              <div class="schedule-subject">Bahasa Indonesia 1</div>
+              <div class="schedule-teacher">Literasi Bahasa Indonesia &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Bahasa 📚</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">11.45 - 12.25</div>
+            <div>
+              <div class="schedule-subject">Istirahat Kedua</div>
+              <div class="schedule-teacher">Sholat Dzuhur & Makan Siang &bull; Masjid Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat 🍱</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">12.25 - 14.45</div>
+            <div>
+              <div class="schedule-subject">Dasar PPLG</div>
+              <div class="schedule-teacher">Dasar-Dasar Pengembangan Perangkat Lunak & Gim &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Kejuruan RPL 🚀</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">14.45 - 15.20</div>
+            <div>
+              <div class="schedule-subject">MCL (Max Cleaning)</div>
+              <div class="schedule-teacher">Kebersihan Kelas & Lab &bull; Seluruh Siswa & Regu Piket</div>
+            </div>
+            <span class="schedule-type-badge">Kebersihan ✨</span>
+          </div>
+        </div>
+
+        <!-- TIMELINE: KAMIS -->
+        <div class="schedule-timeline schedule-day-content" id="schedule-kamis" style="display: none;">
+          <div class="schedule-item">
+            <div class="schedule-time">06.45 - 07.30</div>
+            <div>
+              <div class="schedule-subject">LDR (Literasi, Dhuha dan Recite)</div>
+              <div class="schedule-teacher">Pembiasaan Pagi &bull; Masjid / Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Pembiasaan 📖</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">07.30 - 09.00</div>
+            <div>
+              <div class="schedule-subject">PAB Islam 1</div>
+              <div class="schedule-teacher">Pendidikan Agama & Budi Pekerti &bull; Ruang X RPL 1 / Masjid</div>
+            </div>
+            <span class="schedule-type-badge">Agama 🕌</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.00 - 09.15</div>
+            <div>
+              <div class="schedule-subject">Istirahat Pertama</div>
+              <div class="schedule-teacher">Refreshing & Snack Pagi</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat ☕</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.15 - 09.55</div>
+            <div>
+              <div class="schedule-subject">PAB Islam 1</div>
+              <div class="schedule-teacher">Pendidikan Agama & Budi Pekerti &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Agama 🕌</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.55 - 11.45</div>
+            <div>
+              <div class="schedule-subject">Dasar PPLG</div>
+              <div class="schedule-teacher">Dasar-Dasar Pengembangan Perangkat Lunak & Gim &bull; Lab RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Kejuruan RPL 🚀</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">11.45 - 12.25</div>
+            <div>
+              <div class="schedule-subject">Istirahat Kedua</div>
+              <div class="schedule-teacher">Sholat Dzuhur & Makan Siang &bull; Masjid Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat 🍱</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">12.25 - 13.00</div>
+            <div>
+              <div class="schedule-subject">Pendidikan Pancasila</div>
+              <div class="schedule-teacher">Pendidikan Pancasila & Kewarganegaraan &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 🦅</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">13.00 - 15.20</div>
+            <div>
+              <div class="schedule-subject">Seni & B. Jawa 1</div>
+              <div class="schedule-teacher">Seni Budaya & Bahasa Daerah Jawa &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Seni & Budaya 🎭</span>
+          </div>
+        </div>
+
+        <!-- TIMELINE: JUMAT -->
+        <div class="schedule-timeline schedule-day-content" id="schedule-jumat" style="display: none;">
+          <div class="schedule-item">
+            <div class="schedule-time">06.45 - 07.30</div>
+            <div>
+              <div class="schedule-subject">JB (Jumba Berlian)</div>
+              <div class="schedule-teacher">Jumat Bersih & Beriman &bull; Seluruh Area Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Rutin Pagi 🌟</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">07.30 - 09.00</div>
+            <div>
+              <div class="schedule-subject">Matematika 1</div>
+              <div class="schedule-teacher">Matematika &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 📐</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.00 - 09.15</div>
+            <div>
+              <div class="schedule-subject">Istirahat Pertama</div>
+              <div class="schedule-teacher">Refreshing & Snack Pagi</div>
+            </div>
+            <span class="schedule-type-badge">Istirahat ☕</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">09.15 - 10.50</div>
+            <div>
+              <div class="schedule-subject">Matematika 1</div>
+              <div class="schedule-teacher">Matematika &bull; Ruang X RPL 1</div>
+            </div>
+            <span class="schedule-type-badge">Umum 📐</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">10.50 - 11.00</div>
+            <div>
+              <div class="schedule-subject">Persiapan / Istirahat</div>
+              <div class="schedule-teacher">Persiapan Ibadah &bull; Menuju Masjid / Ruang Ibadah</div>
+            </div>
+            <span class="schedule-type-badge">Persiapan ⏱️</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">11.00 - 13.00</div>
+            <div>
+              <div class="schedule-subject">Sholat Jumat / PABP Non-Islam</div>
+              <div class="schedule-teacher">Masjid SMKN 1 Probolinggo / Ruang Khusus</div>
+            </div>
+            <span class="schedule-type-badge">Ibadah 🕌</span>
+          </div>
+
+          <div class="schedule-item">
+            <div class="schedule-time">13.00 - 17.00</div>
+            <div>
+              <div class="schedule-subject">Kegiatan Ekstra Kurikuler</div>
+              <div class="schedule-teacher">Pengembangan Minat & Bakat Siswa &bull; Area Sekolah</div>
+            </div>
+            <span class="schedule-type-badge">Ekstrakurikuler 🏆</span>
+          </div>
+        </div>
+
+        <!-- JADWAL PIKET KELAS & PENGAMBILAN M.BG -->
+        <div id="piket-section" style="margin-top: 5rem;">
+          <div class="section-header animate-on-scroll">
+            <span class="section-badge">Kebersihan & Ketertiban</span>
+            <h3 style="font-size: 2rem; font-weight: 800;">Jadwal Piket & <span>Pengambilan M.bg</span></h3>
+            <p class="section-desc">Kebersihan kelas, kerapian Lab RPL, dan ketertiban pengambilan M.bg adalah tanggung jawab bersama seluruh regu piket.</p>
+          </div>
+
+          <div class="piket-grid animate-on-scroll">
+            <!-- SENIN -->
+            <div class="piket-card tilt-card">
+              <div class="piket-day">Senin</div>
+              <ul class="piket-list">
+                <li class="piket-item">Puspa</li>
+                <li class="piket-item">Aluna</li>
+                <li class="piket-item">Aren</li>
+                <li class="piket-item">Reva</li>
+                <li class="piket-item">Satria</li>
+                <li class="piket-item">Rico</li>
+                <li class="piket-item">I Gede</li>
+              </ul>
+            </div>
+
+            <!-- SELASA -->
+            <div class="piket-card tilt-card">
+              <div class="piket-day">Selasa</div>
+              <ul class="piket-list">
+                <li class="piket-item">Andin</li>
+                <li class="piket-item">Ronald</li>
+                <li class="piket-item">Vano</li>
+                <li class="piket-item">Ian</li>
+                <li class="piket-item">Natasya</li>
+                <li class="piket-item">Cello</li>
+                <li class="piket-item">Bagas</li>
+                <li class="piket-item">Rama</li>
+              </ul>
+            </div>
+
+            <!-- RABU -->
+            <div class="piket-card tilt-card">
+              <div class="piket-day">Rabu</div>
+              <ul class="piket-list">
+                <li class="piket-item">Raffa</li>
+                <li class="piket-item">Bayu</li>
+                <li class="piket-item">Vega</li>
+                <li class="piket-item">Felix</li>
+                <li class="piket-item">Alex</li>
+                <li class="piket-item">Caca</li>
+                <li class="piket-item">Ibra</li>
+                <li class="piket-item">Eni</li>
+              </ul>
+            </div>
+
+            <!-- KAMIS -->
+            <div class="piket-card tilt-card">
+              <div class="piket-day">Kamis</div>
+              <ul class="piket-list">
+                <li class="piket-item">Hafiz</li>
+                <li class="piket-item">Krisna</li>
+                <li class="piket-item">Caesar</li>
+                <li class="piket-item">Micael</li>
+                <li class="piket-item">Yolanda</li>
+                <li class="piket-item">Azryl</li>
+                <li class="piket-item">Naila</li>
+                <li class="piket-item">Dwinge</li>
+              </ul>
+            </div>
+
+            <!-- JUMAT -->
+            <div class="piket-card tilt-card">
+              <div class="piket-day">Jumat</div>
+              <ul class="piket-list">
+                <li class="piket-item">Kiki</li>
+                <li class="piket-item">Adit</li>
+                <li class="piket-item">Aisyah</li>
+                <li class="piket-item">Kafi</li>
+                <li class="piket-item">Rendi</li>
+                <li class="piket-item">Kevin</li>
+                <li class="piket-item">Dido</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; X RPL 1 SMK Negeri 1 Kota Probolinggo.</div>
+        <div><span>Jadwal Pelajaran TA 2025/2026</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/site-auth-ui.js"></script>
+  <script src="../main.js"></script>
+  <script src="../js/chatbot.js"></script>
+</body>
+</html>

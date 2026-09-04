@@ -1,0 +1,796 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Struktur Organisasi dan Direktori Lengkap 38 Siswa Kelas X RPL 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>Struktur & Anggota — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="../index.html" class="nav-link">Beranda</a></li>
+          <li class="nav-item-dropdown">
+            <a href="lab-game.html" class="nav-link nav-dropdown-toggle active" id="rpl-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span>RPL Lab</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="nav-dropdown-menu" aria-labelledby="rpl-dropdown-btn">
+              <li><a href="lab-game.html" class="dropdown-item"><span class="dropdown-icon">🎮</span> RPL Lab & Games</a></li>
+              <li><a href="proyek.html" class="dropdown-item"><span class="dropdown-icon">💻</span> Showcase Projek</a></li>
+              <li><a href="struktur.html" class="dropdown-item active"><span class="dropdown-icon">👥</span> Struktur Organisasi</a></li>
+              <li><a href="jadwal.html" class="dropdown-item"><span class="dropdown-icon">📅</span> Jadwal Pelajaran</a></li>
+              <li><a href="galeri.html" class="dropdown-item"><span class="dropdown-icon">🖼️</span> Galeri Foto</a></li>
+              <li><a href="prestasi.html" class="dropdown-item"><span class="dropdown-icon">🏆</span> Prestasi</a></li>
+              <li><a href="bukutamu.html" class="dropdown-item"><span class="dropdown-icon">📖</span> Buku Tamu</a></li>
+            </ul>
+          </li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <!-- SECTION HEADER -->
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Organisasi & Keanggotaan</span>
+          <h2 class="section-title">Struktur Kelas & <span>Direktori 38 Siswa</span></h2>
+          <p class="section-desc">Mengenal susunan pengurus kelas, koordinator divisi minat, serta seluruh anggota keluarga besar Kelas X RPL 1 Caprice 26.</p>
+        </div>
+
+        <!-- PENGURUS INTI (HIERARKI) -->
+        <h3 style="font-size: 1.6rem; font-weight: 800; text-align: center; margin-bottom: 2rem;" class="animate-on-scroll">
+          👑 Pengurus Inti Kelas
+        </h3>
+
+        <div class="students-grid" style="margin-bottom: 4.5rem;">
+          <!-- 1. KETUA KELAS -->
+          <div class="member-card tilt-card animate-on-scroll">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">CA</div>
+              <span class="member-role-badge leader">Ketua Kelas</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Caesar Arkan Arthariz</h4>
+              <p class="member-role-title">Ketua Kelas X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">Full-Stack</span>
+                <span class="member-tag">Leadership</span>
+                <span class="member-tag">Python & JS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. WAKIL KETUA -->
+          <div class="member-card tilt-card animate-on-scroll delay-1">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">KA</div>
+              <span class="member-role-badge vice">Wakil Ketua</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Kiki Aurelia</h4>
+              <p class="member-role-title">Wakil Ketua Kelas X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">UI/UX Design</span>
+                <span class="member-tag">Frontend</span>
+                <span class="member-tag">Komunikasi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3. SEKRETARIS 1 -->
+          <div class="member-card tilt-card animate-on-scroll delay-2">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #06b6d4, #3b82f6);">AA</div>
+              <span class="member-role-badge sec">Sekretaris 1</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Aisyah Azzahra</h4>
+              <p class="member-role-title">Sekretaris X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">Dokumentasi</span>
+                <span class="member-tag">Web Dev</span>
+                <span class="member-tag">Notulensi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. SEKRETARIS 2 -->
+          <div class="member-card tilt-card animate-on-scroll">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #06b6d4, #6366f1);">NU</div>
+              <span class="member-role-badge sec">Sekretaris 2</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Nugraheni</h4>
+              <p class="member-role-title">Sekretaris X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">Administrasi</span>
+                <span class="member-tag">HTML/CSS</span>
+                <span class="member-tag">Arsip Data</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5. BENDAHARA 1 -->
+          <div class="member-card tilt-card animate-on-scroll delay-1">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #059669);">NF</div>
+              <span class="member-role-badge tres">Bendahara 1</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Natasya Febiola Putri Prianita</h4>
+              <p class="member-role-title">Bendahara X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">Keuangan Kas</span>
+                <span class="member-tag">Database</span>
+                <span class="member-tag">Akuntansi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6. BENDAHARA 2 -->
+          <div class="member-card tilt-card animate-on-scroll delay-2">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder" style="background: linear-gradient(135deg, #10b981, #06b6d4);">AR</div>
+              <span class="member-role-badge tres">Bendahara 2</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">Adeleo Rivano Ibrahimovic</h4>
+              <p class="member-role-title">Bendahara X RPL 1</p>
+              <div class="member-tags">
+                <span class="member-tag">Anggaran Kelas</span>
+                <span class="member-tag">Logistik</span>
+                <span class="member-tag">Backend</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SEARCH & DIRECTORY SELURUH 38 SISWA -->
+        <div class="section-header animate-on-scroll" style="margin-bottom: 2rem;">
+          <span class="section-badge">Direktori Siswa</span>
+          <h3 style="font-size: 2rem; font-weight: 800;">Daftar Lengkap <span>38 Siswa X RPL 1</span></h3>
+          <p class="section-desc">Cari teman sekelas berdasarkan nama, keahlian coding, atau divisi minat.</p>
+        </div>
+
+        <!-- Filter Controls -->
+        <div class="search-input-wrapper animate-on-scroll">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="student-search" class="search-input" placeholder="Ketik nama atau skill siswa (contoh: Python, Caesar, Web)...">
+        </div>
+
+        <div class="filter-bar animate-on-scroll">
+          <button class="filter-btn student-filter-btn active" data-filter="all">Semua Siswa (38)</button>
+          <button class="filter-btn student-filter-btn" data-filter="pengurus">Pengurus Inti</button>
+          <button class="filter-btn student-filter-btn" data-filter="frontend">Frontend & Web</button>
+          <button class="filter-btn student-filter-btn" data-filter="backend">Backend & Database</button>
+          <button class="filter-btn student-filter-btn" data-filter="uiux">UI/UX & Kreatif</button>
+          <button class="filter-btn student-filter-btn" data-filter="gamedev">Game Dev & Mobile</button>
+        </div>
+
+        <!-- STUDENTS GRID (38 MEMBERS) -->
+        <div class="students-grid" id="students-full-grid">
+          <!-- 1 -->
+          <div class="member-card tilt-card student-card" data-name="Abqory Dido Tsanie Adzani" data-role="Frontend Specialist" data-skills="HTML5, CSS3, JavaScript, Web Design" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AD</div></div>
+            <div class="member-info">
+              <h4 class="member-name">01. Abqory Dido Tsanie Adzani</h4>
+              <p class="member-role-title">Frontend Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">HTML/CSS</span>
+                <span class="member-tag">JavaScript</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2 -->
+          <div class="member-card tilt-card student-card" data-name="Adeleo Rivano Ibrahimovic" data-role="Bendahara 2" data-skills="PHP, MySQL, Backend, Logistik" data-category="pengurus backend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">AR</div>
+              <span class="member-role-badge tres">Bendahara 2</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">02. Adeleo Rivano Ibrahimovic</h4>
+              <p class="member-role-title">Bendahara 2 & Backend Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">PHP</span>
+                <span class="member-tag">MySQL</span>
+                <span class="member-tag">Backend</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3 -->
+          <div class="member-card tilt-card student-card" data-name="Aditya Rafa Pratama" data-role="Mobile & Web Dev" data-skills="Flutter, Dart, Web Development" data-category="gamedev frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AR</div></div>
+            <div class="member-info">
+              <h4 class="member-name">03. Aditya Rafa Pratama</h4>
+              <p class="member-role-title">Mobile & Web Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Flutter</span>
+                <span class="member-tag">Dart</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 4 -->
+          <div class="member-card tilt-card student-card" data-name="Ahmad Shofyan" data-role="Python & Algorithm Specialist" data-skills="Python, Algoritma, Flask" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AS</div></div>
+            <div class="member-info">
+              <h4 class="member-name">04. Ahmad Shofyan</h4>
+              <p class="member-role-title">Python Backend Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">Python</span>
+                <span class="member-tag">Algoritma</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 5 -->
+          <div class="member-card tilt-card student-card" data-name="Aisyah Azzahra" data-role="Sekretaris 1" data-skills="Dokumentasi, Web, JavaScript, Administrasi" data-category="pengurus frontend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">AA</div>
+              <span class="member-role-badge sec">Sekretaris 1</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">05. Aisyah Azzahra</h4>
+              <p class="member-role-title">Sekretaris 1 & Frontend Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">Web Dev</span>
+                <span class="member-tag">Administrasi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 6 -->
+          <div class="member-card tilt-card student-card" data-name="Andhika Satria Oetama" data-role="Game Developer & 3D" data-skills="Unity, C#, 3D Blender, Game Design" data-category="gamedev">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AS</div></div>
+            <div class="member-info">
+              <h4 class="member-name">06. Andhika Satria Oetama</h4>
+              <p class="member-role-title">Game Developer & 3D Creator</p>
+              <div class="member-tags">
+                <span class="member-tag">Unity</span>
+                <span class="member-tag">C#</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 7 -->
+          <div class="member-card tilt-card student-card" data-name="Andika Bagas Pratama" data-role="DevOps & Linux Admin" data-skills="Linux, Networking, Server, Cloud" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AB</div></div>
+            <div class="member-info">
+              <h4 class="member-name">07. Andika Bagas Pratama</h4>
+              <p class="member-role-title">DevOps & Linux Admin</p>
+              <div class="member-tags">
+                <span class="member-tag">Linux</span>
+                <span class="member-tag">Networking</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 8 -->
+          <div class="member-card tilt-card student-card" data-name="Andini Syafaaturrohma" data-role="Creative & UI Designer" data-skills="Figma, Canva, UI Design, CSS" data-category="uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">AS</div></div>
+            <div class="member-info">
+              <h4 class="member-name">08. Andini Syafaaturrohma</h4>
+              <p class="member-role-title">Creative & UI Designer</p>
+              <div class="member-tags">
+                <span class="member-tag">Figma</span>
+                <span class="member-tag">UI/UX</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 9 -->
+          <div class="member-card tilt-card student-card" data-name="Caesar Arkan Arthariz" data-role="Ketua Kelas" data-skills="Full-Stack, Python, JavaScript, Linux" data-category="pengurus frontend backend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">CA</div>
+              <span class="member-role-badge leader">Ketua</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">09. Caesar Arkan Arthariz</h4>
+              <p class="member-role-title">Full-Stack & Ketua Kelas</p>
+              <div class="member-tags">
+                <span class="member-tag">Full-Stack</span>
+                <span class="member-tag">Python</span>
+                <span class="member-tag">Node.js</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 10 -->
+          <div class="member-card tilt-card student-card" data-name="Dhearen Nickyta Bhalqiez" data-role="Web Designer & Frontend" data-skills="CSS Grid, Responsive, JavaScript, SASS" data-category="frontend uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">DN</div></div>
+            <div class="member-info">
+              <h4 class="member-name">10. Dhearen Nickyta Bhalqiez</h4>
+              <p class="member-role-title">Web Designer & Frontend</p>
+              <div class="member-tags">
+                <span class="member-tag">Responsive</span>
+                <span class="member-tag">CSS3</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 11 -->
+          <div class="member-card tilt-card student-card" data-name="Dwinge Rahilda Afrishea" data-role="UI & Typography Specialist" data-skills="UI Design, Wireframing, Figma, Web" data-category="uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">DR</div></div>
+            <div class="member-info">
+              <h4 class="member-name">11. Dwinge Rahilda Afrishea</h4>
+              <p class="member-role-title">UI & Typography Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">UI Design</span>
+                <span class="member-tag">Figma</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 12 -->
+          <div class="member-card tilt-card student-card" data-name="Fachrandy Ferdinandz Firdaus" data-role="Backend API Developer" data-skills="Node.js, Express, REST API, MySQL" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">FF</div></div>
+            <div class="member-info">
+              <h4 class="member-name">12. Fachrandy Ferdinandz Firdaus</h4>
+              <p class="member-role-title">Backend API Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Node.js</span>
+                <span class="member-tag">REST API</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 13 -->
+          <div class="member-card tilt-card student-card" data-name="Faiharicya Ilmania Tirta Agista" data-role="Creative & Frontend Dev" data-skills="HTML5, CSS Animations, UI/UX" data-category="frontend uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">FI</div></div>
+            <div class="member-info">
+              <h4 class="member-name">13. Faiharicya Ilmania Tirta Agista</h4>
+              <p class="member-role-title">Creative & Frontend Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">Frontend</span>
+                <span class="member-tag">Animations</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 14 -->
+          <div class="member-card tilt-card student-card" data-name="Felix Damian Akbar Febriesta" data-role="Database Administrator" data-skills="MySQL, PostgreSQL, Database Management" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">FD</div></div>
+            <div class="member-info">
+              <h4 class="member-name">14. Felix Damian Akbar Febriesta</h4>
+              <p class="member-role-title">Database Administrator</p>
+              <div class="member-tags">
+                <span class="member-tag">MySQL</span>
+                <span class="member-tag">Database</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 15 -->
+          <div class="member-card tilt-card student-card" data-name="I Gede Niloh Pratama Putra" data-role="Game Developer & Logic" data-skills="Godot, C++, Game Logic, Algoritma" data-category="gamedev backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">IG</div></div>
+            <div class="member-info">
+              <h4 class="member-name">15. Ibra Putra Kurniawan</h4>
+              <p class="member-role-title">Game Developer & Logic</p>
+              <div class="member-tags">
+                <span class="member-tag">Godot</span>
+                <span class="member-tag">C++</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 16 -->
+          <div class="member-card tilt-card student-card" data-name="Ibra Putra Kurniawan" data-role="Frontend Developer" data-skills="JavaScript, Vue.js, Tailwind CSS" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">IP</div></div>
+            <div class="member-info">
+              <h4 class="member-name">16. Igede Niloh Pratama Putra</h4>
+              <p class="member-role-title">Frontend Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Tailwind</span>
+                <span class="member-tag">JavaScript</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 17 -->
+          <div class="member-card tilt-card student-card" data-name="Kafi Nurhikmah" data-role="QA & Software Tester" data-skills="Quality Assurance, Testing, Git, Bug Tracking" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">KN</div></div>
+            <div class="member-info">
+              <h4 class="member-name">17. Kafi Nurhikmah</h4>
+              <p class="member-role-title">QA & Software Tester</p>
+              <div class="member-tags">
+                <span class="member-tag">QA Testing</span>
+                <span class="member-tag">Git</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 18 -->
+          <div class="member-card tilt-card student-card" data-name="Kevin Ramadhan" data-role="TypeScript & Modern Web" data-skills="TypeScript, React, Next.js, CSS" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">KR</div></div>
+            <div class="member-info">
+              <h4 class="member-name">18. Kevin Ramadhan</h4>
+              <p class="member-role-title">TypeScript & Modern Web Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">TypeScript</span>
+                <span class="member-tag">Next.js</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 19 -->
+          <div class="member-card tilt-card student-card" data-name="Kiki Aurelia" data-role="Wakil Ketua" data-skills="UI/UX, Frontend, Figma, Design System" data-category="pengurus uiux frontend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">KA</div>
+              <span class="member-role-badge vice">Wakil Ketua</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">19. Kiki Aurelia</h4>
+              <p class="member-role-title">Wakil Ketua & UI/UX Designer</p>
+              <div class="member-tags">
+                <span class="member-tag">Figma</span>
+                <span class="member-tag">UI/UX</span>
+                <span class="member-tag">Frontend</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 20 -->
+          <div class="member-card tilt-card student-card" data-name="Krisna Andika Nugraha" data-role="Mobile App Developer" data-skills="React Native, Mobile, JavaScript" data-category="gamedev frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">KA</div></div>
+            <div class="member-info">
+              <h4 class="member-name">20. Krisna Andika Nugraha</h4>
+              <p class="member-role-title">React Native Mobile Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">React Native</span>
+                <span class="member-tag">Mobile</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 21 -->
+          <div class="member-card tilt-card student-card" data-name="Latifah Maulida Puspa Sari" data-role="Humas & Content Specialist" data-skills="Copywriting, Public Relations, Web Content" data-category="uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">LM</div></div>
+            <div class="member-info">
+              <h4 class="member-name">21. Latifah Maulida Puspa Sari</h4>
+              <p class="member-role-title">Humas & Content Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">Content</span>
+                <span class="member-tag">Public Relations</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 22 -->
+          <div class="member-card tilt-card student-card" data-name="M. Rico Efendi" data-role="Desktop & C# Developer" data-skills="C#, .NET, Windows Forms, SQL" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MR</div></div>
+            <div class="member-info">
+              <h4 class="member-name">22. M. Rico Efendi</h4>
+              <p class="member-role-title">Desktop & C# Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">C#</span>
+                <span class="member-tag">.NET</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 23 -->
+          <div class="member-card tilt-card student-card" data-name="Marcello Daniel Novaldo" data-role="Laravel Backend Developer" data-skills="PHP, Laravel, MySQL, Linux" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MD</div></div>
+            <div class="member-info">
+              <h4 class="member-name">23. Marcello Daniel Novaldo</h4>
+              <p class="member-role-title">Laravel Backend Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Laravel</span>
+                <span class="member-tag">MySQL</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 24 -->
+          <div class="member-card tilt-card student-card" data-name="Michael Brilliant Alfakhir" data-role="Cyber Security Enthusiast" data-skills="Cybersecurity, Pentesting, Linux, Network" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MB</div></div>
+            <div class="member-info">
+              <h4 class="member-name">24. Michael Brilliant Alfakhir</h4>
+              <p class="member-role-title">Cyber Security Enthusiast</p>
+              <div class="member-tags">
+                <span class="member-tag">Security</span>
+                <span class="member-tag">Linux</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 25 -->
+          <div class="member-card tilt-card student-card" data-name="Muhammad Azryl Raynaldi Arifin" data-role="IoT & Hardware Developer" data-skills="IoT, Arduino, Microcontroller, C++" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MA</div></div>
+            <div class="member-info">
+              <h4 class="member-name">25. Muhammad Azryl Raynaldi Arifin</h4>
+              <p class="member-role-title">IoT & Hardware Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">IoT</span>
+                <span class="member-tag">Arduino</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 26 -->
+          <div class="member-card tilt-card student-card" data-name="Muhammad Bayuangga Sahputra" data-role="Data & Automation Engineer" data-skills="Python, Pandas, Automation, Scripting" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MB</div></div>
+            <div class="member-info">
+              <h4 class="member-name">26. Muhammad Bayuangga Sahputra</h4>
+              <p class="member-role-title">Data & Automation Engineer</p>
+              <div class="member-tags">
+                <span class="member-tag">Python</span>
+                <span class="member-tag">Automation</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 27 -->
+          <div class="member-card tilt-card student-card" data-name="Muhammad Hafizh" data-role="Frontend Specialist" data-skills="React, JavaScript, Tailwind, Vite" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">MH</div></div>
+            <div class="member-info">
+              <h4 class="member-name">27. Muhammad Hafizh</h4>
+              <p class="member-role-title">Frontend Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">React</span>
+                <span class="member-tag">JavaScript</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 28 -->
+          <div class="member-card tilt-card student-card" data-name="Nailah Mufrihatin Nazidah" data-role="UI/UX & Graphic Designer" data-skills="Figma, Design System, Wireframing, CSS" data-category="uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">NM</div></div>
+            <div class="member-info">
+              <h4 class="member-name">28. Nailah Mufrihatin Nazidah</h4>
+              <p class="member-role-title">UI/UX & Graphic Designer</p>
+              <div class="member-tags">
+                <span class="member-tag">Figma</span>
+                <span class="member-tag">UI Design</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 29 -->
+          <div class="member-card tilt-card student-card" data-name="Natasya Febiola Putri Prianita" data-role="Bendahara 1" data-skills="Keuangan, Database, SQL, Administrasi" data-category="pengurus backend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">NF</div>
+              <span class="member-role-badge tres">Bendahara 1</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">29. Natasya Febiola Putri Prianita</h4>
+              <p class="member-role-title">Bendahara 1 & Database</p>
+              <div class="member-tags">
+                <span class="member-tag">SQL</span>
+                <span class="member-tag">Keuangan</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 30 -->
+          <div class="member-card tilt-card student-card" data-name="Nugraheni" data-role="Sekretaris 2" data-skills="Administrasi, Web Dev, CSS, Notulensi" data-category="pengurus frontend">
+            <div class="member-photo-wrapper">
+              <div class="member-avatar-placeholder">NU</div>
+              <span class="member-role-badge sec">Sekretaris 2</span>
+            </div>
+            <div class="member-info">
+              <h4 class="member-name">30. Nugraheni</h4>
+              <p class="member-role-title">Sekretaris 2 & Web Dev</p>
+              <div class="member-tags">
+                <span class="member-tag">CSS Flexbox</span>
+                <span class="member-tag">Notulensi</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 31 -->
+          <div class="member-card tilt-card student-card" data-name="Putri Yolanda" data-role="Web Layout Developer" data-skills="Bootstrap, HTML5, CSS3, SASS" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">PY</div></div>
+            <div class="member-info">
+              <h4 class="member-name">31. Putri Yolanda</h4>
+              <p class="member-role-title">Web Layout Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Bootstrap</span>
+                <span class="member-tag">HTML/CSS</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 32 -->
+          <div class="member-card tilt-card student-card" data-name="Raffa Adi Wijaksono" data-role="Game Developer & Pixel Art" data-skills="Godot, Pixel Art, 2D Game, C#" data-category="gamedev">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">RA</div></div>
+            <div class="member-info">
+              <h4 class="member-name">32. Raffa Adi Wijaksono</h4>
+              <p class="member-role-title">Game Developer & Pixel Art</p>
+              <div class="member-tags">
+                <span class="member-tag">Godot</span>
+                <span class="member-tag">Pixel Art</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 33 -->
+          <div class="member-card tilt-card student-card" data-name="Ramadhan Hendry Syahputra" data-role="Frontend Developer" data-skills="Vue.js, JavaScript, Tailwind CSS" data-category="frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">RH</div></div>
+            <div class="member-info">
+              <h4 class="member-name">33. Ramadhan Hendry Syahputra</h4>
+              <p class="member-role-title">Frontend Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Vue.js</span>
+                <span class="member-tag">Tailwind</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 34 -->
+          <div class="member-card tilt-card student-card" data-name="Revalina Inge Avrilia Haris" data-role="Multimedia & Creative Specialist" data-skills="Video Editing, Multimedia, Canva, UI" data-category="uiux">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">RI</div></div>
+            <div class="member-info">
+              <h4 class="member-name">34. Revalina Inge Avrilia Haris</h4>
+              <p class="member-role-title">Multimedia & Creative Specialist</p>
+              <div class="member-tags">
+                <span class="member-tag">Multimedia</span>
+                <span class="member-tag">UI Design</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 35 -->
+          <div class="member-card tilt-card student-card" data-name="Ronald Abqory Az Ghozaly" data-role="Backend & Security Explorer" data-skills="Linux, Python, Cybersecurity, Scripting" data-category="backend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">RA</div></div>
+            <div class="member-info">
+              <h4 class="member-name">35. Ronald Abqory Az Ghozaly</h4>
+              <p class="member-role-title">Backend & Security Explorer</p>
+              <div class="member-tags">
+                <span class="member-tag">Python</span>
+                <span class="member-tag">Linux</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 36 -->
+          <div class="member-card tilt-card student-card" data-name="Satria Eka Arifianto" data-role="Mobile & Game Developer" data-skills="Flutter, Unity, Dart, C#" data-category="gamedev frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">SE</div></div>
+            <div class="member-info">
+              <h4 class="member-name">36. Satria Eka Arifianto</h4>
+              <p class="member-role-title">Mobile & Game Developer</p>
+              <div class="member-tags">
+                <span class="member-tag">Flutter</span>
+                <span class="member-tag">Game Dev</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 37 -->
+          <div class="member-card tilt-card student-card" data-name="Shaluna Adinda Chalista" data-role="UI/UX & Frontend Designer" data-skills="Figma, CSS3, Wireframing, Web Design" data-category="uiux frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">SA</div></div>
+            <div class="member-info">
+              <h4 class="member-name">37. Shaluna Adinda Chalista</h4>
+              <p class="member-role-title">UI/UX & Frontend Designer</p>
+              <div class="member-tags">
+                <span class="member-tag">Figma</span>
+                <span class="member-tag">Web Design</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 38 -->
+          <div class="member-card tilt-card student-card" data-name="Vega Zhafir Rabbani" data-role="Product & UX Researcher" data-skills="UX Research, Prototyping, Web Dev, Figma" data-category="uiux frontend">
+            <div class="member-photo-wrapper"><div class="member-avatar-placeholder">VZ</div></div>
+            <div class="member-info">
+              <h4 class="member-name">38. Vega Zhafir Rabbani</h4>
+              <p class="member-role-title">Product & UX Researcher</p>
+              <div class="member-tags">
+                <span class="member-tag">UX Research</span>
+                <span class="member-tag">Prototyping</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <a href="../index.html" class="logo" style="margin-bottom: 1rem; display: inline-flex;">
+            <span class="logo-badge">X</span>
+            <span class="logo-text">RPL 1</span>
+            <span class="logo-sub">Caprice 26</span>
+          </a>
+          <p style="color: var(--text-muted); font-size: 0.92rem; line-height: 1.6;">
+            Struktur kepengurusan dan profil keanggotaan resmi Kelas X RPL 1 SMK Negeri 1 Kota Probolinggo.
+          </p>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Navigasi</h4>
+          <ul class="footer-links-list">
+            <li><a href="../index.html">Beranda</a></li>
+            <li><a href="struktur.html">Struktur</a></li>
+            <li><a href="jadwal.html">Jadwal</a></li>
+            <li><a href="galeri.html">Galeri</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Eksplorasi</h4>
+          <ul class="footer-links-list">
+            <li><a href="proyek.html">Projek RPL</a></li>
+            <li><a href="prestasi.html">Prestasi</a></li>
+            <li><a href="lab-game.html">RPL Game</a></li>
+            <li><a href="kontak.html">Kontak</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Sekolah</h4>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">
+            SMK Negeri 1 Kota Probolinggo &bull; Rekayasa Perangkat Lunak.
+          </p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong>. Solid, Kreatif, Berprestasi.</div>
+        <div><span>38 Siswa Aktif</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/site-auth-ui.js"></script>
+  <script src="../main.js"></script>
+  <script src="../js/chatbot.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Siswa (Anggota) — Caprice 26</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <div class="dash-layout" id="dash-app">
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+      <p class="dash-nav-heading">Menu Akses</p>
+      <ul class="dash-nav-list" id="dashboard-nav-list"></ul>
+      <div class="dash-sidebar-footer">
+        <button class="btn btn-outline btn-sm" id="dash-logout">Keluar</button>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button class="nav-toggle" id="dash-nav-toggle" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <span class="section-badge">Portal Anggota</span>
+        <div class="dash-user" id="dash-user-bar"></div>
+      </header>
+
+      <main class="dash-content">
+        <div class="dash-heading-row">
+          <div>
+            <h1 class="dash-title">Portal Siswa X RPL 1</h1>
+            <p class="auth-sub">Selamat datang! Pantau transparansi uang kas kelas, jadwal piket, dan agenda kegiatan bersama.</p>
+          </div>
+        </div>
+
+        <!-- Class Quick Stats -->
+        <div class="stats-grid animate-on-scroll">
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-number">Rp 845.000</div>
+            <div class="stat-label">Saldo Kas Kelas Terkini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🧹</div>
+            <div class="stat-number">Regu 3</div>
+            <div class="stat-label">Jadwal Piket Hari Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📅</div>
+            <div class="stat-number">2 Kegiatan</div>
+            <div class="stat-label">Agenda Bulan Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number">36 Siswa</div>
+            <div class="stat-label">Keluarga X RPL 1</div>
+          </div>
+        </div>
+
+        <div class="dash-grid-2">
+          <!-- Class Transparency Feed -->
+          <div class="glass-card dash-card">
+            <h3 class="dash-card-title">💵 Transparansi Kas Terakhir</h3>
+            <ul class="dash-activity-list" id="student-kas-feed">
+              <li><span class="dash-activity-ok">📥</span> Iuran Kas Mingguan #1 — Rp 180.000 <em>(01 Sep)</em></li>
+              <li><span class="dash-activity-denied" style="background:rgba(239,68,68,0.2); color:#f87171;">📤</span> Beli spidol whiteboard — Rp 45.000 <em>(02 Sep)</em></li>
+              <li><span class="dash-activity-ok">📥</span> Saldo awal kas Agustus — Rp 710.000 <em>(25 Agu)</em></li>
+            </ul>
+            <p class="auth-sub" style="margin-top:1rem; font-size:0.8rem;">
+              💡 <em>Sebagai anggota, Anda memiliki akses baca untuk transparansi kas dan kegiatan kelas.</em>
+            </p>
+          </div>
+
+          <!-- Quick Navigation -->
+          <div class="glass-card dash-card">
+            <h3 class="dash-card-title">🚀 Navigasi Cepat Siswa</h3>
+            <div class="dash-actions">
+              <a href="admin-users.html" class="btn btn-primary">👥 Daftar Teman Sekelas</a>
+              <a href="jadwal.html" class="btn btn-secondary">📅 Jadwal Pelajaran & Piket</a>
+              <a href="proyek.html" class="btn btn-outline">💻 Portofolio Proyek</a>
+              <a href="galeri.html" class="btn btn-outline">📸 Galeri Kegiatan</a>
+              <a href="bukutamu.html" class="btn btn-outline">✍️ Buku Tamu / Aspirasi</a>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/middleware.js"></script>
+  <script>
+    "use strict";
+    (function () {
+      const middleware = window.CapriceMiddleware;
+      const auth = window.CapriceAuth;
+      const result = middleware.guardRoute("dashboard-viewer.html");
+      if (result.type !== "ok") { window.location.replace(result.to); return; }
+      const user = auth.getUser();
+      middleware.renderMenu(user, "dashboard-nav-list");
+      middleware.renderUserBar(user, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(user);
+
+      const toggle = document.getElementById("dash-nav-toggle");
+      const sidebar = document.getElementById("dash-sidebar");
+      if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+    })();
+  </script>
+  <script src="../main.js"></script>
+</body>
+</html>
+

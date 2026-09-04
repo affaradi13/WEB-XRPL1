@@ -1,0 +1,335 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Kas & Keuangan — Caprice 26</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- Toast Container -->
+  <div class="caprice-toast-container" id="toast-container"></div>
+
+  <div class="dash-layout" id="dash-app">
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+      <p class="dash-nav-heading">Menu Akses</p>
+      <ul class="dash-nav-list" id="dashboard-nav-list"></ul>
+      <div class="dash-sidebar-footer">
+        <button class="btn btn-outline btn-sm" id="dash-logout">Keluar</button>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button class="nav-toggle" id="dash-nav-toggle" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <span class="section-badge">Bendahara Kelas</span>
+        <div class="dash-user" id="dash-user-bar"></div>
+      </header>
+
+      <main class="dash-content">
+        <div class="dash-heading-row" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h1 class="dash-title">Kas & Keuangan Kelas</h1>
+            <p class="auth-sub">Kelola pembukuan uang kas, pencatatan pemasukan/pengeluaran, dan transparansi saldo.</p>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" id="btn-export-kas" data-permission="kas.export">
+              📥 Export Laporan Kas
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-add-kas" data-permission="kas.create">
+              ➕ Catat Transaksi Kas
+            </button>
+          </div>
+        </div>
+
+        <!-- Financial Stats -->
+        <div class="stats-grid animate-on-scroll">
+          <div class="stat-card">
+            <div class="stat-icon">💰</div>
+            <div class="stat-number" id="stat-total-saldo">Rp 845.000</div>
+            <div class="stat-label">Total Saldo Kas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📈</div>
+            <div class="stat-number" id="stat-pemasukan-bulan">Rp 320.000</div>
+            <div class="stat-label">Pemasukan Bulan Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">📉</div>
+            <div class="stat-number" id="stat-pengeluaran-bulan">Rp 150.000</div>
+            <div class="stat-label">Pengeluaran Bulan Ini</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">👥</div>
+            <div class="stat-number" id="stat-lunas-persen">92%</div>
+            <div class="stat-label">Kepatuhan Kas Siswa</div>
+          </div>
+        </div>
+
+        <!-- Transactions Table Card -->
+        <div class="glass-card dash-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <h3 class="dash-card-title" style="margin-bottom:0;">💳 Riwayat Transaksi Kas Kelas</h3>
+            <span class="tech-badge" id="trans-count-badge">4 Transaksi</span>
+          </div>
+
+          <div class="dash-table-container">
+            <table class="dash-table" id="kas-table">
+              <thead>
+                <tr>
+                  <th>Tanggal</th>
+                  <th>Keterangan / Rincian</th>
+                  <th>Jenis</th>
+                  <th>Nominal</th>
+                  <th>Dicatat Oleh</th>
+                  <th style="text-align:right;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="kas-tbody">
+                <!-- Populated dynamically -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Catat Transaksi Kas -->
+  <div class="caprice-modal-overlay" id="modal-kas">
+    <div class="caprice-modal">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">💰 Catat Transaksi Kas Baru</h3>
+        <button class="caprice-modal-close" id="close-modal-kas">&times;</button>
+      </div>
+      <form id="form-kas">
+        <div class="caprice-modal-body">
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="kas-type">Jenis Transaksi</label>
+            <select class="caprice-form-select" id="kas-type" required>
+              <option value="in">Pemasukan (Uang Kas Siswa / Iuran)</option>
+              <option value="out">Pengeluaran (Beli Spidol / Sapu / Keperluan Kelas)</option>
+            </select>
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="kas-desc">Keterangan / Rincian</label>
+            <input type="text" class="caprice-form-input" id="kas-desc" placeholder="contoh: Iuran kas mingguan ke-1 September" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="kas-amount">Nominal (Rp)</label>
+            <input type="number" class="caprice-form-input" id="kas-amount" placeholder="contoh: 50000" min="1000" step="1000" required />
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-kas">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan Transaksi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/middleware.js"></script>
+  <script>
+    "use strict";
+    (function () {
+      const middleware = window.CapriceMiddleware;
+      const auth = window.CapriceAuth;
+
+      const result = middleware.guardRoute("dashboard-bendahara.html");
+      if (result.type !== "ok") { window.location.replace(result.to); return; }
+
+      const currentUser = auth.getUser();
+      middleware.renderMenu(currentUser, "dashboard-nav-list");
+      middleware.renderUserBar(currentUser, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(currentUser);
+
+      const canDeleteKas = middleware.userHasPermission(currentUser, "kas.delete");
+
+      const toggle = document.getElementById("dash-nav-toggle");
+      const sidebar = document.getElementById("dash-sidebar");
+      if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+
+      // Kas store
+      const KAS_STORAGE_KEY = "caprice_kas_transactions_v2";
+      function loadKas() {
+        try {
+          const raw = localStorage.getItem(KAS_STORAGE_KEY);
+          if (raw) return JSON.parse(raw);
+        } catch (e) {}
+        return [
+          { id: "k-1", date: "2026-09-01", desc: "Iuran kas mingguan minggu ke-1 (36 Siswa)", type: "in", amount: 180000, author: "bendahara@caprice26.id" },
+          { id: "k-2", date: "2026-09-02", desc: "Beli spidol whiteboard & penghapus", type: "out", amount: 45000, author: "bendahara@caprice26.id" },
+          { id: "k-3", date: "2026-08-25", desc: "Sisa kas bulan Agustus", type: "in", amount: 710000, author: "wali@caprice26.id" },
+        ];
+      }
+
+      function saveKas(data) {
+        localStorage.setItem(KAS_STORAGE_KEY, JSON.stringify(data));
+      }
+
+      function formatRupiah(num) {
+        return "Rp " + Number(num).toLocaleString("id-ID");
+      }
+
+      function showToast(msg, type = "success") {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+        const toast = document.createElement("div");
+        toast.className = `caprice-toast toast-${type}`;
+        const icon = type === "success" ? "✅" : "ℹ️";
+        toast.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      function renderKas() {
+        const data = loadKas();
+        const tbody = document.getElementById("kas-tbody");
+        let totalIn = 0;
+        let totalOut = 0;
+
+        data.forEach((t) => {
+          if (t.type === "in") totalIn += t.amount;
+          else totalOut += t.amount;
+        });
+
+        const saldo = totalIn - totalOut;
+        document.getElementById("stat-total-saldo").textContent = formatRupiah(saldo);
+        document.getElementById("stat-pemasukan-bulan").textContent = formatRupiah(totalIn);
+        document.getElementById("stat-pengeluaran-bulan").textContent = formatRupiah(totalOut);
+        document.getElementById("trans-count-badge").textContent = `${data.length} Transaksi`;
+
+        if (tbody) {
+          tbody.innerHTML = data.map((t) => {
+            const isIncome = t.type === "in";
+            return `
+              <tr>
+                <td>${t.date}</td>
+                <td><strong>${middleware.escapeHtml(t.desc)}</strong></td>
+                <td>
+                  <span class="tech-badge ${isIncome ? 'badge-status-active' : 'badge-status-inactive'}">
+                    ${isIncome ? '📥 Pemasukan' : '📤 Pengeluaran'}
+                  </span>
+                </td>
+                <td style="font-weight:700; color:${isIncome ? '#10b981' : '#f43f5e'};">
+                  ${isIncome ? '+' : '-'}${formatRupiah(t.amount)}
+                </td>
+                <td><code style="font-size:0.8rem;">${middleware.escapeHtml(t.author)}</code></td>
+                <td style="text-align:right;">
+                  ${canDeleteKas ? `
+                    <button class="btn btn-outline btn-sm btn-delete-kas" data-id="${t.id}" style="padding:2px 6px; font-size:0.75rem; color:#f43f5e;">
+                      🗑️
+                    </button>
+                  ` : '-'}
+                </td>
+              </tr>
+            `;
+          }).join("");
+
+          tbody.querySelectorAll(".btn-delete-kas").forEach((btn) => {
+            btn.addEventListener("click", () => {
+              const id = btn.getAttribute("data-id");
+              if (confirm("Hapus catatan transaksi kas ini?")) {
+                const updated = data.filter((item) => item.id !== id);
+                saveKas(updated);
+                auth.logAuditEvent("KAS_DELETE", `Menghapus transaksi kas ID: ${id}`, currentUser, "Sukses");
+                showToast("Transaksi kas berhasil dihapus.");
+                renderKas();
+              }
+            });
+          });
+        }
+      }
+
+      renderKas();
+
+      // Modal Add Kas
+      const modal = document.getElementById("modal-kas");
+      const btnAdd = document.getElementById("btn-add-kas");
+      const closeM = document.getElementById("close-modal-kas");
+      const cancelM = document.getElementById("cancel-modal-kas");
+      const form = document.getElementById("form-kas");
+
+      if (btnAdd && modal) {
+        btnAdd.addEventListener("click", () => {
+          modal.classList.add("active");
+          form.reset();
+        });
+      }
+
+      const hideModal = () => modal && modal.classList.remove("active");
+      if (closeM) closeM.addEventListener("click", hideModal);
+      if (cancelM) cancelM.addEventListener("click", hideModal);
+
+      if (form) {
+        form.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const type = document.getElementById("kas-type").value;
+          const desc = document.getElementById("kas-desc").value.trim();
+          const amount = parseInt(document.getElementById("kas-amount").value, 10);
+
+          const list = loadKas();
+          list.unshift({
+            id: "k-" + Date.now().toString(36),
+            date: new Date().toISOString().split("T")[0],
+            desc: desc,
+            type: type,
+            amount: amount,
+            author: currentUser.identifier || currentUser.displayName,
+          });
+
+          saveKas(list);
+          auth.logAuditEvent("KAS_CREATE", `Mencatat kas: [${type.toUpperCase()}] ${desc} - ${formatRupiah(amount)}`, currentUser, "Sukses");
+          showToast("Transaksi kas berhasil dicatat!");
+          hideModal();
+          renderKas();
+        });
+      }
+
+      // Export Button
+      const btnExport = document.getElementById("btn-export-kas");
+      if (btnExport) {
+        btnExport.addEventListener("click", () => {
+          const list = loadKas();
+          let csv = "ID,Tanggal,Keterangan,Jenis,Nominal,Pencatat\n";
+          list.forEach((t) => {
+            csv += `"${t.id}","${t.date}","${t.desc}","${t.type}","${t.amount}","${t.author}"\n`;
+          });
+          const blob = new Blob([csv], { type: "text/csv" });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `Laporan_Kas_Caprice26_${new Date().toISOString().split("T")[0]}.csv`;
+          a.click();
+          auth.logAuditEvent("KAS_EXPORT", "Export data kas ke CSV", currentUser, "Sukses");
+          showToast("Laporan kas berhasil diexport!");
+        });
+      }
+    })();
+  </script>
+  <script src="../main.js"></script>
+</body>
+</html>

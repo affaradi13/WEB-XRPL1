@@ -1,0 +1,521 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Anggota & Role — Caprice 26</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <!-- Toast Container -->
+  <div class="caprice-toast-container" id="toast-container"></div>
+
+  <div class="dash-layout" id="dash-app">
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+      <p class="dash-nav-heading">Menu Akses</p>
+      <ul class="dash-nav-list" id="dashboard-nav-list"></ul>
+      <div class="dash-sidebar-footer">
+        <button class="btn btn-outline btn-sm" id="dash-logout">Keluar</button>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button class="nav-toggle" id="dash-nav-toggle" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <span class="section-badge">Manajemen Kelas</span>
+        <div class="dash-user" id="dash-user-bar"></div>
+      </header>
+
+      <main class="dash-content">
+        <div class="dash-heading-row" style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:1rem;">
+          <div>
+            <h1 class="dash-title">Daftar Anggota & Penugasan Role</h1>
+            <p class="auth-sub">Kelola data siswa dan tetapkan peran (Ketua Kelas, Bendahara, Sekretaris, Anggota).</p>
+          </div>
+          <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" id="btn-reset-users" data-permission="user.create">
+              🔄 Reset Data Anggota
+            </button>
+            <button class="btn btn-primary btn-sm" id="btn-add-user" data-permission="user.create">
+              ➕ Tambah Anggota Baru
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter and Search Row -->
+        <div class="glass-card dash-card" style="padding: 1rem 1.25rem; margin-bottom: 1.5rem;">
+          <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; justify-content:space-between;">
+            <div style="display:flex; gap:0.75rem; flex:1; min-width:280px;">
+              <input
+                type="text"
+                class="caprice-form-input"
+                id="search-user"
+                placeholder="🔍 Cari nama, email, atau NISN..."
+                style="flex:1;"
+              />
+            </div>
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+              <select class="caprice-form-select" id="filter-role">
+                <option value="all">Semua Role</option>
+                <!-- Populated dynamically -->
+              </select>
+              <select class="caprice-form-select" id="filter-status">
+                <option value="all">Semua Status</option>
+                <option value="active">Aktif</option>
+                <option value="inactive">Nonaktif</option>
+                <option value="locked">Terkunci</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Users Table Card -->
+        <div class="glass-card dash-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; flex-wrap:wrap; gap:0.5rem;">
+            <h3 class="dash-card-title" style="margin-bottom:0;">👥 Anggota Terdaftar</h3>
+            <span class="tech-badge" id="user-count-badge">0 Anggota</span>
+          </div>
+
+          <div class="dash-table-container">
+            <table class="dash-table" id="users-table">
+              <thead>
+                <tr>
+                  <th>Nama Siswa / Akun</th>
+                  <th>Identifier (Email)</th>
+                  <th>NISN</th>
+                  <th>Role Saat Ini</th>
+                  <th>Status</th>
+                  <th style="text-align:right;">Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="users-tbody">
+                <!-- Populated by JS -->
+              </tbody>
+            </table>
+          </div>
+          <p class="auth-sub" style="margin-top:1rem;">
+            🛡️ <strong>Wewenang:</strong> Super Admin (Wali Kelas) dapat mengelola semua akun. Ketua Kelas dapat menetapkan role anggota menjadi Bendahara, Sekretaris, atau Anggota.
+          </p>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modal Tambah Anggota Baru -->
+  <div class="caprice-modal-overlay" id="modal-add-user">
+    <div class="caprice-modal">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">➕ Tambah Anggota Baru</h3>
+        <button class="caprice-modal-close" id="close-modal-user">&times;</button>
+      </div>
+      <form id="form-add-user">
+        <div class="caprice-modal-body">
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-name">Nama Lengkap Siswa</label>
+            <input type="text" class="caprice-form-input" id="add-user-name" placeholder="contoh: Budi Santoso" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-email">Email / Username Login</label>
+            <input type="email" class="caprice-form-input" id="add-user-email" placeholder="contoh: budi@caprice26.id" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-nisn">NISN / Nomor Induk</label>
+            <input type="text" class="caprice-form-input" id="add-user-nisn" placeholder="contoh: 0089123456" />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-password">Password Awal</label>
+            <input type="password" class="caprice-form-input" id="add-user-password" value="pass123" required />
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-role">Role Awal</label>
+            <select class="caprice-form-select" id="add-user-role" required>
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="add-user-status">Status Akun</label>
+            <select class="caprice-form-select" id="add-user-status">
+              <option value="active">Aktif</option>
+              <option value="inactive">Nonaktif</option>
+              <option value="locked">Terkunci</option>
+            </select>
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-user">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan Anggota</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Atur Role & Edit Anggota -->
+  <div class="caprice-modal-overlay" id="modal-role-assign">
+    <div class="caprice-modal">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">🛡️ Atur Role & Status Anggota</h3>
+        <button class="caprice-modal-close" id="close-modal-assign">&times;</button>
+      </div>
+      <form id="form-role-assign">
+        <input type="hidden" id="assign-user-id" />
+        <div class="caprice-modal-body">
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:0.9rem; border-radius:8px;">
+            <p style="margin:0; font-weight:700; color:#fff;" id="assign-user-name-display"></p>
+            <p style="margin:0.2rem 0 0; font-size:0.85rem; color:var(--text-dim);" id="assign-user-email-display"></p>
+          </div>
+
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="assign-role-select">Pilih Role Baru</label>
+            <select class="caprice-form-select" id="assign-role-select" required>
+              <!-- Populated dynamically -->
+            </select>
+            <p style="font-size:0.78rem; color:var(--text-muted); margin:0.3rem 0 0;" id="assign-role-desc"></p>
+          </div>
+
+          <div class="caprice-form-group">
+            <label class="caprice-form-label" for="assign-status-select">Status Akun</label>
+            <select class="caprice-form-select" id="assign-status-select">
+              <option value="active">Aktif (Dapat Login & Akses Fitur)</option>
+              <option value="inactive">Nonaktif (Belum Diaktivasi)</option>
+              <option value="locked">Terkunci (Sanksi / Diblokir)</option>
+            </select>
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-assign">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Terapkan Perubahan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/middleware.js"></script>
+  <script>
+    "use strict";
+    (function () {
+      const middleware = window.CapriceMiddleware;
+      const auth = window.CapriceAuth;
+      const cfg = window.CAPRICE_CONFIG;
+
+      // 1. Route Guard
+      const result = middleware.guardRoute("admin-users.html");
+      if (result.type !== "ok") { window.location.replace(result.to); return; }
+
+      const currentUser = auth.getUser();
+      middleware.renderMenu(currentUser, "dashboard-nav-list");
+      middleware.renderUserBar(currentUser, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(currentUser);
+
+      const isSuperAdmin = currentUser && currentUser.role === "super-admin";
+      const isKetuaKelas = currentUser && (currentUser.role === "ketua-kelas" || currentUser.role === "admin");
+      const canChangeRole = middleware.userHasPermission(currentUser, "user.change_role");
+      const canDeleteUser = middleware.userHasPermission(currentUser, "user.delete");
+      const canCreateUser = middleware.userHasPermission(currentUser, "user.create");
+
+      // Sidebar mobile toggle
+      const toggle = document.getElementById("dash-nav-toggle");
+      const sidebar = document.getElementById("dash-sidebar");
+      if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+
+      // Toast notification helper
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        if (!container) return;
+        const toast = document.createElement("div");
+        toast.className = `caprice-toast toast-${type}`;
+        const icon = type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️";
+        toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.opacity = "0";
+          toast.style.transform = "translateX(50px)";
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      // Populate Role Select Options
+      function populateRoleOptions() {
+        const roles = cfg.getRoles();
+        const filterSelect = document.getElementById("filter-role");
+        const addRoleSelect = document.getElementById("add-user-role");
+        const assignRoleSelect = document.getElementById("assign-role-select");
+
+        const allowedRoleKeys = Object.keys(roles).filter((rk) => {
+          if (isSuperAdmin) return true;
+          if (isKetuaKelas) return rk !== "super-admin";
+          return false;
+        });
+
+        // Populate filter
+        if (filterSelect) {
+          filterSelect.innerHTML = `<option value="all">Semua Role</option>` +
+            Object.keys(roles).map((rk) => `<option value="${rk}">${roles[rk].label}</option>`).join("");
+        }
+
+        // Populate add user select
+        if (addRoleSelect) {
+          addRoleSelect.innerHTML = allowedRoleKeys.map((rk) => `<option value="${rk}">${roles[rk].label}</option>`).join("");
+        }
+
+        // Populate assign modal select
+        if (assignRoleSelect) {
+          assignRoleSelect.innerHTML = allowedRoleKeys.map((rk) => `<option value="${rk}">${roles[rk].label}</option>`).join("");
+        }
+      }
+
+      // Render Users Table
+      function renderUsersTable() {
+        const tbody = document.getElementById("users-tbody");
+        const countBadge = document.getElementById("user-count-badge");
+        if (!tbody) return;
+
+        const users = auth.getUsers();
+        const roles = cfg.getRoles();
+        const query = (document.getElementById("search-user").value || "").toLowerCase().trim();
+        const roleFilter = document.getElementById("filter-role").value;
+        const statusFilter = document.getElementById("filter-status").value;
+
+        const filtered = users.filter((u) => {
+          const matchQuery = !query ||
+            u.displayName.toLowerCase().includes(query) ||
+            u.identifier.toLowerCase().includes(query) ||
+            (u.nisn && u.nisn.toLowerCase().includes(query));
+
+          const matchRole = roleFilter === "all" || u.role === roleFilter;
+          const matchStatus = statusFilter === "all" || u.status === statusFilter;
+
+          return matchQuery && matchRole && matchStatus;
+        });
+
+        if (countBadge) countBadge.textContent = `${filtered.length} Anggota`;
+
+        if (filtered.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="6" style="text-align:center; padding:2.5rem 1rem; color:var(--text-dim);">
+                Tidak ada data anggota yang cocok dengan filter pencarian.
+              </td>
+            </tr>
+          `;
+          return;
+        }
+
+        tbody.innerHTML = filtered.map((u) => {
+          const roleObj = roles[u.role] || { label: u.role };
+          const badgeClass = middleware.getRoleBadgeClass(u.role);
+          const statusClass = u.status === "active" ? "badge-status-active" : (u.status === "locked" ? "badge-status-locked" : "badge-status-inactive");
+          const statusLabel = u.status === "active" ? "Aktif" : (u.status === "locked" ? "Terkunci" : "Nonaktif");
+
+          const canManageThisUser = isSuperAdmin || (isKetuaKelas && u.role !== "super-admin");
+          const canDeleteThisUser = canDeleteUser && u.role !== "super-admin" && u.id !== currentUser.id;
+
+          return `
+            <tr>
+              <td>
+                <div style="font-weight:600; color:#fff;">${middleware.escapeHtml(u.displayName)}</div>
+                ${u.id === currentUser.id ? '<span style="font-size:0.72rem; color:var(--primary); font-weight:700;">(Akun Anda)</span>' : ''}
+              </td>
+              <td><code>${middleware.escapeHtml(u.identifier)}</code></td>
+              <td><span style="font-size:0.85rem; color:var(--text-dim); font-family:monospace;">${u.nisn || "-"}</span></td>
+              <td><span class="tech-badge ${badgeClass}">${middleware.escapeHtml(roleObj.label)}</span></td>
+              <td><span class="tech-badge ${statusClass}">${statusLabel}</span></td>
+              <td style="text-align:right;">
+                <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                  ${canChangeRole && canManageThisUser ? `
+                    <button class="btn btn-outline btn-sm btn-assign-role" data-id="${u.id}" style="padding:4px 8px; font-size:0.8rem;">
+                      🛡️ Atur Role
+                    </button>
+                  ` : ''}
+                  ${canDeleteThisUser ? `
+                    <button class="btn btn-outline btn-sm btn-delete-user" data-id="${u.id}" style="padding:4px 8px; font-size:0.8rem; color:#f43f5e;" title="Hapus Akun">
+                      🗑️
+                    </button>
+                  ` : ''}
+                </div>
+              </td>
+            </tr>
+          `;
+        }).join("");
+
+        // Attach assign listeners
+        tbody.querySelectorAll(".btn-assign-role").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const userId = btn.getAttribute("data-id");
+            openAssignModal(userId);
+          });
+        });
+
+        // Attach delete listeners
+        tbody.querySelectorAll(".btn-delete-user").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const userId = btn.getAttribute("data-id");
+            const target = auth.getUserById(userId);
+            if (!target) return;
+            if (confirm(`Yakin ingin menghapus anggota "${target.displayName}"? Tindakan ini tidak dapat dibatalkan.`)) {
+              try {
+                auth.deleteUser(userId, currentUser);
+                showToast(`Anggota "${target.displayName}" berhasil dihapus.`);
+                renderUsersTable();
+              } catch (err) {
+                showToast(err.message, "error");
+              }
+            }
+          });
+        });
+      }
+
+      // Open Assign Role Modal
+      const modalAssign = document.getElementById("modal-role-assign");
+      const closeAssign = document.getElementById("close-modal-assign");
+      const cancelAssign = document.getElementById("cancel-modal-assign");
+      const formAssign = document.getElementById("form-role-assign");
+
+      function openAssignModal(userId) {
+        const user = auth.getUserById(userId);
+        if (!user || !modalAssign) return;
+
+        document.getElementById("assign-user-id").value = user.id;
+        document.getElementById("assign-user-name-display").textContent = user.displayName;
+        document.getElementById("assign-user-email-display").textContent = `${user.identifier} — (Role saat ini: ${user.role})`;
+        document.getElementById("assign-role-select").value = user.role;
+        document.getElementById("assign-status-select").value = user.status;
+
+        modalAssign.classList.add("active");
+      }
+
+      const hideAssignModal = () => modalAssign && modalAssign.classList.remove("active");
+      if (closeAssign) closeAssign.addEventListener("click", hideAssignModal);
+      if (cancelAssign) cancelAssign.addEventListener("click", hideAssignModal);
+      if (modalAssign) {
+        modalAssign.addEventListener("click", (e) => {
+          if (e.target === modalAssign) hideAssignModal();
+        });
+      }
+
+      if (formAssign) {
+        formAssign.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const userId = document.getElementById("assign-user-id").value;
+          const newRole = document.getElementById("assign-role-select").value;
+          const newStatus = document.getElementById("assign-status-select").value;
+
+          try {
+            const user = auth.getUserById(userId);
+            if (!user) throw new Error("Pengguna tidak ditemukan");
+
+            // Update status if changed
+            if (user.status !== newStatus) {
+              auth.saveUser({ id: userId, status: newStatus }, currentUser);
+            }
+
+            // Update role
+            auth.updateUserRole(userId, newRole, currentUser);
+
+            showToast(`Role ${user.displayName} berhasil diperbarui menjadi [${newRole}]!`);
+            hideAssignModal();
+            renderUsersTable();
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      // Add User Modal
+      const modalAdd = document.getElementById("modal-add-user");
+      const btnAddUser = document.getElementById("btn-add-user");
+      const closeAdd = document.getElementById("close-modal-user");
+      const cancelAdd = document.getElementById("cancel-modal-user");
+      const formAdd = document.getElementById("form-add-user");
+
+      if (btnAddUser && modalAdd) {
+        btnAddUser.addEventListener("click", () => {
+          modalAdd.classList.add("active");
+          formAdd.reset();
+        });
+      }
+
+      const hideAddModal = () => modalAdd && modalAdd.classList.remove("active");
+      if (closeAdd) closeAdd.addEventListener("click", hideAddModal);
+      if (cancelAdd) cancelAdd.addEventListener("click", hideAddModal);
+      if (modalAdd) {
+        modalAdd.addEventListener("click", (e) => {
+          if (e.target === modalAdd) hideAddModal();
+        });
+      }
+
+      if (formAdd) {
+        formAdd.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const name = document.getElementById("add-user-name").value.trim();
+          const email = document.getElementById("add-user-email").value.trim();
+          const nisn = document.getElementById("add-user-nisn").value.trim();
+          const pass = document.getElementById("add-user-password").value;
+          const role = document.getElementById("add-user-role").value;
+          const status = document.getElementById("add-user-status").value;
+
+          try {
+            auth.saveUser({
+              displayName: name,
+              identifier: email,
+              nisn: nisn,
+              password: pass,
+              role: role,
+              status: status,
+            }, currentUser);
+
+            showToast(`Anggota baru "${name}" berhasil didaftarkan!`);
+            hideAddModal();
+            renderUsersTable();
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      // Reset Users Handler
+      const btnResetUsers = document.getElementById("btn-reset-users");
+      if (btnResetUsers) {
+        btnResetUsers.addEventListener("click", () => {
+          if (confirm("Kembalikan data anggota ke daftar default kelas X RPL 1?")) {
+            auth.resetUsersToDefault();
+            auth.logAuditEvent("USERS_RESET", "Mengembalikan data anggota ke default", currentUser, "Sukses");
+            showToast("Daftar anggota berhasil di-reset ke default.");
+            renderUsersTable();
+          }
+        });
+      }
+
+      // Search & Filters Listener
+      document.getElementById("search-user").addEventListener("input", renderUsersTable);
+      document.getElementById("filter-role").addEventListener("change", renderUsersTable);
+      document.getElementById("filter-status").addEventListener("change", renderUsersTable);
+
+      // Init
+      populateRoleOptions();
+      renderUsersTable();
+    })();
+  </script>
+  <script src="../main.js"></script>
+</body>
+</html>
+

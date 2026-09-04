@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="RPL Playground, Mini Games, Kuis Pemrograman, dan Coding Speed Test — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>RPL Lab & Mini Games — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="../index.html" class="nav-link">Beranda</a></li>
+          <li class="nav-item-dropdown">
+            <a href="lab-game.html" class="nav-link nav-dropdown-toggle active" id="rpl-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span>RPL Lab</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="nav-dropdown-menu" aria-labelledby="rpl-dropdown-btn">
+              <li><a href="lab-game.html" class="dropdown-item active"><span class="dropdown-icon">🎮</span> RPL Lab & Games</a></li>
+              <li><a href="proyek.html" class="dropdown-item"><span class="dropdown-icon">💻</span> Showcase Projek</a></li>
+              <li><a href="struktur.html" class="dropdown-item"><span class="dropdown-icon">👥</span> Struktur Organisasi</a></li>
+              <li><a href="jadwal.html" class="dropdown-item"><span class="dropdown-icon">📅</span> Jadwal Pelajaran</a></li>
+              <li><a href="galeri.html" class="dropdown-item"><span class="dropdown-icon">🖼️</span> Galeri Foto</a></li>
+              <li><a href="prestasi.html" class="dropdown-item"><span class="dropdown-icon">🏆</span> Prestasi</a></li>
+              <li><a href="bukutamu.html" class="dropdown-item"><span class="dropdown-icon">📖</span> Buku Tamu</a></li>
+            </ul>
+          </li>
+          <li><a href="kontak.html" class="nav-link">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Playground & Game Interaktif</span>
+          <h2 class="section-title">RPL Lab & <span>Tantangan Coding</span></h2>
+          <p class="section-desc">Uji pengetahuan sintaksis pemrograman web, kuasai logika algoritma, dan tantang kecepatan mengetik kode kamu!</p>
+        </div>
+
+        <!-- GAME 1: KUIS SINTAKS KODING -->
+        <div class="game-container animate-on-scroll">
+          <div id="quiz-container">
+            <!-- Quiz rendered via main.js -->
+          </div>
+        </div>
+
+        <!-- GAME 2: LIVE HTML/CSS/JS INTERACTIVE RUNNER -->
+        <div style="margin-top: 5rem;" class="animate-on-scroll">
+          <div class="section-header">
+            <span class="section-badge">Live Sandbox</span>
+            <h3 style="font-size: 2rem; font-weight: 800;">Mini Code <span>Playground Live</span></h3>
+            <p class="section-desc">Tulis kode HTML & CSS sederhana di bawah ini dan saksikan hasil perubahannya secara instan!</p>
+          </div>
+
+          <div class="glass-card" style="padding: 2rem;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;" id="sandbox-grid">
+              <div>
+                <label style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Editor Kode (HTML + CSS):</label>
+                <textarea id="sandbox-code" class="form-control" rows="8" style="font-family:'Fira Code', monospace; font-size:0.9rem; background:#000000; color:#38bdf8; resize:vertical;"><div style="text-align:center; padding:20px; font-family:sans-serif; color:#ffffff; background:linear-gradient(135deg,#6366f1,#ec4899); border-radius:12px;">
+  <h2>Halo Caprice Team 26! 🚀</h2>
+  <p>Saya sedang ngoding di Lab RPL SMKN 1 Probolinggo!</p>
+  <button style="padding:8px 16px; border:none; border-radius:6px; background:#ffffff; color:#6366f1; font-weight:bold; cursor:pointer;">Klik Saya!</button>
+</div></textarea>
+                <button class="btn btn-primary btn-sm" id="btn-run-sandbox" style="margin-top: 1rem;" onclick="runSandboxCode()">Jalankan Kode ⚡</button>
+              </div>
+
+              <div>
+                <label style="font-weight: 700; font-size: 0.9rem; margin-bottom: 0.5rem; display: block;">Live Preview Hasil:</label>
+                <iframe id="sandbox-preview" style="width: 100%; height: 230px; background: #0f172a; border: 1px solid var(--border-card); border-radius: var(--radius-md);"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; RPL Playground & Gamification Lab.</div>
+        <div><span>Selamat Belajar Sambil Bermain!</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/site-auth-ui.js"></script>
+  <script src="../main.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script>
+    function runSandboxCode() {
+      const code = document.getElementById("sandbox-code").value;
+      const preview = document.getElementById("sandbox-preview");
+      if (preview) {
+        preview.srcdoc = code;
+        if (window.soundFX) window.soundFX.play("success");
+      }
+    }
+    document.addEventListener("DOMContentLoaded", runSandboxCode);
+  </script>
+</body>
+</html>

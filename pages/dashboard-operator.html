@@ -1,0 +1,100 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Operator — Caprice 26</title>
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <div class="dash-layout" id="dash-app">
+    <aside class="dash-sidebar" id="dash-sidebar">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+      <p class="dash-nav-heading">Menu Akses</p>
+      <ul class="dash-nav-list" id="dashboard-nav-list"></ul>
+      <div class="dash-sidebar-footer">
+        <button class="btn btn-outline btn-sm" id="dash-logout">Keluar</button>
+      </div>
+    </aside>
+
+    <div class="dash-main">
+      <header class="dash-topbar">
+        <button class="nav-toggle" id="dash-nav-toggle" aria-label="Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+        <span class="section-badge">Operator</span>
+        <div class="dash-user" id="dash-user-bar"></div>
+      </header>
+
+      <main class="dash-content">
+        <div class="dash-heading-row">
+          <div>
+            <h1 class="dash-title">Antrean & Tugas Harian</h1>
+            <p class="auth-sub">Kerjakan proses operasional Anda tanpa mengubah konfigurasi kritis.</p>
+          </div>
+        </div>
+
+        <div class="stats-grid animate-on-scroll">
+          <div class="stat-card"><div class="stat-icon">📥</div><div class="stat-number">14</div><div class="stat-label">Antrean Proses</div></div>
+          <div class="stat-card"><div class="stat-icon">✅</div><div class="stat-number">32</div><div class="stat-label">Selesai Hari Ini</div></div>
+          <div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-number">2</div><div class="stat-label">Dalam Proses</div></div>
+        </div>
+
+        <div class="glass-card dash-card">
+          <h3 class="dash-card-title">📋 Tugas yang Perlu Anda Kerjakan</h3>
+          <ul class="dash-task-list">
+            <li>
+              <span class="dash-task-check">☐</span>
+              <div><strong>Validasi data masuk</strong><em>— Proses #4821</em></div>
+            </li>
+            <li>
+              <span class="dash-task-check">☐</span>
+              <div><strong>Perbarui status pesanan</strong><em>— Proses #4827</em></div>
+            </li>
+            <li>
+              <span class="dash-task-check">☐</span>
+              <div><strong>Tinjau laporan harian</strong><em>— Ringkasan 01 Sep</em></div>
+            </li>
+          </ul>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/middleware.js"></script>
+  <script>
+    "use strict";
+    (function () {
+      const middleware = window.CapriceMiddleware;
+      const auth = window.CapriceAuth;
+      const result = middleware.guardRoute("dashboard-operator.html");
+      if (result.type !== "ok") { window.location.replace(result.to); return; }
+      const user = auth.getUser();
+      middleware.renderMenu(user, "dashboard-nav-list");
+      middleware.renderUserBar(user, "dash-user-bar", "dash-logout");
+      middleware.applyDomPermissions(user);
+      const toggle = document.getElementById("dash-nav-toggle");
+      const sidebar = document.getElementById("dash-sidebar");
+      if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+    })();
+  </script>
+  <script src="../main.js"></script>
+</body>
+</html>

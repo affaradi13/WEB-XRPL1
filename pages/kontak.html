@@ -1,0 +1,246 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Kontak, Informasi Sekolah, Lokasi, dan FAQ Kelas X RPL 1 — Caprice Team 26 SMK Negeri 1 Kota Probolinggo.">
+  <title>Kontak & Lokasi — Caprice 26 | Kelas X RPL 1</title>
+  
+  <link rel="stylesheet" href="../style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <canvas id="bg-canvas"></canvas>
+  <div class="cyber-grid-overlay"></div>
+  <div class="glow-orb glow-orb-1"></div>
+  <div class="glow-orb glow-orb-2"></div>
+
+  <div class="custom-cursor-dot"></div>
+  <div class="custom-cursor-ring"></div>
+  <div id="scroll-progress"></div>
+
+  <header class="site-header">
+    <nav class="navbar" aria-label="Navigasi Utama">
+      <a href="../index.html" class="logo">
+        <span class="logo-badge">X</span>
+        <span class="logo-text">RPL 1</span>
+        <span class="logo-sub">Caprice 26</span>
+      </a>
+
+      <div class="nav-menu-wrapper" id="nav-menu-wrapper">
+        <ul class="nav-links">
+          <li><a href="../index.html" class="nav-link">Beranda</a></li>
+          <li class="nav-item-dropdown">
+            <a href="lab-game.html" class="nav-link nav-dropdown-toggle" id="rpl-dropdown-btn" aria-haspopup="true" aria-expanded="false">
+              <span>RPL Lab</span>
+              <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </a>
+            <ul class="nav-dropdown-menu" aria-labelledby="rpl-dropdown-btn">
+              <li><a href="lab-game.html" class="dropdown-item"><span class="dropdown-icon">🎮</span> RPL Lab & Games</a></li>
+              <li><a href="proyek.html" class="dropdown-item"><span class="dropdown-icon">💻</span> Showcase Projek</a></li>
+              <li><a href="struktur.html" class="dropdown-item"><span class="dropdown-icon">👥</span> Struktur Organisasi</a></li>
+              <li><a href="jadwal.html" class="dropdown-item"><span class="dropdown-icon">📅</span> Jadwal Pelajaran</a></li>
+              <li><a href="galeri.html" class="dropdown-item"><span class="dropdown-icon">🖼️</span> Galeri Foto</a></li>
+              <li><a href="prestasi.html" class="dropdown-item"><span class="dropdown-icon">🏆</span> Prestasi</a></li>
+              <li><a href="bukutamu.html" class="dropdown-item"><span class="dropdown-icon">📖</span> Buku Tamu</a></li>
+            </ul>
+          </li>
+          <li><a href="kontak.html" class="nav-link active">Kontak</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <button class="icon-btn" id="sound-toggle-btn" aria-label="Toggle Efek Suara">🔊</button>
+          <button class="icon-btn" id="theme-toggle-btn" aria-label="Ganti Tema">🌙</button>
+          <div class="accent-dropdown">
+            <button class="icon-btn" id="accent-toggle-btn" aria-label="Pilih Warna Aksen">🎨</button>
+            <div class="accent-palette-menu" id="accent-palette-menu">
+              <span class="accent-dot" data-accent="indigo" style="background:#6366f1;"></span>
+              <span class="accent-dot" data-accent="cyan" style="background:#06b6d4;"></span>
+              <span class="accent-dot" data-accent="emerald" style="background:#10b981;"></span>
+              <span class="accent-dot" data-accent="pink" style="background:#ec4899;"></span>
+              <span class="accent-dot" data-accent="amber" style="background:#f59e0b;"></span>
+            </div>
+          </div>
+          <a href="login.html" class="btn btn-primary btn-sm">Portal Siswa ⚡</a>
+        </div>
+      </div>
+
+      <button class="nav-toggle" id="nav-toggle" aria-label="Menu Mobile">
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+        <span class="hamburger-bar"></span>
+      </button>
+    </nav>
+  </header>
+
+  <main style="padding-top: 5rem;">
+    <section class="section">
+      <div class="container">
+        <div class="section-header animate-on-scroll">
+          <span class="section-badge">Hubungi Kami</span>
+          <h2 class="section-title">Kontak, Lokasi & <span>Pusat Bantuan FAQ</span></h2>
+          <p class="section-desc">Punya pertanyaan, ajakan kolaborasi projek IT, atau ingin terhubung dengan pengurus Caprice 26? Silakan sampaikan melalui formulir di bawah ini.</p>
+        </div>
+
+        <div class="contact-wrapper">
+          <!-- KOLOM KIRI: INFO SEKOLAH & PETA -->
+          <div class="glass-card animate-on-scroll">
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 1.25rem;">📍 Informasi Kelas & Lokasi</h3>
+            
+            <div style="display:flex; flex-direction:column; gap:1.25rem; margin-bottom: 2rem;">
+              <div style="display:flex; gap:1rem; align-items:flex-start;">
+                <span style="font-size:1.5rem;">🏫</span>
+                <div>
+                  <strong style="display:block; font-size:1rem;">Sekolah</strong>
+                  <p style="color:var(--text-muted); font-size:0.92rem;">SMK Negeri 1 Kota Probolinggo</p>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:1rem; align-items:flex-start;">
+                <span style="font-size:1.5rem;">💻</span>
+                <div>
+                  <strong style="display:block; font-size:1rem;">Jurusan & Angkatan</strong>
+                  <p style="color:var(--text-muted); font-size:0.92rem;">Rekayasa Perangkat Lunak (RPL) &bull; Caprice 26</p>
+                </div>
+              </div>
+
+              <div style="display:flex; gap:1rem; align-items:flex-start;">
+                <span style="font-size:1.5rem;">🗺️</span>
+                <div>
+                  <strong style="display:block; font-size:1rem;">Alamat Lengkap</strong>
+                  <p style="color:var(--text-muted); font-size:0.92rem;">Jl. Mastrip No.357, Kanigaran, Kec. Kanigaran, Kota Probolinggo, Jawa Timur 67219</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Stylized Map Card -->
+            <div style="background: linear-gradient(135deg, #0f172a, #1e293b); border: 1px solid var(--border-card); border-radius: var(--radius-md); padding: 1.5rem; text-align: center;">
+              <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📍 SMKN 1 Probolinggo</div>
+              <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Titik Koordinat: -7.7725° S, 113.2089° E</p>
+              <a href="https://maps.google.com/?q=SMK+Negeri+1+Kota+Probolinggo" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm" style="width: 100%;">
+                Buka di Google Maps 🗺️
+              </a>
+            </div>
+          </div>
+
+          <!-- KOLOM KANAN: FORM KONTAK -->
+          <div class="glass-card animate-on-scroll delay-1">
+            <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem;">✉️ Kirim Pesan / Kolaborasi</h3>
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.5rem;">
+              Kami akan merespons pesan Anda secepat mungkin.
+            </p>
+
+            <div id="contact-success-alert" style="display:none; background:var(--success-bg); border:1px solid var(--success); color:var(--success); padding:0.75rem 1rem; border-radius:var(--radius-sm); font-size:0.88rem; margin-bottom:1.25rem;"></div>
+
+            <form id="contact-main-form">
+              <div class="form-group">
+                <label for="c-name">Nama Lengkap <span style="color:var(--error);">*</span></label>
+                <input type="text" id="c-name" class="form-control" placeholder="Contoh: Budi Santoso" required maxlength="100">
+              </div>
+
+              <div class="form-group">
+                <label for="c-email">Alamat Email <span style="color:var(--error);">*</span></label>
+                <input type="email" id="c-email" class="form-control" placeholder="Contoh: budi@gmail.com" required maxlength="254">
+              </div>
+
+              <div class="form-group">
+                <label for="c-message">Pesan / Penawaran <span style="color:var(--error);">*</span></label>
+                <textarea id="c-message" class="form-control" rows="4" placeholder="Tuliskan detail pertanyaan atau ajakan kolaborasi..." required maxlength="2000"></textarea>
+              </div>
+
+              <button type="submit" class="btn btn-primary" style="width: 100%;">
+                Kirim Pesan Sekarang 🚀
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <!-- FAQ SECTION -->
+        <div style="margin-top: 5rem;" class="animate-on-scroll">
+          <div class="section-header">
+            <span class="section-badge">FAQ & Tanya Jawab</span>
+            <h3 style="font-size: 2rem; font-weight: 800;">Pertanyaan yang <span>Sering Diajukan</span></h3>
+            <p class="section-desc">Jawaban atas hal-hal umum seputar Kelas X RPL 1 Caprice 26 dan kegiatan kami.</p>
+          </div>
+
+          <div class="faq-list">
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Apa itu Caprice 26?</span>
+                <span class="faq-icon">▼</span>
+              </button>
+              <div class="faq-answer">
+                Caprice 26 adalah nama angkatan resmi untuk Kelas X Rekayasa Perangkat Lunak 1 (X RPL 1) di SMK Negeri 1 Kota Probolinggo. Nama ini merepresentasikan kreativitas, semangat muda, dan solidaritas persaudaraan siswa.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Bahasa pemrograman apa saja yang dipelajari di X RPL 1?</span>
+                <span class="faq-icon">▼</span>
+              </button>
+              <div class="faq-answer">
+                Kami mempelajari dasar-dasar logika algoritma, HTML5 & CSS3 modern, JavaScript, Python, PHP, Basis Data SQL (MySQL & PostgreSQL), serta pengenalan framework dan Git Version Control.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Bagaimana cara berkolaborasi projek coding dengan siswa Caprice 26?</span>
+                <span class="faq-icon">▼</span>
+              </button>
+              <div class="faq-answer">
+                Anda dapat mengisi formulir kontak di atas atau langsung menghubungi perwakilan pengurus kelas kami untuk berdiskusi mengenai projek open-source, hackathon, atau kegiatan IT bersama.
+              </div>
+            </div>
+
+            <div class="faq-item">
+              <button class="faq-question">
+                <span>Apakah website ini dibangun oleh siswa sendiri?</span>
+                <span class="faq-icon">▼</span>
+              </button>
+              <div class="faq-answer">
+                Ya! Website WebCaprice 26 dirancang dan dibangun secara mandiri menggunakan teknologi web modern, Vanilla CSS design tokens, Web Audio API, Canvas partikel, dan arsitektur multi-page responsif.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <div>&copy; 2026 <strong>Caprice Team 26</strong> &bull; Kontak Resmi SMKN 1 Probolinggo.</div>
+        <div><span>Respon Cepat & Ramah</span></div>
+      </div>
+    </div>
+  </footer>
+
+  <button id="back-to-top" class="back-to-top" aria-label="Kembali ke atas">↑</button>
+  <script src="../js/config.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/site-auth-ui.js"></script>
+  <script src="../main.js"></script>
+  <script src="../js/chatbot.js"></script>
+  <script>
+    document.getElementById("contact-main-form")?.addEventListener("submit", function(e) {
+      e.preventDefault();
+      const alertBox = document.getElementById("contact-success-alert");
+      if (alertBox) {
+        alertBox.style.display = "block";
+        alertBox.innerHTML = "✨ Terima kasih! Pesan Anda telah berhasil kami terima dan akan segera kami balas.";
+        this.reset();
+        if (window.soundFX) window.soundFX.play("success");
+        setTimeout(() => alertBox.style.display = "none", 5000);
+      }
+    });
+  </script>
+</body>
+</html>
