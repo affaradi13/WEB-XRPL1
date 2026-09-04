@@ -234,8 +234,91 @@
     return `🧹 **Petugas Piket & Pengambilan M.bg Hari Ini (${dayKey.toUpperCase()}):**\n👥 **Anggota:** ${piket.join(', ')}\n\n💡 *Catatan:* Petugas piket bertanggung jawab menjaga kebersihan kelas dan mengambil M.bg tepat waktu!`;
   }
 
+  // --- MATHEMATICAL & LOGIC ARITHMETIC EVALUATOR ---
+  function trySolveMath(input) {
+    if (!input) return null;
+    const raw = input.trim();
+    let q = raw.toLowerCase();
+
+    // Abaikan jika query jelas menanyakan jadwal, piket, atau siswa
+    if (/\b(absen|siswa|murid|nomor\s+\d|piket|jadwal|jam|kelas|pelajaran)\b/i.test(q)) {
+      return null;
+    }
+
+    // 1. Operasi Akar Kuadrat: "akar dari 64", "akar 16", "sqrt(16)"
+    const sqrtMatch = q.match(/^(?:berapa\s+|hitung\s+)?(?:akar\s*(?:dari|\^2)?|sqrt\s*\(?)\s*(\d+(?:\.\d+)?)\)?(?:\s*(?:sama dengan|adalah|berapa|hasilnya)|[\s\?\=])*$/i);
+    if (sqrtMatch) {
+      const num = parseFloat(sqrtMatch[1]);
+      const res = Math.sqrt(num);
+      const formattedRes = Number.isInteger(res) ? res : Number(res.toFixed(6));
+      return `🧮 **Hasil Perhitungan Matematika:**\n**√${num} = ${formattedRes}** ⚡\n\n💡 *Catatan:* Akar kuadrat dari ${num} adalah ${formattedRes}.`;
+    }
+
+    // 2. Normalisasi awalan & akhiran ekspresi matematika
+    let expr = q
+      .replace(/^(?:berapa|hitunglah|hitung|coba hitung|tolong hitung|hasil dari|hasil|apakah)\s+/i, "")
+      .replace(/(?:\s*(?:sama dengan|adalah|berapa|hasilnya)|[\s\?\=])+$/i, "")
+      .trim();
+
+    // 3. Konversi kata verbal operator Indonesia ke operator aritmatika
+    expr = expr
+      .replace(/\bpangkat\b/gi, "**")
+      .replace(/\^/g, "**")
+      .replace(/\btambah\b/gi, "+")
+      .replace(/\bkurang\b/gi, "-")
+      .replace(/\bkali\b/gi, "*")
+      .replace(/(\d)\s*x\s*(\d)/gi, "$1 * $2")
+      .replace(/\bbagi\b/gi, "/")
+      .replace(/(\d)\s*:\s*(\d)/gi, "$1 / $2")
+      .replace(/\bmodulus\b|\bmod\b/gi, "%");
+
+    // 4. Sanitasi ketat: Hanya izinkan digit, spasi, +, -, *, /, %, (, ), .
+    if (!/^[\d\s\+\-\*\/\%\(\)\.]+$/.test(expr)) {
+      return null;
+    }
+
+    // Harus mengandung minimal satu operator matematika dan digit angka
+    if (!/[\+\-\*\/\%]/.test(expr) || !/\d/.test(expr)) {
+      return null;
+    }
+
+    // Cegah kurung kosong "()"
+    if (/\(\s*\)/.test(expr)) return null;
+
+    try {
+      const calcFn = new Function("return (" + expr + ");");
+      const result = calcFn();
+
+      if (typeof result !== "number" || isNaN(result)) return null;
+
+      if (!isFinite(result)) {
+        return `🧮 **Hasil Perhitungan:**\n\`${raw}\` = **Tidak Terdefinisi (Pembagian dengan Nol)** ⚠️`;
+      }
+
+      const cleanExpr = expr.replace(/\*\*/g, "^");
+      const formattedResult = Number.isInteger(result) ? result : Number(result.toFixed(6));
+
+      let techFact = "";
+      if (Number.isInteger(result) && result >= 0 && result <= 65535) {
+        const bin = result.toString(2);
+        const hex = result.toString(16).toUpperCase();
+        techFact = `\n\n💡 *Fun Fact IT RPL:* Nilai desimal **${formattedResult}** setara dengan biner \`${bin}₂\` dan heksadesimal \`0x${hex}\`.`;
+      }
+
+      return `🧮 **Hasil Perhitungan Matematika:**\n**${cleanExpr} = ${formattedResult}** ⚡${techFact}\n\nAda soal logika atau koding lain yang ingin kamu tanyakan?`;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function processQuery(input) {
     const q = input.toLowerCase().trim();
+
+    // 0. Evaluasi Ekspresi Matematika & Logika Aritmatika (Presisi 100%)
+    const mathResult = trySolveMath(input);
+    if (mathResult) {
+      return mathResult;
+    }
 
     // 1. Salam / Sapaan
     if (/^(hai|halo|hello|hey|hei|pagi|siang|sore|malam|assalamualaikum|shalom|ping|p)\b/i.test(q)) {
@@ -327,10 +410,23 @@
       return `🏛️ **Pengurus Inti X RPL 1 (Caprice 26):**\n• **Ketua:** ${KNOWLEDGE_BASE.pengurus.ketua}\n• **Wakil Ketua:** ${KNOWLEDGE_BASE.pengurus.wakil}\n• **Sekretaris 1:** ${KNOWLEDGE_BASE.pengurus.sekretaris1}\n• **Sekretaris 2:** ${KNOWLEDGE_BASE.pengurus.sekretaris2}\n• **Bendahara 1:** ${KNOWLEDGE_BASE.pengurus.bendahara1}\n• **Bendahara 2:** ${KNOWLEDGE_BASE.pengurus.bendahara2}\n\n🔗 <a href="${getPageLink('struktur.html')}" class="chat-link">Lihat Bagan Struktur Lengkap</a>`;
     }
 
-    // 8. Pencarian Data 38 Siswa Berdasarkan Nama
+    // 8a. Pencarian Siswa Berdasarkan Nomor Absen (misal: "absen 13", "nomor 2", "no absen 5")
+    const absenMatch = q.match(/(?:absen|no|nomor)\s*(\d{1,2})\b/i);
+    if (absenMatch) {
+      const targetNo = parseInt(absenMatch[1], 10);
+      const student = KNOWLEDGE_BASE.studentsList.find(s => s.no === targetNo);
+      if (student) {
+        return `👤 **Data Siswa X RPL 1 (Absen ${student.no < 10 ? '0' + student.no : student.no}):**\n• **Nama Lengkap:** ${student.name}\n• **Panggilan:** ${student.nick}\n• **Spesialisasi:** ${student.role}\n• **Skills:** ${student.skills}\n\n🔗 <a href="${getPageLink('struktur.html')}" class="chat-link">Lihat di Direktori 38 Siswa</a>`;
+      }
+    }
+
+    // 8b. Pencarian Data 38 Siswa Berdasarkan Nama & Panggilan (menggunakan token kata agar tidak salah cocok)
+    const queryWords = q.split(/[\s,?!.]+/).filter(Boolean);
     for (const st of KNOWLEDGE_BASE.studentsList) {
-      const matchName = st.name.toLowerCase().includes(q) || (st.nick && q.includes(st.nick.toLowerCase()));
-      if (matchName) {
+      const matchFullName = q.length >= 3 && st.name.toLowerCase().includes(q);
+      const nicks = st.nick ? st.nick.toLowerCase().split(/[\/,]/).map(n => n.trim()) : [];
+      const matchNick = nicks.some(n => n && (q === n || queryWords.includes(n)));
+      if (matchFullName || matchNick) {
         return `👤 **Data Siswa X RPL 1:**\n• **Nomor Absen:** ${st.no < 10 ? '0' + st.no : st.no}\n• **Nama Lengkap:** ${st.name}\n• **Panggilan:** ${st.nick}\n• **Spesialisasi:** ${st.role}\n• **Skills:** ${st.skills}\n\n🔗 <a href="${getPageLink('struktur.html')}" class="chat-link">Lihat di Direktori 38 Siswa</a>`;
       }
     }
@@ -546,7 +642,9 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
 2. Gunakan Bahasa Indonesia yang luwes dan natural. Tambahkan emoji yang relevan secukupnya.
 3. Selalu prioritaskan data resmi kelas X RPL 1 saat menjawab pertanyaan seputar siswa, jadwal, piket, atau kegiatan kelas.
 4. Kamu juga ahli koding (HTML, CSS, JS, Python, PHP, Java, C++, Flutter, Unity, database SQL). Jika diminta membuat kode program atau tutorial, gunakan format blok kode (\`\`\`bahasa ... \`\`\`) dengan penjelasan ringkas yang mudah dipahami pemula.
-5. Bila relevan, sertakan saran tautan ke halaman internal website kami (gunakan format link HTML sederhana).`;
+5. Bila relevan, sertakan saran tautan ke halaman internal website kami (gunakan format link HTML sederhana).
+6. MATEMATIKA & PERHITUNGAN LOGIKA: Selalu hitung dan jawab operasi matematika (seperti 1 + 1, perkalian, pembagian, akar, dsb.) dengan hasil yang 100% presisi dan benar secara ilmiah (misalnya: 1 + 1 = 2). DILARANG KERAS mengaitkan operasi hitung angka dengan nomor urut absen siswa atau memberikan jawaban halusinasi seperti 13.
+7. PERTANYAAN UMUM / DILUAR KELAS: Jika pengguna menanyakan sains, matematika, logika, atau pengetahuan umum di luar data kelas X RPL 1, berikan jawaban edukatif, faktual, dan benar tanpa memaksakan data kelas.`;
     },
 
     async generateResponse(userPrompt, conversationHistory = []) {
@@ -1171,6 +1269,19 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
 
       // Record user turn in conversation history
       this.conversationHistory.push({ role: 'user', text: text });
+
+      // Cek apakah query adalah operasi matematika langsung
+      const directMath = trySolveMath(text);
+      if (directMath) {
+        this.conversationHistory.push({ role: 'model', text: directMath });
+        this.showTyping(true);
+        setTimeout(() => {
+          this.showTyping(false);
+          this.streamBotMessage(directMath);
+          ChatAudio.playBeep('receive');
+        }, 220);
+        return;
+      }
 
       // Show Typing Animation
       this.showTyping(true);
