@@ -167,13 +167,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  // ---- Lupa password (PRD Login FR-10) ----
+  // ---- Lupa password (Kebijakan Terpusat / Closed Registration) ----
   const forgotLink = document.getElementById("forgot-link");
   if (forgotLink) {
     forgotLink.addEventListener("click", (e) => {
       e.preventDefault();
       if (window.soundFX) window.soundFX.play("click");
-      showAlert("Alur reset password sedang dikembangkan. Hubungi administrator untuk bantuan.");
+      showAlert("Akun dikelola terpusat. Untuk mereset password, hubungi Ketua Kelas atau Wali Kelas X RPL 1.");
     });
   }
 

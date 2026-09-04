@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -45,18 +45,87 @@
         <div class="dash-heading-row">
           <div>
             <h1 class="dash-title">Pengaturan Aplikasi</h1>
-            <p class="auth-sub">Halaman memerlukan permission <code>settings.view</code>.</p>
+            <p class="auth-sub">Kelola konfigurasi sistem kelas dan integrasi kecerdasan buatan.</p>
+          </div>
+        </div>
+
+        <!-- Kartu Integrasi Google AI Studio (Gemini API) -->
+        <div class="glass-card dash-card" style="margin-bottom: 1.5rem; border-left: 3px solid var(--accent-cyan, #06b6d4);">
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:0.75rem; margin-bottom:1rem;">
+            <div>
+              <h3 class="dash-card-title" style="display:flex; align-items:center; gap:0.5rem; margin:0;">
+                <span>⚡</span> Integrasi Google AI Studio (Gemini API)
+              </h3>
+              <p class="auth-sub" style="margin-top:0.25rem;">
+                Kelola kredensial API Google AI Studio untuk Chatbot AI Kelas (CapriceBot). Pengaturan ini dilindungi dan hanya dapat diakses oleh Super Admin & Admin.
+              </p>
+            </div>
+            <div id="gemini-status-badge" style="font-size:0.8rem; font-weight:600; padding:0.35rem 0.85rem; border-radius:999px; display:inline-flex; align-items:center; gap:0.4rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1);">
+              Memeriksa status...
+            </div>
+          </div>
+
+          <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;">
+            <div>
+              <label for="admin-gemini-key" style="display:block; font-size:0.85rem; font-weight:600; color:#e2e8f0; margin-bottom:0.4rem;">
+                Google AI Studio API Key:
+              </label>
+              <div style="position:relative; display:flex; align-items:center;">
+                <input 
+                  type="password" 
+                  id="admin-gemini-key" 
+                  class="caprice-form-input" 
+                  placeholder="AIzaSy..." 
+                  style="width:100%; padding-right:2.8rem; font-family:monospace; font-size:0.88rem;"
+                  autocomplete="off"
+                />
+                <button type="button" id="btn-toggle-key-eye" style="position:absolute; right:10px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:1rem;" title="Lihat/Sembunyikan Key">
+                  👁️
+                </button>
+              </div>
+              <div style="display:flex; justify-content:space-between; flex-wrap:wrap; gap:0.5rem; margin-top:0.4rem; font-size:0.78rem; color:var(--text-muted);">
+                <span>🔒 API Key disimpan di penyimpanan internal dan disembunyikan sepenuhnya dari siswa/publik.</span>
+                <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;">
+                  Dapatkan API Key di Google AI Studio &rarr;
+                </a>
+              </div>
+            </div>
+
+            <div>
+              <label for="admin-gemini-model" style="display:block; font-size:0.85rem; font-weight:600; color:#e2e8f0; margin-bottom:0.4rem;">
+                Model Gemini AI:
+              </label>
+              <select id="admin-gemini-model" class="caprice-form-select" style="max-width:440px; font-size:0.88rem;">
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash (Sangat Cepat & Cerdas — Rekomendasi)</option>
+                <option value="gemini-2.0-flash">Gemini 2.0 Flash (Stabil)</option>
+                <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
+              </select>
+            </div>
+
+            <div id="admin-gemini-feedback" style="display:none; padding:0.65rem 1rem; border-radius:8px; font-size:0.82rem; line-height:1.45;"></div>
+
+            <div style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center; border-top:1px solid rgba(255,255,255,0.06); padding-top:0.85rem;">
+              <button type="button" class="btn btn-primary btn-sm" id="btn-admin-save-gemini">
+                💾 Simpan Pengaturan AI
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-admin-test-gemini">
+                🧪 Tes Koneksi API
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-admin-reset-gemini" style="color:#f43f5e; border-color:rgba(244,63,94,0.3); margin-left:auto;">
+                🔄 Reset ke Mode Lokal
+              </button>
+            </div>
           </div>
         </div>
 
         <div class="glass-card dash-card">
-          <h3 class="dash-card-title">Konfigurasi</h3>
+          <h3 class="dash-card-title">Konfigurasi Sistem</h3>
           <ul class="dash-activity-list">
             <li><span class="dash-activity-ok">⚙️</span> Dashboard default per role — terkunci untuk Admin</li>
             <li><span class="dash-activity-ok">🔐</span> Kebijakan sesi & timeout</li>
-            <li><span class="dash-activity-ok">🗂️</span> Scope data & organisasi</li>
+            <li><span class="dash-activity-ok">🗂️</span> Scope data & organisasi kelas X RPL 1</li>
           </ul>
-          <p class="auth-sub" style="margin-top:1rem;">⚠️ <code>settings.manage</code> hanya untuk Super Admin. Admin hanya dapat melihat konfigurasi terbatas.</p>
+          <p class="auth-sub" style="margin-top:1rem;">⚠️ Hak kelola penuh dimiliki oleh Super Admin (Wali Kelas) dan Admin (Ketua Kelas).</p>
         </div>
       </main>
     </div>
@@ -79,6 +148,160 @@
       const toggle = document.getElementById("dash-nav-toggle");
       const sidebar = document.getElementById("dash-sidebar");
       if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+
+      // --- Google AI Studio Settings Controller ---
+      const STORAGE_KEY_API = "caprice_gemini_api_key";
+      const STORAGE_KEY_MODEL = "caprice_gemini_model";
+      const DEFAULT_MODEL = "gemini-2.5-flash";
+
+      const keyInput = document.getElementById("admin-gemini-key");
+      const modelSelect = document.getElementById("admin-gemini-model");
+      const eyeBtn = document.getElementById("btn-toggle-key-eye");
+      const saveBtn = document.getElementById("btn-admin-save-gemini");
+      const testBtn = document.getElementById("btn-admin-test-gemini");
+      const resetBtn = document.getElementById("btn-admin-reset-gemini");
+      const statusBadge = document.getElementById("gemini-status-badge");
+      const feedback = document.getElementById("admin-gemini-feedback");
+
+      function getSavedKey() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY_API);
+          if (stored && stored.trim()) return stored.trim();
+        } catch (e) {}
+        if (window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.apiKey) {
+          return window.CAPRICE_CONFIG.DEFAULT_CHATBOT_CONFIG.apiKey;
+        }
+        return "";
+      }
+
+      function getSavedModel() {
+        try {
+          const stored = localStorage.getItem(STORAGE_KEY_MODEL);
+          if (stored && stored.trim()) return stored.trim();
+        } catch (e) {}
+        return window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.defaultModel || DEFAULT_MODEL;
+      }
+
+      function updateUI() {
+        const key = getSavedKey();
+        const model = getSavedModel();
+        keyInput.value = key;
+        modelSelect.value = model;
+
+        if (key) {
+          statusBadge.innerHTML = `<span style="color:#10b981;">●</span> Aktif: ${model.replace('gemini-', 'Gemini ')}`;
+          statusBadge.style.color = "#34d399";
+          statusBadge.style.borderColor = "rgba(52, 211, 153, 0.3)";
+          statusBadge.style.background = "rgba(16, 185, 129, 0.1)";
+        } else {
+          statusBadge.innerHTML = `<span style="color:#f59e0b;">●</span> Mode Pengetahuan Lokal (Offline)`;
+          statusBadge.style.color = "#fbbf24";
+          statusBadge.style.borderColor = "rgba(245, 158, 11, 0.3)";
+          statusBadge.style.background = "rgba(245, 158, 11, 0.1)";
+        }
+      }
+
+      function showFeedback(text, type = "info") {
+        feedback.style.display = "block";
+        if (type === "success") {
+          feedback.style.background = "rgba(16, 185, 129, 0.15)";
+          feedback.style.border = "1px solid rgba(16, 185, 129, 0.4)";
+          feedback.style.color = "#34d399";
+          feedback.innerHTML = `✅ ${text}`;
+        } else if (type === "error") {
+          feedback.style.background = "rgba(244, 63, 94, 0.15)";
+          feedback.style.border = "1px solid rgba(244, 63, 94, 0.4)";
+          feedback.style.color = "#fb7185";
+          feedback.innerHTML = `❌ ${text}`;
+        } else {
+          feedback.style.background = "rgba(255, 255, 255, 0.06)";
+          feedback.style.border = "1px solid rgba(255, 255, 255, 0.12)";
+          feedback.style.color = "#e2e8f0";
+          feedback.innerHTML = `ℹ️ ${text}`;
+        }
+      }
+
+      // Password toggle
+      if (eyeBtn) {
+        eyeBtn.addEventListener("click", () => {
+          const isPass = keyInput.type === "password";
+          keyInput.type = isPass ? "text" : "password";
+          eyeBtn.textContent = isPass ? "🔒" : "👁️";
+        });
+      }
+
+      // Simpan
+      if (saveBtn) {
+        saveBtn.addEventListener("click", () => {
+          const key = keyInput.value.trim();
+          const model = modelSelect.value;
+          if (key) {
+            localStorage.setItem(STORAGE_KEY_API, key);
+          } else {
+            localStorage.removeItem(STORAGE_KEY_API);
+          }
+          localStorage.setItem(STORAGE_KEY_MODEL, model);
+          updateUI();
+          document.dispatchEvent(new CustomEvent("caprice:auth", { detail: { user } }));
+          showFeedback("Konfigurasi Google AI Studio berhasil disimpan dan langsung diterapkan ke seluruh bot kelas!", "success");
+        });
+      }
+
+      // Reset
+      if (resetBtn) {
+        resetBtn.addEventListener("click", () => {
+          if (!confirm("Apakah Anda yakin ingin menghapus API Key dan kembali ke Mode Pengetahuan Lokal?")) return;
+          localStorage.removeItem(STORAGE_KEY_API);
+          localStorage.removeItem(STORAGE_KEY_MODEL);
+          updateUI();
+          document.dispatchEvent(new CustomEvent("caprice:auth", { detail: { user } }));
+          showFeedback("Kredensial API telah dihapus. CapriceBot kini berjalan dalam Mode Lokal.", "info");
+        });
+      }
+
+      // Test Connection
+      if (testBtn) {
+        testBtn.addEventListener("click", async () => {
+          const key = keyInput.value.trim();
+          const model = modelSelect.value;
+          if (!key) {
+            showFeedback("Harap isi API Key terlebih dahulu sebelum menguji koneksi.", "error");
+            return;
+          }
+
+          testBtn.disabled = true;
+          testBtn.textContent = "Menguji...";
+          showFeedback("Menghubungi endpoint Google AI Studio API...", "info");
+
+          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+          try {
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: "Tes koneksi. Jawab singkat: OK" }] }],
+                generationConfig: { maxOutputTokens: 10 }
+              })
+            });
+
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              const msg = errData.error?.message || `Status HTTP ${response.status}`;
+              showFeedback(`Gagal terhubung: ${msg}`, "error");
+            } else {
+              showFeedback(`Berhasil terhubung ke Google AI Studio! Model <strong>${model}</strong> siap digunakan.`, "success");
+            }
+          } catch (err) {
+            showFeedback(`Koneksi gagal atau offline: ${err.message}`, "error");
+          } finally {
+            testBtn.disabled = false;
+            testBtn.textContent = "🧪 Tes Koneksi API";
+          }
+        });
+      }
+
+      // Inisialisasi awal
+      updateUI();
     })();
   </script>
   <script src="../main.js"></script>

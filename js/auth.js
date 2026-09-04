@@ -145,8 +145,18 @@ window.CapriceAuth = (function () {
           if (list[idx].role === "super-admin") {
             throw new Error("Ketua Kelas tidak diizinkan mengubah akun Wali Kelas (Super Admin)!");
           }
+          if (userData.role === "super-admin") {
+            throw new Error("Ketua Kelas tidak dapat mengangkat akun menjadi Super Admin!");
+          }
         }
-        list[idx] = Object.assign({}, list[idx], userData);
+        // Validasi keunikan NISN jika diubah
+        if (userData.nisn && userData.nisn !== "-" && userData.nisn.trim()) {
+          const nisnExist = list.some((u) => u.id !== userData.id && u.nisn && u.nisn.trim() === userData.nisn.trim());
+          if (nisnExist) {
+            throw new Error(`NISN ${userData.nisn} sudah digunakan oleh siswa lain!`);
+          }
+        }
+        list[idx] = Object.assign({}, list[idx], userData, { updatedAt: new Date().toISOString() });
         updatedUser = list[idx];
         logAuditEvent("USER_UPDATE", `Mengubah profil ${updatedUser.displayName} (${updatedUser.identifier})`, actorUser, "Sukses");
       } else {
@@ -154,19 +164,34 @@ window.CapriceAuth = (function () {
       }
     } else {
       // Create new user
-      const exists = list.some((u) => u.identifier.toLowerCase() === userData.identifier.trim().toLowerCase());
+      if (actorUser && actorUser.role === "ketua-kelas" && userData.role === "super-admin") {
+        throw new Error("Ketua Kelas tidak diizinkan membuat akun dengan peran Super Admin!");
+      }
+
+      const emailLookup = userData.identifier.trim().toLowerCase();
+      const exists = list.some((u) => u.identifier.toLowerCase() === emailLookup);
       if (exists) {
         throw new Error("Email / Username sudah terdaftar!");
       }
+
+      if (userData.nisn && userData.nisn !== "-" && userData.nisn.trim()) {
+        const nisnExist = list.some((u) => u.nisn && u.nisn.trim() === userData.nisn.trim());
+        if (nisnExist) {
+          throw new Error(`NISN ${userData.nisn} sudah terdaftar pada akun lain!`);
+        }
+      }
+
       updatedUser = {
         id: "u-" + Date.now().toString(36),
-        identifier: userData.identifier.trim().toLowerCase(),
+        identifier: emailLookup,
         password: userData.password || "pass123",
         displayName: userData.displayName.trim(),
         role: userData.role || "anggota",
         status: userData.status || "active",
-        nisn: userData.nisn || "-",
+        nisn: userData.nisn ? userData.nisn.trim() : "-",
+        mustChangePassword: userData.mustChangePassword !== false,
         joinedAt: new Date().toISOString().split("T")[0],
+        createdBy: actorUser ? actorUser.identifier : "system",
       };
       list.push(updatedUser);
       logAuditEvent("USER_CREATE", `Menambah anggota baru ${updatedUser.displayName} [Role: ${updatedUser.role}]`, actorUser, "Sukses");
@@ -174,6 +199,148 @@ window.CapriceAuth = (function () {
 
     saveUsersToStorage(list);
     return updatedUser;
+  }
+
+  function resetUserPassword(userId, newPassword, actorUser) {
+    const list = getUsers();
+    const target = list.find((u) => u.id === userId);
+    if (!target) throw new Error("Pengguna tidak ditemukan");
+
+    if (actorUser && actorUser.role === "ketua-kelas" && target.role === "super-admin") {
+      throw new Error("Ketua Kelas tidak berwenang mereset password Wali Kelas (Super Admin)!");
+    }
+
+    if (!newPassword || newPassword.trim().length < 4) {
+      throw new Error("Password baru minimal 4 karakter!");
+    }
+
+    target.password = newPassword.trim();
+    target.mustChangePassword = true;
+    target.updatedAt = new Date().toISOString();
+    saveUsersToStorage(list);
+
+    logAuditEvent(
+      "USER_PASSWORD_RESET",
+      `Mereset password untuk akun: ${target.displayName} (${target.identifier})`,
+      actorUser,
+      "Sukses"
+    );
+
+    return target;
+  }
+
+  function toggleUserStatus(userId, newStatus, actorUser) {
+    const validStatuses = ["active", "inactive", "locked"];
+    if (!validStatuses.includes(newStatus)) {
+      throw new Error("Status tidak valid. Harus active, inactive, atau locked.");
+    }
+
+    const list = getUsers();
+    const target = list.find((u) => u.id === userId);
+    if (!target) throw new Error("Pengguna tidak ditemukan");
+
+    if (actorUser && actorUser.id === userId && newStatus !== "active") {
+      throw new Error("Anda tidak dapat menonaktifkan atau mengunci akun Anda sendiri!");
+    }
+
+    if (actorUser && actorUser.role === "ketua-kelas" && target.role === "super-admin") {
+      throw new Error("Ketua Kelas tidak berwenang mengubah status akun Wali Kelas!");
+    }
+
+    const oldStatus = target.status;
+    target.status = newStatus;
+    target.updatedAt = new Date().toISOString();
+    saveUsersToStorage(list);
+
+    logAuditEvent(
+      "USER_STATUS_CHANGE",
+      `Mengubah status akun ${target.displayName} dari [${oldStatus}] menjadi [${newStatus}]`,
+      actorUser,
+      "Sukses"
+    );
+
+    return target;
+  }
+
+  function importUsersBatch(usersData, actorUser) {
+    if (!Array.isArray(usersData) || usersData.length === 0) {
+      throw new Error("Data impor harus berupa array pengguna yang tidak kosong.");
+    }
+
+    const list = getUsers();
+    let imported = 0;
+    const errors = [];
+
+    usersData.forEach((item, index) => {
+      try {
+        if (!item.displayName || !item.displayName.trim()) {
+          throw new Error(`Baris ${index + 1}: Nama lengkap wajib diisi.`);
+        }
+        const identifier = (item.identifier || (item.nisn ? item.nisn + "@caprice26.id" : "")).trim().toLowerCase();
+        if (!identifier) {
+          throw new Error(`Baris ${index + 1}: Identifier / Email / NISN wajib diisi.`);
+        }
+
+        const existingIdx = list.findIndex((u) => u.identifier.toLowerCase() === identifier);
+        if (existingIdx !== -1) {
+          // Update existing
+          if (list[existingIdx].role === "super-admin" && actorUser && actorUser.role !== "super-admin") {
+            throw new Error(`Baris ${index + 1}: Tidak dapat menimpa akun Super Admin.`);
+          }
+          list[existingIdx].displayName = item.displayName.trim();
+          if (item.nisn) list[existingIdx].nisn = item.nisn.trim();
+          if (item.role && (actorUser.role === "super-admin" || item.role !== "super-admin")) {
+            list[existingIdx].role = item.role;
+          }
+          if (item.status) list[existingIdx].status = item.status;
+          list[existingIdx].updatedAt = new Date().toISOString();
+        } else {
+          // Create new
+          const targetRole = item.role || "anggota";
+          if (targetRole === "super-admin" && actorUser && actorUser.role !== "super-admin") {
+            throw new Error(`Baris ${index + 1}: Izin ditolak untuk membuat Super Admin.`);
+          }
+          list.push({
+            id: "u-" + Date.now().toString(36) + Math.random().toString(36).substring(2, 5),
+            identifier: identifier,
+            password: item.password || "pass123",
+            displayName: item.displayName.trim(),
+            role: targetRole,
+            status: item.status || "active",
+            nisn: item.nisn ? item.nisn.trim() : "-",
+            mustChangePassword: true,
+            joinedAt: new Date().toISOString().split("T")[0],
+            createdBy: actorUser ? actorUser.identifier : "batch-import",
+          });
+        }
+        imported++;
+      } catch (err) {
+        errors.push(err.message);
+      }
+    });
+
+    saveUsersToStorage(list);
+    logAuditEvent(
+      "USER_BULK_IMPORT",
+      `Impor data siswa: berhasil memproses ${imported} akun (${errors.length} gagal)`,
+      actorUser,
+      errors.length === 0 ? "Sukses" : "Peringatan"
+    );
+
+    return { imported, errors, total: usersData.length };
+  }
+
+  function exportUsersData() {
+    const list = getUsers();
+    return list.map((u) => ({
+      id: u.id,
+      nisn: u.nisn || "-",
+      displayName: u.displayName,
+      identifier: u.identifier,
+      role: u.role,
+      status: u.status,
+      joinedAt: u.joinedAt || "-",
+    }));
   }
 
   function updateUserRole(userId, newRole, actorUser) {
@@ -423,6 +590,10 @@ window.CapriceAuth = (function () {
     getUsers,
     saveUser,
     updateUserRole,
+    resetUserPassword,
+    toggleUserStatus,
+    importUsersBatch,
+    exportUsersData,
     deleteUser,
     resetUsersToDefault,
     logAuditEvent,

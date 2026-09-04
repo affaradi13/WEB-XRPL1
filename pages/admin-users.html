@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -51,8 +51,14 @@
             <p class="auth-sub">Kelola data siswa dan tetapkan peran (Ketua Kelas, Bendahara, Sekretaris, Anggota).</p>
           </div>
           <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+            <button class="btn btn-outline btn-sm" id="btn-export-users" data-permission="user.export" title="Unduh rekap akun format CSV">
+              📤 Ekspor CSV
+            </button>
+            <button class="btn btn-outline btn-sm" id="btn-import-users" data-permission="user.bulk_import" title="Impor data siswa sekaligus">
+              📥 Impor Siswa
+            </button>
             <button class="btn btn-outline btn-sm" id="btn-reset-users" data-permission="user.create">
-              🔄 Reset Data Anggota
+              🔄 Reset Data Default
             </button>
             <button class="btn btn-primary btn-sm" id="btn-add-user" data-permission="user.create">
               ➕ Tambah Anggota Baru
@@ -112,7 +118,7 @@
             </table>
           </div>
           <p class="auth-sub" style="margin-top:1rem;">
-            🛡️ <strong>Wewenang:</strong> Super Admin (Wali Kelas) dapat mengelola semua akun. Ketua Kelas dapat menetapkan role anggota menjadi Bendahara, Sekretaris, atau Anggota.
+            🛡️ <strong>Kebijakan Terpusat:</strong> Akun anggota dibuat dan dikelola oleh Ketua Kelas & Wali Kelas. Siswa masuk dengan NISN/Email dan password sementara.
           </p>
         </div>
       </main>
@@ -141,8 +147,13 @@
             <input type="text" class="caprice-form-input" id="add-user-nisn" placeholder="contoh: 0089123456" />
           </div>
           <div class="caprice-form-group">
-            <label class="caprice-form-label" for="add-user-password">Password Awal</label>
-            <input type="password" class="caprice-form-input" id="add-user-password" value="pass123" required />
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label class="caprice-form-label" for="add-user-password" style="margin-bottom:0;">Password Awal</label>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-gen-pass-add" style="padding:2px 8px; font-size:0.75rem;">
+                🎲 Acak Password
+              </button>
+            </div>
+            <input type="text" class="caprice-form-input" id="add-user-password" value="pass123" required />
           </div>
           <div class="caprice-form-group">
             <label class="caprice-form-label" for="add-user-role">Role Awal</label>
@@ -158,10 +169,16 @@
               <option value="locked">Terkunci</option>
             </select>
           </div>
+          <div class="caprice-form-group">
+            <label style="display:flex; align-items:center; gap:0.5rem; font-size:0.85rem; color:var(--text-dim); cursor:pointer;">
+              <input type="checkbox" id="add-user-must-change" checked />
+              <span>Wajibkan ganti password saat siswa pertama kali login</span>
+            </label>
+          </div>
         </div>
         <div class="caprice-modal-footer">
           <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-user">Batal</button>
-          <button type="submit" class="btn btn-primary btn-sm">Simpan Anggota</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan & Terbitkan Kredensial</button>
         </div>
       </form>
     </div>
@@ -182,7 +199,7 @@
             <p style="margin:0.2rem 0 0; font-size:0.85rem; color:var(--text-dim);" id="assign-user-email-display"></p>
           </div>
 
-          <div class="caprice-form-group">
+          <div class="caprice-form-group" style="margin-top:1rem;">
             <label class="caprice-form-label" for="assign-role-select">Pilih Role Baru</label>
             <select class="caprice-form-select" id="assign-role-select" required>
               <!-- Populated dynamically -->
@@ -194,7 +211,7 @@
             <label class="caprice-form-label" for="assign-status-select">Status Akun</label>
             <select class="caprice-form-select" id="assign-status-select">
               <option value="active">Aktif (Dapat Login & Akses Fitur)</option>
-              <option value="inactive">Nonaktif (Belum Diaktivasi)</option>
+              <option value="inactive">Nonaktif (Belum Diaktivasi / Lulus)</option>
               <option value="locked">Terkunci (Sanksi / Diblokir)</option>
             </select>
           </div>
@@ -206,6 +223,107 @@
       </form>
     </div>
   </div>
+
+  <!-- Modal Reset Password Siswa -->
+  <div class="caprice-modal-overlay" id="modal-reset-pwd">
+    <div class="caprice-modal">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">🔑 Reset Password Siswa</h3>
+        <button class="caprice-modal-close" id="close-modal-reset-pwd">&times;</button>
+      </div>
+      <form id="form-reset-pwd">
+        <input type="hidden" id="reset-pwd-user-id" />
+        <div class="caprice-modal-body">
+          <div style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:0.9rem; border-radius:8px;">
+            <p style="margin:0; font-weight:700; color:#fff;" id="reset-pwd-name-display"></p>
+            <p style="margin:0.2rem 0 0; font-size:0.85rem; color:var(--text-dim);" id="reset-pwd-email-display"></p>
+          </div>
+
+          <div class="caprice-form-group" style="margin-top:1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.25rem;">
+              <label class="caprice-form-label" for="reset-pwd-new-pass" style="margin-bottom:0;">Password Baru</label>
+              <button type="button" class="btn btn-outline btn-sm" id="btn-gen-pass-reset" style="padding:2px 8px; font-size:0.75rem;">
+                🎲 Acak Password
+              </button>
+            </div>
+            <input type="text" class="caprice-form-input" id="reset-pwd-new-pass" placeholder="Ketik password baru atau klik Acak" required />
+            <p style="font-size:0.75rem; color:var(--text-muted); margin-top:0.3rem;">
+              Siswa akan diarahkan untuk memperbarui password setelah berhasil login.
+            </p>
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-reset-pwd">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Simpan Password Baru</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Kartu Kredensial Siswa (Bagikan Akun) -->
+  <div class="caprice-modal-overlay" id="modal-credential-card">
+    <div class="caprice-modal" style="max-width:520px;">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">🎓 Kredensial Siswa Diterbitkan</h3>
+        <button class="caprice-modal-close" id="close-modal-cred">&times;</button>
+      </div>
+      <div class="caprice-modal-body">
+        <p style="font-size:0.85rem; color:var(--text-dim); margin-top:0;">
+          Salin dan kirimkan informasi kredensial berikut kepada siswa bersangkutan:
+        </p>
+        <div style="background:rgba(0,240,255,0.05); border:1px solid rgba(0,240,255,0.25); border-radius:10px; padding:1.1rem; font-family:monospace; font-size:0.88rem; line-height:1.6; color:#e0f2fe;" id="cred-card-text">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="caprice-modal-footer" style="flex-wrap:wrap;">
+        <button type="button" class="btn btn-outline btn-sm" id="btn-copy-cred">📋 Salin ke Clipboard</button>
+        <button type="button" class="btn btn-primary btn-sm" id="btn-wa-cred" style="background:#22c55e; border-color:#22c55e; color:#fff;">
+          💬 Bagikan via WhatsApp
+        </button>
+        <button type="button" class="btn btn-outline btn-sm" id="close-cred-btn">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Impor Data Siswa Massal -->
+  <div class="caprice-modal-overlay" id="modal-import-users">
+    <div class="caprice-modal" style="max-width:600px;">
+      <div class="caprice-modal-header">
+        <h3 class="caprice-modal-title">📥 Impor Data Siswa Sekaligus</h3>
+        <button class="caprice-modal-close" id="close-modal-import">&times;</button>
+      </div>
+      <form id="form-import-users">
+        <div class="caprice-modal-body">
+          <p style="font-size:0.85rem; color:var(--text-dim); margin-top:0;">
+            Masukkan daftar siswa dalam format <strong>JSON</strong> atau <strong>CSV</strong> (Nama, NISN, Email/Identifier, Role, Password).
+          </p>
+          <div style="margin-bottom:0.75rem; display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn-outline btn-sm" id="btn-template-json" style="font-size:0.75rem; padding:3px 8px;">
+              Contoh Format JSON
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" id="btn-template-csv" style="font-size:0.75rem; padding:3px 8px;">
+              Contoh Format CSV
+            </button>
+          </div>
+          <div class="caprice-form-group">
+            <textarea
+              class="caprice-form-input"
+              id="import-data-text"
+              rows="8"
+              placeholder="Tempel data JSON atau CSV di sini..."
+              style="font-family:monospace; font-size:0.82rem;"
+              required
+            ></textarea>
+          </div>
+        </div>
+        <div class="caprice-modal-footer">
+          <button type="button" class="btn btn-outline btn-sm" id="cancel-modal-import">Batal</button>
+          <button type="submit" class="btn btn-primary btn-sm">Mulai Impor Akun</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
 
   <script src="../js/config.js"></script>
   <script src="../js/auth.js"></script>
@@ -228,14 +346,39 @@
 
       const isSuperAdmin = currentUser && currentUser.role === "super-admin";
       const isKetuaKelas = currentUser && (currentUser.role === "ketua-kelas" || currentUser.role === "admin");
-      const canChangeRole = middleware.userHasPermission(currentUser, "user.change_role");
-      const canDeleteUser = middleware.userHasPermission(currentUser, "user.delete");
-      const canCreateUser = middleware.userHasPermission(currentUser, "user.create");
+      const canChangeRole = middleware.userHasPermission(currentUser, "user.change_role") || isSuperAdmin || isKetuaKelas;
+      const canDeleteUser = middleware.userHasPermission(currentUser, "user.delete") || isSuperAdmin;
+      const canCreateUser = middleware.userHasPermission(currentUser, "user.create") || isSuperAdmin || isKetuaKelas;
+      const canResetPassword = middleware.userHasPermission(currentUser, "user.reset_password") || isSuperAdmin || isKetuaKelas;
+      const canToggleStatus = middleware.userHasPermission(currentUser, "user.status_toggle") || isSuperAdmin || isKetuaKelas;
+      const canBulkImport = middleware.userHasPermission(currentUser, "user.bulk_import") || isSuperAdmin || isKetuaKelas;
+      const canExport = middleware.userHasPermission(currentUser, "user.export") || isSuperAdmin || isKetuaKelas;
 
       // Sidebar mobile toggle
       const toggle = document.getElementById("dash-nav-toggle");
       const sidebar = document.getElementById("dash-sidebar");
       if (toggle) toggle.addEventListener("click", () => sidebar.classList.toggle("open"));
+
+      // Helper Generate Safe Random Password
+      function generateRandomPassword() {
+        const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+        let rand = "";
+        for (let i = 0; i < 6; i++) {
+          rand += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return `Caprice-${rand}`;
+      }
+
+      // Helper Download CSV
+      function downloadCsv(filename, text) {
+        const element = document.createElement("a");
+        element.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURIComponent(text));
+        element.setAttribute("download", filename);
+        element.style.display = "none";
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+      }
 
       // Toast notification helper
       function showToast(message, type = "success") {
@@ -283,6 +426,69 @@
         }
       }
 
+      // Credential Card Modal Handler
+      const modalCred = document.getElementById("modal-credential-card");
+      const credCardText = document.getElementById("cred-card-text");
+      let currentCredCopyPayload = "";
+
+      function openCredentialCard(name, identifier, nisn, password, roleLabel) {
+        if (!modalCred || !credCardText) return;
+
+        const loginUrl = window.location.origin + window.location.pathname.replace("admin-users.html", "login.html");
+        currentCredCopyPayload = 
+`🎓 *KREDENSIAL PORTAL RESMI KELAS X RPL 1*
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+👤 Nama Siswa  : ${name}
+🆔 NISN        : ${nisn || "-"}
+✉️ Login/Email : ${identifier}
+🔑 Password    : ${password}
+🛡️ Role        : ${roleLabel || "Anggota"}
+🌐 Link Masuk  : ${loginUrl}
+━━━━━━━━━━━━━━━━━━━━━━━━━━
+⚠️ *Penting:* Harap segera login dan ubah password Anda demi keamanan akun.`;
+
+        credCardText.innerHTML = `
+          <div style="font-weight:700; color:var(--primary); margin-bottom:0.5rem;">🎓 KREDENSIAL ANGGOTA KELAS X RPL 1</div>
+          <div>👤 <strong>Nama Siswa:</strong> ${middleware.escapeHtml(name)}</div>
+          <div>🆔 <strong>NISN:</strong> ${middleware.escapeHtml(nisn || "-")}</div>
+          <div>✉️ <strong>Login/Email:</strong> <code>${middleware.escapeHtml(identifier)}</code></div>
+          <div style="margin-top:0.3rem;">🔑 <strong>Password Sementara:</strong> <span style="background:rgba(0,240,255,0.15); color:#fff; padding:2px 6px; border-radius:4px; font-weight:700;">${middleware.escapeHtml(password)}</span></div>
+          <div style="margin-top:0.3rem; font-size:0.8rem; color:var(--text-dim);">🌐 <strong>Tautan Login:</strong> ${loginUrl}</div>
+        `;
+
+        modalCred.classList.add("active");
+      }
+
+      const hideCredModal = () => modalCred && modalCred.classList.remove("active");
+      const closeCredX = document.getElementById("close-modal-cred");
+      const closeCredBtn = document.getElementById("close-cred-btn");
+      if (closeCredX) closeCredX.addEventListener("click", hideCredModal);
+      if (closeCredBtn) closeCredBtn.addEventListener("click", hideCredModal);
+      if (modalCred) {
+        modalCred.addEventListener("click", (e) => {
+          if (e.target === modalCred) hideCredModal();
+        });
+      }
+
+      const btnCopyCred = document.getElementById("btn-copy-cred");
+      if (btnCopyCred) {
+        btnCopyCred.addEventListener("click", () => {
+          navigator.clipboard.writeText(currentCredCopyPayload).then(() => {
+            showToast("Kredensial berhasil disalin ke clipboard!");
+          }).catch(() => {
+            showToast("Gagal menyalin, periksa izin peramban Anda.", "error");
+          });
+        });
+      }
+
+      const btnWaCred = document.getElementById("btn-wa-cred");
+      if (btnWaCred) {
+        btnWaCred.addEventListener("click", () => {
+          const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(currentCredCopyPayload)}`;
+          window.open(waUrl, "_blank");
+        });
+      }
+
       // Render Users Table
       function renderUsersTable() {
         const tbody = document.getElementById("users-tbody");
@@ -328,26 +534,40 @@
 
           const canManageThisUser = isSuperAdmin || (isKetuaKelas && u.role !== "super-admin");
           const canDeleteThisUser = canDeleteUser && u.role !== "super-admin" && u.id !== currentUser.id;
+          const isSelf = u.id === currentUser.id;
 
           return `
             <tr>
               <td>
                 <div style="font-weight:600; color:#fff;">${middleware.escapeHtml(u.displayName)}</div>
-                ${u.id === currentUser.id ? '<span style="font-size:0.72rem; color:var(--primary); font-weight:700;">(Akun Anda)</span>' : ''}
+                ${isSelf ? '<span style="font-size:0.72rem; color:var(--primary); font-weight:700;">(Akun Anda)</span>' : ''}
               </td>
               <td><code>${middleware.escapeHtml(u.identifier)}</code></td>
               <td><span style="font-size:0.85rem; color:var(--text-dim); font-family:monospace;">${u.nisn || "-"}</span></td>
               <td><span class="tech-badge ${badgeClass}">${middleware.escapeHtml(roleObj.label)}</span></td>
-              <td><span class="tech-badge ${statusClass}">${statusLabel}</span></td>
+              <td>
+                ${canToggleStatus && canManageThisUser && !isSelf ? `
+                  <button class="tech-badge ${statusClass} btn-toggle-status" data-id="${u.id}" data-status="${u.status}" style="cursor:pointer; border:none;" title="Klik untuk ubah status akun">
+                    ${statusLabel} 🔄
+                  </button>
+                ` : `
+                  <span class="tech-badge ${statusClass}">${statusLabel}</span>
+                `}
+              </td>
               <td style="text-align:right;">
-                <div style="display:flex; gap:0.5rem; justify-content:flex-end;">
+                <div style="display:flex; gap:0.4rem; justify-content:flex-end; flex-wrap:wrap;">
                   ${canChangeRole && canManageThisUser ? `
-                    <button class="btn btn-outline btn-sm btn-assign-role" data-id="${u.id}" style="padding:4px 8px; font-size:0.8rem;">
-                      🛡️ Atur Role
+                    <button class="btn btn-outline btn-sm btn-assign-role" data-id="${u.id}" style="padding:4px 8px; font-size:0.78rem;" title="Atur Role & Status">
+                      🛡️ Role
+                    </button>
+                  ` : ''}
+                  ${canResetPassword && canManageThisUser ? `
+                    <button class="btn btn-outline btn-sm btn-reset-pwd" data-id="${u.id}" style="padding:4px 8px; font-size:0.78rem;" title="Reset Password Siswa">
+                      🔑 Reset
                     </button>
                   ` : ''}
                   ${canDeleteThisUser ? `
-                    <button class="btn btn-outline btn-sm btn-delete-user" data-id="${u.id}" style="padding:4px 8px; font-size:0.8rem; color:#f43f5e;" title="Hapus Akun">
+                    <button class="btn btn-outline btn-sm btn-delete-user" data-id="${u.id}" style="padding:4px 8px; font-size:0.78rem; color:#f43f5e;" title="Hapus Akun">
                       🗑️
                     </button>
                   ` : ''}
@@ -357,11 +577,35 @@
           `;
         }).join("");
 
-        // Attach assign listeners
+        // Attach assign role listeners
         tbody.querySelectorAll(".btn-assign-role").forEach((btn) => {
           btn.addEventListener("click", () => {
             const userId = btn.getAttribute("data-id");
             openAssignModal(userId);
+          });
+        });
+
+        // Attach reset password listeners
+        tbody.querySelectorAll(".btn-reset-pwd").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const userId = btn.getAttribute("data-id");
+            openResetPasswordModal(userId);
+          });
+        });
+
+        // Attach quick status toggle listeners
+        tbody.querySelectorAll(".btn-toggle-status").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const userId = btn.getAttribute("data-id");
+            const currentStatus = btn.getAttribute("data-status");
+            const nextStatus = currentStatus === "active" ? "inactive" : (currentStatus === "inactive" ? "locked" : "active");
+            try {
+              const updated = auth.toggleUserStatus(userId, nextStatus, currentUser);
+              showToast(`Status akun ${updated.displayName} diubah menjadi [${nextStatus}].`);
+              renderUsersTable();
+            } catch (err) {
+              showToast(err.message, "error");
+            }
           });
         });
 
@@ -371,10 +615,10 @@
             const userId = btn.getAttribute("data-id");
             const target = auth.getUserById(userId);
             if (!target) return;
-            if (confirm(`Yakin ingin menghapus anggota "${target.displayName}"? Tindakan ini tidak dapat dibatalkan.`)) {
+            if (confirm(`Yakin ingin menghapus akun siswa "${target.displayName}"? Tindakan ini tidak dapat dibatalkan.`)) {
               try {
                 auth.deleteUser(userId, currentUser);
-                showToast(`Anggota "${target.displayName}" berhasil dihapus.`);
+                showToast(`Akun "${target.displayName}" berhasil dihapus.`);
                 renderUsersTable();
               } catch (err) {
                 showToast(err.message, "error");
@@ -396,7 +640,7 @@
 
         document.getElementById("assign-user-id").value = user.id;
         document.getElementById("assign-user-name-display").textContent = user.displayName;
-        document.getElementById("assign-user-email-display").textContent = `${user.identifier} — (Role saat ini: ${user.role})`;
+        document.getElementById("assign-user-email-display").textContent = `${user.identifier} — (Role: ${user.role})`;
         document.getElementById("assign-role-select").value = user.role;
         document.getElementById("assign-status-select").value = user.status;
 
@@ -423,17 +667,74 @@
             const user = auth.getUserById(userId);
             if (!user) throw new Error("Pengguna tidak ditemukan");
 
-            // Update status if changed
             if (user.status !== newStatus) {
-              auth.saveUser({ id: userId, status: newStatus }, currentUser);
+              auth.toggleUserStatus(userId, newStatus, currentUser);
             }
 
-            // Update role
             auth.updateUserRole(userId, newRole, currentUser);
 
-            showToast(`Role ${user.displayName} berhasil diperbarui menjadi [${newRole}]!`);
+            showToast(`Role dan status ${user.displayName} berhasil diperbarui!`);
             hideAssignModal();
             renderUsersTable();
+          } catch (err) {
+            showToast(err.message, "error");
+          }
+        });
+      }
+
+      // Reset Password Modal
+      const modalResetPwd = document.getElementById("modal-reset-pwd");
+      const closeResetPwd = document.getElementById("close-modal-reset-pwd");
+      const cancelResetPwd = document.getElementById("cancel-modal-reset-pwd");
+      const formResetPwd = document.getElementById("form-reset-pwd");
+      const btnGenPassReset = document.getElementById("btn-gen-pass-reset");
+
+      function openResetPasswordModal(userId) {
+        const user = auth.getUserById(userId);
+        if (!user || !modalResetPwd) return;
+
+        document.getElementById("reset-pwd-user-id").value = user.id;
+        document.getElementById("reset-pwd-name-display").textContent = user.displayName;
+        document.getElementById("reset-pwd-email-display").textContent = `${user.identifier} — NISN: ${user.nisn || "-"}`;
+        document.getElementById("reset-pwd-new-pass").value = generateRandomPassword();
+
+        modalResetPwd.classList.add("active");
+      }
+
+      const hideResetPwdModal = () => modalResetPwd && modalResetPwd.classList.remove("active");
+      if (closeResetPwd) closeResetPwd.addEventListener("click", hideResetPwdModal);
+      if (cancelResetPwd) cancelResetPwd.addEventListener("click", hideResetPwdModal);
+      if (modalResetPwd) {
+        modalResetPwd.addEventListener("click", (e) => {
+          if (e.target === modalResetPwd) hideResetPwdModal();
+        });
+      }
+
+      if (btnGenPassReset) {
+        btnGenPassReset.addEventListener("click", () => {
+          document.getElementById("reset-pwd-new-pass").value = generateRandomPassword();
+        });
+      }
+
+      if (formResetPwd) {
+        formResetPwd.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const userId = document.getElementById("reset-pwd-user-id").value;
+          const newPass = document.getElementById("reset-pwd-new-pass").value.trim();
+
+          try {
+            const user = auth.getUserById(userId);
+            if (!user) throw new Error("Pengguna tidak ditemukan");
+
+            auth.resetUserPassword(userId, newPass, currentUser);
+            showToast(`Password untuk ${user.displayName} berhasil direset!`);
+            hideResetPwdModal();
+            renderUsersTable();
+
+            // Buka dialog kredensial untuk membagikan ke siswa
+            const roles = cfg.getRoles();
+            const roleObj = roles[user.role] || { label: user.role };
+            openCredentialCard(user.displayName, user.identifier, user.nisn, newPass, roleObj.label);
           } catch (err) {
             showToast(err.message, "error");
           }
@@ -446,11 +747,19 @@
       const closeAdd = document.getElementById("close-modal-user");
       const cancelAdd = document.getElementById("cancel-modal-user");
       const formAdd = document.getElementById("form-add-user");
+      const btnGenPassAdd = document.getElementById("btn-gen-pass-add");
+
+      if (btnGenPassAdd) {
+        btnGenPassAdd.addEventListener("click", () => {
+          document.getElementById("add-user-password").value = generateRandomPassword();
+        });
+      }
 
       if (btnAddUser && modalAdd) {
         btnAddUser.addEventListener("click", () => {
           modalAdd.classList.add("active");
           formAdd.reset();
+          document.getElementById("add-user-password").value = generateRandomPassword();
         });
       }
 
@@ -472,23 +781,152 @@
           const pass = document.getElementById("add-user-password").value;
           const role = document.getElementById("add-user-role").value;
           const status = document.getElementById("add-user-status").value;
+          const mustChange = document.getElementById("add-user-must-change").checked;
 
           try {
-            auth.saveUser({
+            const newUser = auth.saveUser({
               displayName: name,
               identifier: email,
               nisn: nisn,
               password: pass,
               role: role,
               status: status,
+              mustChangePassword: mustChange,
             }, currentUser);
 
             showToast(`Anggota baru "${name}" berhasil didaftarkan!`);
             hideAddModal();
             renderUsersTable();
+
+            // Tampilkan kartu kredensial
+            const roles = cfg.getRoles();
+            const roleObj = roles[role] || { label: role };
+            openCredentialCard(name, email, nisn, pass, roleObj.label);
           } catch (err) {
             showToast(err.message, "error");
           }
+        });
+      }
+
+      // Batch Import Modal
+      const modalImport = document.getElementById("modal-import-users");
+      const btnImportUsers = document.getElementById("btn-import-users");
+      const closeImport = document.getElementById("close-modal-import");
+      const cancelImport = document.getElementById("cancel-modal-import");
+      const formImport = document.getElementById("form-import-users");
+      const btnTemplateJson = document.getElementById("btn-template-json");
+      const btnTemplateCsv = document.getElementById("btn-template-csv");
+      const importTextarea = document.getElementById("import-data-text");
+
+      if (btnImportUsers && modalImport) {
+        btnImportUsers.addEventListener("click", () => {
+          modalImport.classList.add("active");
+        });
+      }
+
+      const hideImportModal = () => modalImport && modalImport.classList.remove("active");
+      if (closeImport) closeImport.addEventListener("click", hideImportModal);
+      if (cancelImport) cancelImport.addEventListener("click", hideImportModal);
+      if (modalImport) {
+        modalImport.addEventListener("click", (e) => {
+          if (e.target === modalImport) hideImportModal();
+        });
+      }
+
+      if (btnTemplateJson) {
+        btnTemplateJson.addEventListener("click", () => {
+          importTextarea.value = JSON.stringify([
+            {
+              displayName: "Fajar Pratama",
+              identifier: "fajar@caprice26.id",
+              nisn: "0088112233",
+              role: "anggota",
+              password: "pass123",
+              status: "active"
+            },
+            {
+              displayName: "Dewi Lestari",
+              identifier: "dewi@caprice26.id",
+              nisn: "0088112244",
+              role: "anggota",
+              password: "pass123",
+              status: "active"
+            }
+          ], null, 2);
+        });
+      }
+
+      if (btnTemplateCsv) {
+        btnTemplateCsv.addEventListener("click", () => {
+          importTextarea.value = 
+`displayName,identifier,nisn,role,password,status
+Fajar Pratama,fajar@caprice26.id,0088112233,anggota,pass123,active
+Dewi Lestari,dewi@caprice26.id,0088112244,anggota,pass123,active`;
+        });
+      }
+
+      if (formImport) {
+        formImport.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const raw = importTextarea.value.trim();
+          if (!raw) return;
+
+          let parsedList = [];
+          try {
+            if (raw.startsWith("[") || raw.startsWith("{")) {
+              // JSON parse
+              parsedList = JSON.parse(raw);
+              if (!Array.isArray(parsedList)) parsedList = [parsedList];
+            } else {
+              // Simple CSV parse
+              const lines = raw.split("\n").map(l => l.trim()).filter(Boolean);
+              if (lines.length <= 1) throw new Error("CSV minimal memiliki 1 baris header dan 1 baris data.");
+              const headers = lines[0].split(",").map(h => h.trim());
+              for (let i = 1; i < lines.length; i++) {
+                const cols = lines[i].split(",").map(c => c.trim());
+                const item = {};
+                headers.forEach((h, idx) => {
+                  item[h] = cols[idx] || "";
+                });
+                parsedList.push(item);
+              }
+            }
+
+            const res = auth.importUsersBatch(parsedList, currentUser);
+            showToast(`Berhasil mengimpor ${res.imported} akun anggota!`);
+            if (res.errors.length > 0) {
+              alert(`Peringatan impor (${res.errors.length} catatan):\n` + res.errors.join("\n"));
+            }
+            hideImportModal();
+            renderUsersTable();
+          } catch (err) {
+            showToast("Format data impor tidak valid: " + err.message, "error");
+          }
+        });
+      }
+
+      // Export CSV Handler
+      const btnExportUsers = document.getElementById("btn-export-users");
+      if (btnExportUsers) {
+        btnExportUsers.addEventListener("click", () => {
+          const data = auth.exportUsersData();
+          if (!data || data.length === 0) {
+            showToast("Tidak ada data anggota untuk diekspor.", "error");
+            return;
+          }
+          const headers = ["ID", "NISN", "Nama Siswa", "Email / Identifier", "Role", "Status", "Tanggal Bergabung"];
+          const rows = data.map((u) => [
+            `"${u.id}"`,
+            `"${u.nisn}"`,
+            `"${u.displayName}"`,
+            `"${u.identifier}"`,
+            `"${u.role}"`,
+            `"${u.status}"`,
+            `"${u.joinedAt}"`
+          ].join(","));
+          const csvContent = headers.join(",") + "\n" + rows.join("\n");
+          downloadCsv("rekap-anggota-caprice26-x-rpl1.csv", csvContent);
+          showToast("Data anggota berhasil diekspor ke CSV.");
         });
       }
 

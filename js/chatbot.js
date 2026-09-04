@@ -395,13 +395,254 @@
     }[tag] || tag));
   }
 
+  // --- RICH MARKDOWN PARSER WITH CODE BLOCK & COPY SUPPORT ---
   function formatMessageText(text) {
-    // Basic Markdown parser for Bold and Line Breaks
-    let formatted = text
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/\n/g, '<br>');
+    if (!text) return '';
+
+    // 1. Extract and format multi-line code blocks: ```lang ... ```
+    const codeBlockRegex = /```([a-zA-Z0-9_-]*)\n([\s\S]*?)```/g;
+    let formatted = text.replace(codeBlockRegex, (match, lang, code) => {
+      const language = lang.trim() || 'code';
+      const cleanCode = escapeHTML(code.trim());
+      return `
+        <div class="chat-code-container">
+          <div class="chat-code-header">
+            <span>💻 ${language}</span>
+            <button type="button" class="chat-code-copy-btn" title="Salin Kode">
+              <span>📋</span> Salin
+            </button>
+          </div>
+          <pre class="chat-code-pre"><code>${cleanCode}</code></pre>
+        </div>
+      `;
+    });
+
+    // 2. Format inline code: `code`
+    formatted = formatted.replace(/`([^`]+)`/g, '<code class="chat-inline-code">$1</code>');
+
+    // 3. Format bold: **text**
+    formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+    // 4. Format italic: *text* or _text_
+    formatted = formatted.replace(/\*(.*?)\*/g, '<em>$1</em>');
+
+    // 5. Format bullet points
+    formatted = formatted.replace(/^[•\-\*]\s+(.*)$/gm, '<li style="margin-left:1rem;">$1</li>');
+
+    // 6. Convert newlines to <br> (excluding inside code blocks)
+    formatted = formatted.replace(/\n/g, '<br>');
+
+    // Clean up adjacent </li><br><li to cleaner lists
+    formatted = formatted.replace(/<\/li><br><li/g, '</li><li');
+
     return formatted;
+  }
+
+  // --- GOOGLE AI STUDIO (GEMINI API) CLIENT ---
+  const GeminiClient = {
+    STORAGE_KEY_API: "caprice_gemini_api_key",
+    STORAGE_KEY_MODEL: "caprice_gemini_model",
+    DEFAULT_MODEL: "gemini-2.5-flash",
+
+    getApiKey() {
+      try {
+        const stored = localStorage.getItem(this.STORAGE_KEY_API);
+        if (stored && stored.trim()) return stored.trim();
+      } catch (e) {}
+      if (window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.apiKey) {
+        return window.CAPRICE_CONFIG.DEFAULT_CHATBOT_CONFIG.apiKey;
+      }
+      if (window.CAPRICE_CONFIG?.GEMINI_API_KEY) {
+        return window.CAPRICE_CONFIG.GEMINI_API_KEY;
+      }
+      return "";
+    },
+
+    setApiKey(key) {
+      if (key && key.trim()) {
+        localStorage.setItem(this.STORAGE_KEY_API, key.trim());
+      } else {
+        localStorage.removeItem(this.STORAGE_KEY_API);
+      }
+    },
+
+    getModel() {
+      try {
+        const stored = localStorage.getItem(this.STORAGE_KEY_MODEL);
+        if (stored && stored.trim()) return stored.trim();
+      } catch (e) {}
+      return window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.defaultModel || this.DEFAULT_MODEL;
+    },
+
+    setModel(model) {
+      if (model && model.trim()) {
+        localStorage.setItem(this.STORAGE_KEY_MODEL, model.trim());
+      }
+    },
+
+    hasApiKey() {
+      return Boolean(this.getApiKey());
+    },
+
+    buildSystemInstruction() {
+      // Compile class knowledge base into system instruction
+      const kb = KNOWLEDGE_BASE;
+      const studentsSummary = kb.studentsList.map(s => 
+        `${s.no}. ${s.name} (${s.nick}) - ${s.role} [Keahlian: ${s.skills}]`
+      ).join("\n");
+
+      return `Kamu adalah Caprice AI (CapriceBot ⚡), asisten virtual kecerdasan buatan resmi untuk kelas X Rekayasa Perangkat Lunak 1 (X RPL 1 / Caprice 26) di SMK Negeri 1 Kota Probolinggo.
+
+Motto Kelas: "${kb.identity.motto}".
+Jumlah Siswa: 38 siswa.
+
+PENGURUS KELAS:
+- Ketua Kelas: ${kb.pengurus.ketua}
+- Wakil Ketua: ${kb.pengurus.wakil}
+- Sekretaris 1: ${kb.pengurus.sekretaris1}
+- Sekretaris 2: ${kb.pengurus.sekretaris2}
+- Bendahara 1: ${kb.pengurus.bendahara1}
+- Bendahara 2: ${kb.pengurus.bendahara2}
+
+DAFTAR 38 SISWA LENGKAP:
+${studentsSummary}
+
+JADWAL PELAJARAN:
+- Senin: ${kb.jadwalPelajaran.senin.join(", ")}
+- Selasa: ${kb.jadwalPelajaran.selasa.join(", ")}
+- Rabu: ${kb.jadwalPelajaran.rabu.join(", ")}
+- Kamis: ${kb.jadwalPelajaran.kamis.join(", ")}
+- Jumat: ${kb.jadwalPelajaran.jumat.join(", ")}
+
+JADWAL PIKET:
+- Senin: ${kb.jadwalPiket.senin.join(", ")}
+- Selasa: ${kb.jadwalPiket.selasa.join(", ")}
+- Rabu: ${kb.jadwalPiket.rabu.join(", ")}
+- Kamis: ${kb.jadwalPiket.kamis.join(", ")}
+- Jumat: ${kb.jadwalPiket.jumat.join(", ")}
+
+HALAMAN WEBSITE KELAS X RPL 1:
+- Beranda: index.html
+- Jadwal Pelajaran & Piket: pages/jadwal.html
+- Struktur Organisasi & 38 Siswa: pages/struktur.html
+- Prestasi Siswa: pages/prestasi.html
+- Galeri Foto & Momen: pages/galeri.html
+- Showcase Projek RPL: pages/proyek.html
+- Lab Game RPL: pages/lab-game.html
+- Buku Tamu Kelas: pages/bukutamu.html
+- Hubungi Kelas: pages/kontak.html
+- Portal Login: pages/login.html
+
+PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
+1. Bersikap ramah, antusias, cerdas, solutif, dan bergaya khas anak IT / siswa Rekayasa Perangkat Lunak SMK yang profesional dan melek teknologi.
+2. Gunakan Bahasa Indonesia yang luwes dan natural. Tambahkan emoji yang relevan secukupnya.
+3. Selalu prioritaskan data resmi kelas X RPL 1 saat menjawab pertanyaan seputar siswa, jadwal, piket, atau kegiatan kelas.
+4. Kamu juga ahli koding (HTML, CSS, JS, Python, PHP, Java, C++, Flutter, Unity, database SQL). Jika diminta membuat kode program atau tutorial, gunakan format blok kode (\`\`\`bahasa ... \`\`\`) dengan penjelasan ringkas yang mudah dipahami pemula.
+5. Bila relevan, sertakan saran tautan ke halaman internal website kami (gunakan format link HTML sederhana).`;
+    },
+
+    async generateResponse(userPrompt, conversationHistory = []) {
+      const apiKey = this.getApiKey();
+      if (!apiKey) {
+        throw new Error("NO_API_KEY");
+      }
+
+      const model = this.getModel();
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+
+      // Prepare conversation payload
+      const contents = [];
+
+      // Add previous conversation turns (limit to last 10 messages for speed & token efficiency)
+      const recentHistory = conversationHistory.slice(-10);
+      recentHistory.forEach(item => {
+        if (item.role === 'user' || item.role === 'model') {
+          contents.push({
+            role: item.role,
+            parts: [{ text: item.text }]
+          });
+        }
+      });
+
+      // Add the current user prompt
+      contents.push({
+        role: "user",
+        parts: [{ text: userPrompt }]
+      });
+
+      const body = {
+        contents: contents,
+        systemInstruction: {
+          parts: [{ text: this.buildSystemInstruction() }]
+        },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1200
+        }
+      };
+
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body)
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error?.message || `HTTP Error ${response.status} (${response.statusText})`;
+        throw new Error(errMsg);
+      }
+
+      const data = await response.json();
+      const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!text) {
+        throw new Error("Respon kosong dari Google AI Studio.");
+      }
+
+      return text;
+    },
+
+    async testConnection(testKey, testModel) {
+      const key = (testKey || this.getApiKey() || "").trim();
+      const model = testModel || this.getModel() || this.DEFAULT_MODEL;
+
+      if (!key) {
+        return { ok: false, error: "API Key belum diisi." };
+      }
+
+      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: "Tes koneksi. Jawab singkat: OK" }] }],
+            generationConfig: { maxOutputTokens: 10 }
+          })
+        });
+
+        if (!response.ok) {
+          const errData = await response.json().catch(() => ({}));
+          return { ok: false, error: errData.error?.message || `Status HTTP ${response.status}` };
+        }
+
+        return { ok: true };
+      } catch (err) {
+        return { ok: false, error: err.message || "Gagal menghubungi server Google AI Studio." };
+      }
+    }
+  };
+
+  // Helper Pemeriksaan Hak Akses Admin / Super Admin
+  function isUserAdminOrSuperAdmin() {
+    try {
+      if (!window.CapriceAuth) return false;
+      const user = window.CapriceAuth.getUser();
+      if (!user) return false;
+      return user.role === "super-admin" || user.role === "ketua-kelas" || user.role === "admin";
+    } catch (e) {
+      return false;
+    }
   }
 
   // --- UI CHATBOT WIDGET CONTROLLER ---
@@ -409,7 +650,8 @@
     constructor() {
       this.isOpen = false;
       this.isTyping = false;
-      this.messages = [];
+      this.isWide = false;
+      this.conversationHistory = [];
       this.init();
     }
 
@@ -418,6 +660,8 @@
       this.injectWidgetHTML();
       this.cacheDOMElements();
       this.bindEvents();
+      this.updateAdminControls();
+      this.updateStatusBadge();
       this.loadWelcomeMessage();
     }
 
@@ -440,18 +684,87 @@
           <!-- Header -->
           <div class="chatbot-header">
             <div class="chatbot-header-info">
-              <div class="chatbot-avatar">
+              <div class="chatbot-avatar" id="chatbot-avatar">
                 <span>⚡</span>
                 <span class="chatbot-online-indicator" title="Online"></span>
               </div>
               <div class="chatbot-title-wrap">
-                <h4 class="chatbot-title">Caprice AI ⚡</h4>
-                <p class="chatbot-status">Asisten Cerdas X RPL 1</p>
+                <div style="display:flex; align-items:center; gap:0.4rem;">
+                  <h4 class="chatbot-title">Caprice AI ⚡</h4>
+                  <span class="chatbot-mode-badge" id="chatbot-mode-badge">Memuat...</span>
+                </div>
+                <p class="chatbot-status" id="chatbot-status-desc">Asisten Cerdas X RPL 1</p>
               </div>
             </div>
             <div class="chatbot-header-actions">
+              <button id="chatbot-settings-btn" class="chatbot-action-btn" title="Pengaturan Google AI Studio (Khusus Admin)" aria-label="Pengaturan Admin" style="display:none;">⚙️</button>
+              <button id="chatbot-expand-btn" class="chatbot-action-btn" title="Perlebar Tampilan" aria-label="Perlebar Tampilan">⛶</button>
               <button id="chatbot-clear-btn" class="chatbot-action-btn" title="Bersihkan Percakapan" aria-label="Bersihkan Percakapan">🗑️</button>
               <button id="chatbot-close-btn" class="chatbot-action-btn" title="Tutup Chat" aria-label="Tutup Chat">✕</button>
+            </div>
+          </div>
+
+          <!-- In-Chat Settings Panel Flyout (Khusus Super Admin & Admin) -->
+          <div class="chatbot-settings-panel" id="chatbot-settings-panel">
+            <div class="chatbot-settings-header">
+              <h4 style="margin:0; font-size:0.92rem; font-weight:700; color:#fff; display:flex; align-items:center; gap:0.4rem;">
+                🛡️ Pengaturan AI Studio (Admin)
+              </h4>
+              <button type="button" class="chatbot-action-btn" id="close-settings-btn" title="Kembali ke Chat">✕</button>
+            </div>
+            <div class="chatbot-settings-body">
+              <p style="font-size:0.8rem; color:var(--text-dim); margin:0; line-height:1.4;">
+                Kelola kredensial <strong>Google AI Studio (Gemini API)</strong> untuk seluruh pengunjung dan siswa kelas X RPL 1.
+              </p>
+
+              <div>
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:#e2e8f0; margin-bottom:0.35rem;" for="gemini-api-key-input">
+                  Google AI Studio API Key:
+                </label>
+                <div style="position:relative; display:flex; align-items:center;">
+                  <input
+                    type="password"
+                    id="gemini-api-key-input"
+                    class="caprice-form-input"
+                    placeholder="AIzaSy..."
+                    style="width:100%; padding-right:2.4rem; font-family:monospace; font-size:0.82rem;"
+                  />
+                  <button type="button" id="toggle-key-visibility" style="position:absolute; right:8px; background:none; border:none; color:var(--text-dim); cursor:pointer; font-size:0.9rem;" title="Lihat/Sembunyikan Key">
+                    👁️
+                  </button>
+                </div>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin:0.35rem 0 0;">
+                  🔑 <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style="color:var(--accent-cyan); text-decoration:underline;">Buka Google AI Studio untuk generate API Key &rarr;</a>
+                </p>
+              </div>
+
+              <div>
+                <label style="display:block; font-size:0.8rem; font-weight:600; color:#e2e8f0; margin-bottom:0.35rem;" for="gemini-model-select">
+                  Pilihan Model Gemini:
+                </label>
+                <select id="gemini-model-select" class="caprice-form-select" style="font-size:0.82rem;">
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash (Sangat Cepat & Cerdas — Rekomendasi)</option>
+                  <option value="gemini-2.0-flash">Gemini 2.0 Flash (Stabil)</option>
+                  <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
+                </select>
+              </div>
+
+              <div id="settings-test-result" style="display:none; font-size:0.78rem; padding:0.5rem 0.75rem; border-radius:8px; line-height:1.4;"></div>
+
+              <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:0.5rem;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-test-gemini" style="flex:1; min-width:120px; font-size:0.8rem;">
+                  🧪 Tes Koneksi
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-save-gemini" style="flex:1; min-width:120px; font-size:0.8rem;">
+                  💾 Simpan Key
+                </button>
+              </div>
+
+              <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:0.75rem; margin-top:0.25rem;">
+                <button type="button" class="btn btn-outline btn-sm" id="btn-reset-gemini" style="width:100%; font-size:0.78rem; color:#f43f5e; border-color:rgba(244,63,94,0.3);">
+                  🔄 Hapus Key & Beralih ke Mode Lokal
+                </button>
+              </div>
             </div>
           </div>
 
@@ -479,9 +792,9 @@
                 type="text" 
                 id="chatbot-input" 
                 class="chatbot-input" 
-                placeholder="Tanya jadwal, piket, siswa..." 
+                placeholder="Tanya jadwal, koding, siswa, piket..." 
                 aria-label="Ketik pesan pertanyaan"
-                maxlength="200"
+                maxlength="500"
               />
               <button type="submit" id="chatbot-send-btn" class="chatbot-send-btn" aria-label="Kirim Pesan" title="Kirim">
                 <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
@@ -498,6 +811,11 @@
     cacheDOMElements() {
       this.toggleBtn = document.getElementById('chatbot-toggle-btn');
       this.chatWindow = document.getElementById('chatbot-window');
+      this.avatar = document.getElementById('chatbot-avatar');
+      this.modeBadge = document.getElementById('chatbot-mode-badge');
+      this.statusDesc = document.getElementById('chatbot-status-desc');
+      this.settingsBtn = document.getElementById('chatbot-settings-btn');
+      this.expandBtn = document.getElementById('chatbot-expand-btn');
       this.closeBtn = document.getElementById('chatbot-close-btn');
       this.clearBtn = document.getElementById('chatbot-clear-btn');
       this.messagesBody = document.getElementById('chatbot-messages-body');
@@ -505,38 +823,239 @@
       this.form = document.getElementById('chatbot-form');
       this.input = document.getElementById('chatbot-input');
       this.chipsContainer = document.getElementById('chatbot-chips');
+
+      // Settings Elements
+      this.settingsPanel = document.getElementById('chatbot-settings-panel');
+      this.closeSettingsBtn = document.getElementById('close-settings-btn');
+      this.apiKeyInput = document.getElementById('gemini-api-key-input');
+      this.toggleKeyVisBtn = document.getElementById('toggle-key-visibility');
+      this.modelSelect = document.getElementById('gemini-model-select');
+      this.testResult = document.getElementById('settings-test-result');
+      this.btnTestGemini = document.getElementById('btn-test-gemini');
+      this.btnSaveGemini = document.getElementById('btn-save-gemini');
+      this.btnResetGemini = document.getElementById('btn-reset-gemini');
     }
 
     bindEvents() {
       // Toggle Open/Close
-      this.toggleBtn.addEventListener('click', () => this.toggleChat());
-      this.closeBtn.addEventListener('click', () => this.closeChat());
-      this.clearBtn.addEventListener('click', () => this.clearChat());
+      if (this.toggleBtn) this.toggleBtn.addEventListener('click', () => this.toggleChat());
+      if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.closeChat());
+      if (this.clearBtn) this.clearBtn.addEventListener('click', () => this.clearChat());
+
+      // Expand / Wide Mode Toggle
+      if (this.expandBtn) {
+        this.expandBtn.addEventListener('click', () => this.toggleWideMode());
+      }
+
+      // Settings Panel Open/Close (Admin Only)
+      if (this.settingsBtn) {
+        this.settingsBtn.addEventListener('click', () => this.openSettings());
+      }
+      if (this.closeSettingsBtn) {
+        this.closeSettingsBtn.addEventListener('click', () => this.closeSettings());
+      }
+
+      // Toggle Key Visibility
+      if (this.toggleKeyVisBtn && this.apiKeyInput) {
+        this.toggleKeyVisBtn.addEventListener('click', () => {
+          const isPass = this.apiKeyInput.type === "password";
+          this.apiKeyInput.type = isPass ? "text" : "password";
+          this.toggleKeyVisBtn.textContent = isPass ? "🔒" : "👁️";
+        });
+      }
+
+      // Save Settings
+      if (this.btnSaveGemini) {
+        this.btnSaveGemini.addEventListener('click', () => this.handleSaveSettings());
+      }
+
+      // Test Connection
+      if (this.btnTestGemini) {
+        this.btnTestGemini.addEventListener('click', () => this.handleTestConnection());
+      }
+
+      // Reset to Local
+      if (this.btnResetGemini) {
+        this.btnResetGemini.addEventListener('click', () => this.handleResetSettings());
+      }
+
+      // Listen to Auth State changes (e.g. login/logout)
+      document.addEventListener("caprice:auth", () => {
+        this.updateAdminControls();
+        this.updateStatusBadge();
+      });
 
       // Form Submit
-      this.form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        this.handleUserSubmit();
-      });
+      if (this.form) {
+        this.form.addEventListener('submit', (e) => {
+          e.preventDefault();
+          this.handleUserSubmit();
+        });
+      }
 
       // Quick Chips Click
-      this.chipsContainer.addEventListener('click', (e) => {
-        const chip = e.target.closest('.chat-chip-btn');
-        if (chip) {
-          const query = chip.getAttribute('data-query');
-          if (query) {
-            this.input.value = query;
-            this.handleUserSubmit();
+      if (this.chipsContainer) {
+        this.chipsContainer.addEventListener('click', (e) => {
+          const chip = e.target.closest('.chat-chip-btn');
+          if (chip) {
+            const query = chip.getAttribute('data-query');
+            if (query && this.input) {
+              this.input.value = query;
+              this.handleUserSubmit();
+            }
           }
-        }
-      });
+        });
+      }
+
+      // Copy Code Blocks delegation
+      if (this.messagesBody) {
+        this.messagesBody.addEventListener('click', (e) => {
+          const copyBtn = e.target.closest('.chat-code-copy-btn');
+          if (copyBtn) {
+            const container = copyBtn.closest('.chat-code-container');
+            const codeEl = container ? container.querySelector('pre code') : null;
+            if (codeEl) {
+              navigator.clipboard.writeText(codeEl.textContent).then(() => {
+                const origHtml = copyBtn.innerHTML;
+                copyBtn.innerHTML = '<span>✅</span> Tersalin!';
+                setTimeout(() => copyBtn.innerHTML = origHtml, 2000);
+              }).catch(() => {
+                copyBtn.textContent = 'Gagal!';
+              });
+            }
+          }
+        });
+      }
 
       // Close on Escape Key
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && this.isOpen) {
-          this.closeChat();
+          if (this.settingsPanel && this.settingsPanel.classList.contains('active')) {
+            this.closeSettings();
+          } else {
+            this.closeChat();
+          }
         }
       });
+    }
+
+    updateAdminControls() {
+      const canManage = isUserAdminOrSuperAdmin();
+      if (this.settingsBtn) {
+        this.settingsBtn.style.display = canManage ? "inline-flex" : "none";
+      }
+      if (this.settingsPanel && !canManage) {
+        this.settingsPanel.classList.remove("active");
+      }
+      if (this.statusDesc) {
+        const hasKey = GeminiClient.hasApiKey();
+        if (hasKey) {
+          this.statusDesc.textContent = "Google AI Studio Active ⚡";
+        } else {
+          this.statusDesc.textContent = canManage
+            ? "Knowledge Base Offline (Klik ⚙️ untuk aktifkan Gemini)"
+            : "Asisten Cerdas X RPL 1";
+        }
+      }
+    }
+
+    updateStatusBadge() {
+      const hasKey = GeminiClient.hasApiKey();
+      const model = GeminiClient.getModel();
+
+      if (this.modeBadge) {
+        if (hasKey) {
+          this.modeBadge.className = 'chatbot-mode-badge';
+          this.modeBadge.innerHTML = `🟢 ${model.replace('gemini-', 'Gemini ')}`;
+        } else {
+          this.modeBadge.className = 'chatbot-mode-badge mode-local';
+          this.modeBadge.innerHTML = `🟡 Mode Lokal`;
+        }
+      }
+
+      if (this.avatar) {
+        if (hasKey) {
+          this.avatar.classList.add('gemini-live');
+        } else {
+          this.avatar.classList.remove('gemini-live');
+        }
+      }
+    }
+
+    openSettings() {
+      if (!isUserAdminOrSuperAdmin()) {
+        console.warn("Akses ditolak: Pengaturan hanya dapat diakses oleh Super Admin dan Admin.");
+        return;
+      }
+      this.apiKeyInput.value = GeminiClient.getApiKey();
+      this.modelSelect.value = GeminiClient.getModel();
+      this.testResult.style.display = 'none';
+      this.settingsPanel.classList.add('active');
+    }
+
+    closeSettings() {
+      this.settingsPanel.classList.remove('active');
+      this.updateAdminControls();
+      this.updateStatusBadge();
+    }
+
+    async handleTestConnection() {
+      if (!isUserAdminOrSuperAdmin()) return;
+      const key = this.apiKeyInput.value.trim();
+      const model = this.modelSelect.value;
+      this.btnTestGemini.disabled = true;
+      this.btnTestGemini.textContent = "Menguji...";
+      this.testResult.style.display = 'block';
+      this.testResult.style.background = "rgba(255,255,255,0.06)";
+      this.testResult.style.color = "#fff";
+      this.testResult.textContent = "Menghubungi Google AI Studio...";
+
+      const res = await GeminiClient.testConnection(key, model);
+      this.btnTestGemini.disabled = false;
+      this.btnTestGemini.textContent = "🧪 Tes Koneksi";
+
+      if (res.ok) {
+        this.testResult.style.background = "rgba(16,185,129,0.15)";
+        this.testResult.style.border = "1px solid rgba(16,185,129,0.3)";
+        this.testResult.style.color = "#10b981";
+        this.testResult.innerHTML = "✅ <strong>Koneksi Berhasil!</strong> API Key aktif dan siap digunakan dengan " + model;
+      } else {
+        this.testResult.style.background = "rgba(239,68,68,0.15)";
+        this.testResult.style.border = "1px solid rgba(239,68,68,0.3)";
+        this.testResult.style.color = "#f87171";
+        this.testResult.innerHTML = "❌ <strong>Koneksi Gagal:</strong> " + escapeHTML(res.error);
+      }
+    }
+
+    handleSaveSettings() {
+      if (!isUserAdminOrSuperAdmin()) return;
+      const key = this.apiKeyInput.value.trim();
+      const model = this.modelSelect.value;
+      GeminiClient.setApiKey(key);
+      GeminiClient.setModel(model);
+      this.updateAdminControls();
+      this.updateStatusBadge();
+      this.closeSettings();
+      this.addBotMessage(`⚙️ **Pengaturan Diperbarui!**\nMode kecerdasan saat ini: **${key ? 'Google AI Studio (' + model + ')' : 'Mode Lokal'}**. Kredensial aktif untuk seluruh pengguna portal. 🚀`, true);
+    }
+
+    handleResetSettings() {
+      if (!isUserAdminOrSuperAdmin()) return;
+      GeminiClient.setApiKey("");
+      this.apiKeyInput.value = "";
+      this.updateAdminControls();
+      this.updateStatusBadge();
+      this.closeSettings();
+      this.addBotMessage(`🔄 **Beralih ke Mode Lokal:** API Key telah dihapus. Chatbot kini berjalan offline dengan basis pengetahuan lokal kelas X RPL 1.`, true);
+    }
+
+    toggleWideMode() {
+      this.isWide = !this.isWide;
+      this.chatWindow.classList.toggle('wide-mode', this.isWide);
+      if (this.expandBtn) {
+        this.expandBtn.textContent = this.isWide ? '⤦' : '⛶';
+        this.expandBtn.title = this.isWide ? 'Kecilkan Tampilan' : 'Perlebar Tampilan';
+      }
     }
 
     toggleChat() {
@@ -549,12 +1068,13 @@
 
     openChat() {
       this.isOpen = true;
+      this.updateAdminControls();
       this.chatWindow.classList.add('active');
       this.toggleBtn.classList.add('active');
       this.chatWindow.setAttribute('aria-hidden', 'false');
       ChatAudio.playBeep('open');
       setTimeout(() => {
-        this.input.focus();
+        if (this.input) this.input.focus();
         this.scrollToBottom();
       }, 150);
     }
@@ -564,40 +1084,79 @@
       this.chatWindow.classList.remove('active');
       this.toggleBtn.classList.remove('active');
       this.chatWindow.setAttribute('aria-hidden', 'true');
+      if (this.settingsPanel) this.settingsPanel.classList.remove('active');
     }
 
     clearChat() {
+      this.conversationHistory = [];
+      if (!this.messagesBody) return;
       this.messagesBody.querySelectorAll('.chat-bubble-row').forEach(el => el.remove());
       this.loadWelcomeMessage();
     }
 
     loadWelcomeMessage() {
-      const welcome = `👋 **Halo! Selamat datang di Website X RPL 1 (Caprice 26)!**\n\nSaya **Caprice AI ⚡**, siap membantumu mencari info mengenai:\n• 📅 **Jadwal Pelajaran** harian\n• 🧹 **Regu Piket & Pengambilan M.bg**\n• 👑 **Pengurus & 38 Siswa**\n• 🎮 **Projek & Lab Game**\n\n*Silakan ketik pertanyaanmu di bawah atau klik tombol pertanyaan cepat!*`;
+      if (!this.messagesBody) return;
+      const hasKey = GeminiClient.hasApiKey();
+      const canManage = isUserAdminOrSuperAdmin();
+
+      let welcome = `👋 **Halo! Selamat datang di Website X RPL 1 (Caprice 26)!**\n\nSaya **Caprice AI ⚡**, asisten cerdas resmi kelas X Rekayasa Perangkat Lunak 1.\n\n`;
+      if (hasKey) {
+        welcome += `🟢 **Model Gemini AI Siap:** Ajukan pertanyaan apa pun seputar kelas X RPL 1, belajar coding, matematika, atau obrolan santai!`;
+      } else if (canManage) {
+        welcome += `💡 *Halo Pengurus! Klik tombol ⚙️ di kanan atas untuk memasukkan Google AI Studio API Key agar AI semakin cerdas & kontekstual.*\n\nKamu tetap bisa bertanya seputar jadwal, piket, 38 siswa, dan projek!`;
+      } else {
+        welcome += `Silakan tanyakan info mengenai:\n• 📅 **Jadwal Pelajaran** harian\n• 🧹 **Jadwal Piket Kelas**\n• 👑 **Pengurus & 38 Siswa**\n• 🎮 **Projek & Lab Game**\n\n*Ketik pertanyaanmu di bawah atau klik tombol pertanyaan cepat!*`;
+      }
+
       this.addBotMessage(welcome, false);
     }
 
-    handleUserSubmit() {
-      const text = this.input.value.trim();
+    async handleUserSubmit() {
+      const text = this.input ? this.input.value.trim() : '';
       if (!text || this.isTyping) return;
 
-      this.input.value = '';
+      if (this.input) this.input.value = '';
       this.addUserMessage(text);
       ChatAudio.playBeep('send');
+
+      // Record user turn in conversation history
+      this.conversationHistory.push({ role: 'user', text: text });
 
       // Show Typing Animation
       this.showTyping(true);
 
-      // Simulate Thinking Time (350ms - 750ms)
-      const thinkTime = Math.floor(Math.random() * 300) + 400;
-      setTimeout(() => {
-        const reply = processQuery(text);
-        this.showTyping(false);
-        this.addBotMessage(reply, true);
-        ChatAudio.playBeep('receive');
-      }, thinkTime);
+      const hasKey = GeminiClient.hasApiKey();
+
+      if (hasKey) {
+        try {
+          const aiResponse = await GeminiClient.generateResponse(text, this.conversationHistory);
+          this.conversationHistory.push({ role: 'model', text: aiResponse });
+          this.showTyping(false);
+          this.streamBotMessage(aiResponse);
+          ChatAudio.playBeep('receive');
+        } catch (err) {
+          console.warn("Gemini API error, falling back to local engine:", err);
+          // Graceful fallback to local rule-based processing
+          const localReply = processQuery(text);
+          this.showTyping(false);
+          const notice = `*(Catatan: Terjadi kendala saat menghubungi Google AI Studio: ${escapeHTML(err.message)}. Menampilkan jawaban dari basis pengetahuan lokal:)*\n\n${localReply}`;
+          this.addBotMessage(notice, true);
+          ChatAudio.playBeep('receive');
+        }
+      } else {
+        // Fallback to local rule-based engine
+        const thinkTime = Math.floor(Math.random() * 250) + 300;
+        setTimeout(() => {
+          const reply = processQuery(text);
+          this.showTyping(false);
+          this.streamBotMessage(reply);
+          ChatAudio.playBeep('receive');
+        }, thinkTime);
+      }
     }
 
     addUserMessage(text) {
+      if (!this.messagesBody) return;
       const time = this.getCurrentTime();
       const row = document.createElement('div');
       row.className = 'chat-bubble-row user-row';
@@ -612,6 +1171,7 @@
     }
 
     addBotMessage(text, animate = true) {
+      if (!this.messagesBody) return;
       const time = this.getCurrentTime();
       const row = document.createElement('div');
       row.className = 'chat-bubble-row bot-row' + (animate ? ' animate-pop' : '');
@@ -624,6 +1184,45 @@
       `;
       this.messagesBody.insertBefore(row, this.typingIndicator);
       this.scrollToBottom();
+    }
+
+    streamBotMessage(fullText) {
+      if (!this.messagesBody) return;
+      const time = this.getCurrentTime();
+      const row = document.createElement('div');
+      row.className = 'chat-bubble-row bot-row animate-pop';
+      row.innerHTML = `
+        <div class="chat-bot-avatar">⚡</div>
+        <div class="chat-bubble bot-bubble">
+          <div class="bubble-content"><span class="stream-text"></span><span class="streaming-cursor"></span></div>
+          <span class="bubble-time">${time}</span>
+        </div>
+      `;
+      this.messagesBody.insertBefore(row, this.typingIndicator);
+      this.scrollToBottom();
+
+      const textEl = row.querySelector('.stream-text');
+      const cursorEl = row.querySelector('.streaming-cursor');
+      const bubbleContent = row.querySelector('.bubble-content');
+
+      // Words stream animation
+      const words = fullText.split(' ');
+      let currentIdx = 0;
+      const streamBatchSize = Math.max(1, Math.floor(words.length / 40));
+
+      const interval = setInterval(() => {
+        currentIdx += streamBatchSize;
+        if (currentIdx >= words.length) {
+          clearInterval(interval);
+          if (cursorEl) cursorEl.remove();
+          if (bubbleContent) bubbleContent.innerHTML = formatMessageText(fullText);
+          this.scrollToBottom();
+        } else {
+          const partial = words.slice(0, currentIdx).join(' ');
+          if (textEl) textEl.innerHTML = formatMessageText(partial);
+          this.scrollToBottom();
+        }
+      }, 35);
     }
 
     showTyping(show) {

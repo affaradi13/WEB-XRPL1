@@ -61,6 +61,10 @@ window.CAPRICE_CONFIG = (function () {
     "user.create": ["super-admin", "ketua-kelas"],
     "user.edit": ["super-admin", "ketua-kelas"],
     "user.change_role": ["super-admin", "ketua-kelas"],
+    "user.reset_password": ["super-admin", "ketua-kelas"],
+    "user.status_toggle": ["super-admin", "ketua-kelas"],
+    "user.bulk_import": ["super-admin", "ketua-kelas"],
+    "user.export": ["super-admin", "ketua-kelas"],
     "user.delete": ["super-admin"],
     "role.view": ["super-admin", "ketua-kelas"],
     "role.manage": ["super-admin"],
@@ -76,7 +80,7 @@ window.CAPRICE_CONFIG = (function () {
     "jadwal.manage": ["super-admin", "ketua-kelas", "sekretaris"],
     "audit.view": ["super-admin", "ketua-kelas"],
     "settings.view": ["super-admin", "ketua-kelas"],
-    "settings.manage": ["super-admin"],
+    "settings.manage": ["super-admin", "ketua-kelas"],
   };
 
   // Deskripsi Human-Readable untuk Tiap Permission
@@ -86,6 +90,10 @@ window.CAPRICE_CONFIG = (function () {
     "user.create": { label: "Menambah Anggota Baru", group: "Pengguna & Anggota" },
     "user.edit": { label: "Mengubah Profil Anggota", group: "Pengguna & Anggota" },
     "user.change_role": { label: "Mengatur Role Anggota", group: "Pengguna & Anggota" },
+    "user.reset_password": { label: "Reset Password Siswa", group: "Pengguna & Anggota" },
+    "user.status_toggle": { label: "Ubah Status Akun (Aktif/Kunci)", group: "Pengguna & Anggota" },
+    "user.bulk_import": { label: "Import Data Siswa Massal", group: "Pengguna & Anggota" },
+    "user.export": { label: "Export Rekap Siswa", group: "Pengguna & Anggota" },
     "user.delete": { label: "Menghapus Akun Anggota", group: "Pengguna & Anggota" },
     "role.view": { label: "Melihat Matriks Role", group: "Role & Permission" },
     "role.manage": { label: "Mengubah Matriks & Role", group: "Role & Permission" },
@@ -289,6 +297,18 @@ window.CAPRICE_CONFIG = (function () {
     return { roles: currentRoles, permissions: currentPermissions };
   }
 
+  const DEFAULT_CHATBOT_CONFIG = {
+    defaultModel: "gemini-2.5-flash",
+    fallbackEnabled: true,
+    storageKey: "caprice_gemini_api_key",
+    modelStorageKey: "caprice_gemini_model",
+    supportedModels: [
+      { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Tercepat & Cerdas)" },
+      { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (Stabil)" },
+      { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Legacy)" }
+    ]
+  };
+
   return {
     get ROLES() {
       return getRoles();
@@ -303,6 +323,7 @@ window.CAPRICE_CONFIG = (function () {
     PERMISSION_DESCRIPTIONS,
     DEFAULT_ROLES,
     DEFAULT_PERMISSIONS,
+    DEFAULT_CHATBOT_CONFIG,
     getRoles,
     getPermissions,
     togglePermission,
