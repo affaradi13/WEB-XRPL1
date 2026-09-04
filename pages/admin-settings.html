@@ -96,7 +96,8 @@
                 Model Gemini AI:
               </label>
               <select id="admin-gemini-model" class="caprice-form-select" style="max-width:440px; font-size:0.88rem;">
-                <option value="gemini-2.5-flash">Gemini 2.5 Flash (Sangat Cepat & Cerdas — Rekomendasi)</option>
+                <option value="gemini-3.6-flash">Gemini 3.6 Flash (Terbaru & Sangat Cepat — Rekomendasi)</option>
+                <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                 <option value="gemini-2.0-flash">Gemini 2.0 Flash (Stabil)</option>
                 <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
               </select>
@@ -152,7 +153,7 @@
       // --- Google AI Studio Settings Controller ---
       const STORAGE_KEY_API = "caprice_gemini_api_key";
       const STORAGE_KEY_MODEL = "caprice_gemini_model";
-      const DEFAULT_MODEL = "gemini-2.5-flash";
+      const DEFAULT_MODEL = "gemini-3.6-flash";
 
       const keyInput = document.getElementById("admin-gemini-key");
       const modelSelect = document.getElementById("admin-gemini-model");
@@ -177,7 +178,15 @@
       function getSavedModel() {
         try {
           const stored = localStorage.getItem(STORAGE_KEY_MODEL);
-          if (stored && stored.trim()) return stored.trim();
+          if (stored && stored.trim()) {
+            const m = stored.trim();
+            // Auto migrate deprecated gemini-2.5-flash
+            if (m === "gemini-2.5-flash") {
+              localStorage.setItem(STORAGE_KEY_MODEL, "gemini-3.6-flash");
+              return "gemini-3.6-flash";
+            }
+            return m;
+          }
         } catch (e) {}
         return window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.defaultModel || DEFAULT_MODEL;
       }
@@ -273,9 +282,10 @@
           testBtn.textContent = "Menguji...";
           showFeedback("Menghubungi endpoint Google AI Studio API...", "info");
 
-          const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+          let activeModel = model;
+          let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(key)}`;
           try {
-            const response = await fetch(endpoint, {
+            let response = await fetch(endpoint, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
@@ -286,10 +296,33 @@
 
             if (!response.ok) {
               const errData = await response.json().catch(() => ({}));
-              const msg = errData.error?.message || `Status HTTP ${response.status}`;
+              let msg = errData.error?.message || `Status HTTP ${response.status}`;
+
+              // Auto fallback to gemini-3.6-flash if deprecated
+              if (activeModel !== "gemini-3.6-flash" && (msg.includes("no longer available") || msg.includes("gemini-3.6-flash"))) {
+                activeModel = "gemini-3.6-flash";
+                modelSelect.value = "gemini-3.6-flash";
+                localStorage.setItem(STORAGE_KEY_MODEL, "gemini-3.6-flash");
+                endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(activeModel)}:generateContent?key=${encodeURIComponent(key)}`;
+                response = await fetch(endpoint, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    contents: [{ role: "user", parts: [{ text: "Tes koneksi. Jawab singkat: OK" }] }],
+                    generationConfig: { maxOutputTokens: 10 }
+                  })
+                });
+
+                if (response.ok) {
+                  updateUI();
+                  showFeedback(`Model sebelumnya tidak lagi tersedia untuk akun baru. Sistem berhasil otomatis beralih ke <strong>Gemini 3.6 Flash</strong> dan koneksi sukses! Silakan klik <strong>Simpan Pengaturan AI</strong>.`, "success");
+                  return;
+                }
+              }
+
               showFeedback(`Gagal terhubung: ${msg}`, "error");
             } else {
-              showFeedback(`Berhasil terhubung ke Google AI Studio! Model <strong>${model}</strong> siap digunakan.`, "success");
+              showFeedback(`Berhasil terhubung ke Google AI Studio! Model <strong>${activeModel}</strong> siap digunakan.`, "success");
             }
           } catch (err) {
             showFeedback(`Koneksi gagal atau offline: ${err.message}`, "error");

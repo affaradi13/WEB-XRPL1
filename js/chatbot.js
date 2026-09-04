@@ -442,7 +442,7 @@
   const GeminiClient = {
     STORAGE_KEY_API: "caprice_gemini_api_key",
     STORAGE_KEY_MODEL: "caprice_gemini_model",
-    DEFAULT_MODEL: "gemini-2.5-flash",
+    DEFAULT_MODEL: "gemini-3.6-flash",
 
     getApiKey() {
       try {
@@ -469,7 +469,15 @@
     getModel() {
       try {
         const stored = localStorage.getItem(this.STORAGE_KEY_MODEL);
-        if (stored && stored.trim()) return stored.trim();
+        if (stored && stored.trim()) {
+          const m = stored.trim();
+          // Auto migrate deprecated gemini-2.5-flash to gemini-3.6-flash
+          if (m === "gemini-2.5-flash") {
+            this.setModel("gemini-3.6-flash");
+            return "gemini-3.6-flash";
+          }
+          return m;
+        }
       } catch (e) {}
       return window.CAPRICE_CONFIG?.DEFAULT_CHATBOT_CONFIG?.defaultModel || this.DEFAULT_MODEL;
     },
@@ -547,8 +555,8 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
         throw new Error("NO_API_KEY");
       }
 
-      const model = this.getModel();
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+      let model = this.getModel();
+      let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
 
       // Prepare conversation payload
       const contents = [];
@@ -581,7 +589,7 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
         }
       };
 
-      const response = await fetch(endpoint, {
+      let response = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body)
@@ -590,7 +598,25 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
         const errMsg = errData.error?.message || `HTTP Error ${response.status} (${response.statusText})`;
-        throw new Error(errMsg);
+
+        // Auto fallback if previous model is deprecated / unavailable (e.g. gemini-2.5-flash)
+        if (model !== "gemini-3.6-flash" && (errMsg.includes("no longer available") || errMsg.includes("gemini-3.6-flash") || response.status === 404)) {
+          console.warn(`Model ${model} tidak tersedia (${errMsg}). Mengalihkan otomatis ke gemini-3.6-flash...`);
+          model = "gemini-3.6-flash";
+          this.setModel("gemini-3.6-flash");
+          endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(apiKey)}`;
+          response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+          });
+          if (!response.ok) {
+            const retryErr = await response.json().catch(() => ({}));
+            throw new Error(retryErr.error?.message || `HTTP Error ${response.status}`);
+          }
+        } else {
+          throw new Error(errMsg);
+        }
       }
 
       const data = await response.json();
@@ -604,15 +630,15 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
 
     async testConnection(testKey, testModel) {
       const key = (testKey || this.getApiKey() || "").trim();
-      const model = testModel || this.getModel() || this.DEFAULT_MODEL;
+      let model = testModel || this.getModel() || this.DEFAULT_MODEL;
 
       if (!key) {
         return { ok: false, error: "API Key belum diisi." };
       }
 
-      const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+      let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
       try {
-        const response = await fetch(endpoint, {
+        let response = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -623,7 +649,26 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
 
         if (!response.ok) {
           const errData = await response.json().catch(() => ({}));
-          return { ok: false, error: errData.error?.message || `Status HTTP ${response.status}` };
+          const errMsg = errData.error?.message || `Status HTTP ${response.status}`;
+
+          // Auto fallback if deprecated
+          if (model !== "gemini-3.6-flash" && (errMsg.includes("no longer available") || errMsg.includes("gemini-3.6-flash"))) {
+            model = "gemini-3.6-flash";
+            this.setModel("gemini-3.6-flash");
+            endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent?key=${encodeURIComponent(key)}`;
+            response = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: "Tes koneksi. Jawab singkat: OK" }] }],
+                generationConfig: { maxOutputTokens: 10 }
+              })
+            });
+            if (response.ok) {
+              return { ok: true, modelSwitched: "gemini-3.6-flash" };
+            }
+          }
+          return { ok: false, error: errMsg };
         }
 
         return { ok: true };
@@ -743,7 +788,8 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
                   Pilihan Model Gemini:
                 </label>
                 <select id="gemini-model-select" class="caprice-form-select" style="font-size:0.82rem;">
-                  <option value="gemini-2.5-flash">Gemini 2.5 Flash (Sangat Cepat & Cerdas — Rekomendasi)</option>
+                  <option value="gemini-3.6-flash">Gemini 3.6 Flash (Terbaru & Sangat Cepat — Rekomendasi)</option>
+                  <option value="gemini-2.5-flash">Gemini 2.5 Flash</option>
                   <option value="gemini-2.0-flash">Gemini 2.0 Flash (Stabil)</option>
                   <option value="gemini-1.5-flash">Gemini 1.5 Flash (Legacy)</option>
                 </select>
@@ -1015,10 +1061,14 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       this.btnTestGemini.textContent = "🧪 Tes Koneksi";
 
       if (res.ok) {
+        if (res.modelSwitched) {
+          this.modelSelect.value = res.modelSwitched;
+        }
+        const activeModel = res.modelSwitched || model;
         this.testResult.style.background = "rgba(16,185,129,0.15)";
         this.testResult.style.border = "1px solid rgba(16,185,129,0.3)";
         this.testResult.style.color = "#10b981";
-        this.testResult.innerHTML = "✅ <strong>Koneksi Berhasil!</strong> API Key aktif dan siap digunakan dengan " + model;
+        this.testResult.innerHTML = "✅ <strong>Koneksi Berhasil!</strong> API Key aktif dan siap digunakan dengan <strong>" + activeModel + "</strong>" + (res.modelSwitched ? " (otomatis dialihkan dari model lama yang telah usang)." : ".");
       } else {
         this.testResult.style.background = "rgba(239,68,68,0.15)";
         this.testResult.style.border = "1px solid rgba(239,68,68,0.3)";

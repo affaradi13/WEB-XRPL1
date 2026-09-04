@@ -298,12 +298,13 @@ window.CAPRICE_CONFIG = (function () {
   }
 
   const DEFAULT_CHATBOT_CONFIG = {
-    defaultModel: "gemini-2.5-flash",
+    defaultModel: "gemini-3.6-flash",
     fallbackEnabled: true,
     storageKey: "caprice_gemini_api_key",
     modelStorageKey: "caprice_gemini_model",
     supportedModels: [
-      { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash (Tercepat & Cerdas)" },
+      { id: "gemini-3.6-flash", name: "Gemini 3.6 Flash (Terbaru & Rekomendasi)" },
+      { id: "gemini-2.5-flash", name: "Gemini 2.5 Flash" },
       { id: "gemini-2.0-flash", name: "Gemini 2.0 Flash (Stabil)" },
       { id: "gemini-1.5-flash", name: "Gemini 1.5 Flash (Legacy)" }
     ]
