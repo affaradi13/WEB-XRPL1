@@ -92,7 +92,7 @@
       { no: 3, name: "Aditya Rafa Pratama", nick: "Adit / Rafa", role: "Mobile & Web Developer", skills: "Flutter, Dart, Web Development" },
       { no: 4, name: "Ahmad Shofyan", nick: "Ian / Shofyan", role: "Python Backend Specialist", skills: "Python, Algoritma, Flask" },
       { no: 5, name: "Aisyah Azzahra", nick: "Aisyah / Caca", role: "Sekretaris 1 & Frontend Dev", skills: "Dokumentasi, Web, JavaScript, Administrasi" },
-      { no: 6, name: "Andhika Satria Oetama", nick: "Satria", role: "Game Developer & 3D Creator", skills: "Unity, C#, 3D Blender, Game Design" },
+      { no: 6, name: "Andhika Satria Oetama", nick: "Satria", role: "Fullstack web developer & web3 developer", skills: "HTML, CSS, JS, SOLIDTY" },
       { no: 7, name: "Andika Bagas Pratama", nick: "Bagas", role: "DevOps & Linux Admin", skills: "Linux, Networking, Server, Cloud" },
       { no: 8, name: "Andini Syafaaturrohma", nick: "Andin", role: "Creative & UI Designer", skills: "Figma, Canva, UI Design, CSS" },
       { no: 9, name: "Caesar Arkan Arthariz", nick: "Caesar", role: "Ketua Kelas & Full-Stack", skills: "Full-Stack, Python, JavaScript, Linux" },
@@ -1222,7 +1222,9 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       this.chatWindow.setAttribute('aria-hidden', 'false');
       ChatAudio.playBeep('open');
       setTimeout(() => {
-        if (this.input) this.input.focus();
+        if (this.input && window.innerWidth > 600) {
+          this.input.focus();
+        }
         this.scrollToBottom();
       }, 150);
     }

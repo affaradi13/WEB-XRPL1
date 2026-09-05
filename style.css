@@ -146,6 +146,8 @@
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 85px;
+  overflow-x: hidden; /* menambahkan ini */
+  width: 100%; /* menambahkan ini */
 }
 
 body {
@@ -161,6 +163,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background-color 0.4s ease, color 0.4s ease;
+  width: 100%; /* menambahkan ini */
 }
 
 main {
@@ -200,7 +203,7 @@ button, input, select, textarea {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%; /* mengubah dari 100vw menjadi 100% */
   height: 100vh;
   pointer-events: none;
   z-index: 0;
@@ -211,7 +214,7 @@ button, input, select, textarea {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100vw;
+  width: 100%; /* mengubah dari 100vw menjadi 100% */
   height: 100vh;
   background-image: 
     linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
@@ -2523,8 +2526,8 @@ button, input, select, textarea {
 
 .back-to-top {
   position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  bottom: 100px; /* Ubah dari 2rem agar posisinya di atas Chatbot */
+  right: 24px; /* Samakan jarak kanan dengan Chatbot */
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -2770,6 +2773,48 @@ button, input, select, textarea {
   .footer-grid {
     grid-template-columns: 1fr;
     gap: 2rem;
+  }
+
+  /* ==========================================================================
+   MOBILE PERFORMANCE OPTIMIZATION (Fix Lag)
+   ========================================================================== */
+  /* 1. Matikan render animasi canvas partikel dan efek blur */
+  #bg-canvas,
+  .glow-orb {
+    display: none !important;
+    animation: none !important;
+  }
+  /* 2. Mematikan efek kaca (backdrop-filter) pada elemen-elemen besar */
+  .site-header,
+  .nav-menu-wrapper,
+  .glass-card,
+  .chatbot-window,
+  .caprice-modal-overlay {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    /* ganti warna dengan solid */
+    background-color: var(--bg-surface) !important;
+  }
+  /* 3. khusus header, ganti warna sesuai yang sudah ditentukan dari variabel */
+  .site-header {
+    background-color: var(--bg-nav) !important;
+  }
+  /* 4. Sembunyikan overlay grid yang memaksa HP melakukan re-composite saat scroll */
+  .cyber-grid-overlay {
+    display: none !important;
+  }
+  /* 5. Matikan animasi box-shadow (Glow/Pulse) */
+  .logo-badge,
+  .pulse-dot,
+  .chatbot-badge-dot,
+  .trophy-icon {
+    animation: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+  /* 6. Menghilangkan efek blok warna biru (tap highlight) saat elemen dipencet di HP */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
   }
 }
 
@@ -3689,6 +3734,11 @@ code {
     max-width: none;
     max-height: none;
     border-radius: 20px;
+  }
+  /* Tambahkan blok back-to-top di bawah ini */
+  .back-to-top {
+    bottom: 85px;
+    right: 18px;
   }
 }
 
