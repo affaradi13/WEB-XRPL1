@@ -227,11 +227,11 @@
     const today = new Date().getDay();
     const dayKey = getDayName(today);
     if (dayKey === 'sabtu' || dayKey === 'minggu') {
-      return `🎉 Hari ini (${dayKey.toUpperCase()}) libur, tidak ada tugas piket maupun pengambilan M.bg!`;
+      return `🎉 Hari ini (${dayKey.toUpperCase()}) libur, tidak ada tugas piket maupun pengambilan MBG!`;
     }
     const piket = KNOWLEDGE_BASE.jadwalPiket[dayKey];
     if (!piket) return "Tidak ada data piket untuk hari ini.";
-    return `🧹 **Petugas Piket & Pengambilan M.bg Hari Ini (${dayKey.toUpperCase()}):**\n👥 **Anggota:** ${piket.join(', ')}\n\n💡 *Catatan:* Petugas piket bertanggung jawab menjaga kebersihan kelas dan mengambil M.bg tepat waktu!`;
+    return `🧹 **Petugas Piket & Pengambilan MBG Hari Ini (${dayKey.toUpperCase()}):**\n👥 **Anggota:** ${piket.join(', ')}\n\n💡 *Catatan:* Petugas piket bertanggung jawab menjaga kebersihan kelas dan mengambil MBG tepat waktu!`;
   }
 
   // --- MATHEMATICAL & LOGIC ARITHMETIC EVALUATOR ---
@@ -366,31 +366,31 @@
     if (q.includes('mcl') || q.includes('max cleaning')) {
       return `🧹 **MCL** adalah singkatan dari **Max Cleaning**, yaitu waktu pembersihan dan perapian kelas secara menyeluruh di akhir jam pelajaran.`;
     }
-    if (q.includes('mbg') || q.includes('m.bg')) {
-      return `🍱 **M.bg** adalah program makan bergizi / konsumsi sekolah yang diambil oleh regu piket kelas sesuai jadwal harian.`;
+    if (q.includes('mbg') || q.includes('MBG')) {
+      return `🍱 **MBG** adalah program makan bergizi / konsumsi sekolah yang diambil oleh regu piket kelas sesuai jadwal harian.`;
     }
 
-    // 6. Jadwal Piket & M.bg
+    // 6. Jadwal Piket & MBG
     if (q.includes('piket hari ini') || q.includes('siapa piket') || q.includes('piket sekarang')) {
       return getTodayPiket();
     }
     if (q.includes('piket senin')) {
-      return `🧹 **Petugas Piket & M.bg Hari SENIN:**\n${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}`;
+      return `🧹 **Petugas Piket & MBG Hari SENIN:**\n${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}`;
     }
     if (q.includes('piket selasa')) {
-      return `🧹 **Petugas Piket & M.bg Hari SELASA:**\n${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}`;
+      return `🧹 **Petugas Piket & MBG Hari SELASA:**\n${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}`;
     }
     if (q.includes('piket rabu')) {
-      return `🧹 **Petugas Piket & M.bg Hari RABU:**\n${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}`;
+      return `🧹 **Petugas Piket & MBG Hari RABU:**\n${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}`;
     }
     if (q.includes('piket kamis')) {
-      return `🧹 **Petugas Piket & M.bg Hari KAMIS:**\n${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}`;
+      return `🧹 **Petugas Piket & MBG Hari KAMIS:**\n${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}`;
     }
     if (q.includes('piket jumat') || q.includes('piket jum\'at')) {
-      return `🧹 **Petugas Piket & M.bg Hari JUMAT:**\n${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}`;
+      return `🧹 **Petugas Piket & MBG Hari JUMAT:**\n${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}`;
     }
     if (q.includes('piket') || q.includes('kebersihan')) {
-      return `🧹 **Daftar Piket & Pengambilan M.bg X RPL 1:**\n• **Senin:** ${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}\n• **Selasa:** ${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}\n• **Rabu:** ${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}\n• **Kamis:** ${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}\n• **Jumat:** ${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Lihat Jadwal Piket di Website</a>`;
+      return `🧹 **Daftar Piket & Pengambilan MBG X RPL 1:**\n• **Senin:** ${KNOWLEDGE_BASE.jadwalPiket.senin.join(', ')}\n• **Selasa:** ${KNOWLEDGE_BASE.jadwalPiket.selasa.join(', ')}\n• **Rabu:** ${KNOWLEDGE_BASE.jadwalPiket.rabu.join(', ')}\n• **Kamis:** ${KNOWLEDGE_BASE.jadwalPiket.kamis.join(', ')}\n• **Jumat:** ${KNOWLEDGE_BASE.jadwalPiket.jumat.join(', ')}\n\n🔗 <a href="${getPageLink('jadwal.html')}" class="chat-link">Lihat Jadwal Piket di Website</a>`;
     }
 
     // 7. Pengurus Inti Kelas
