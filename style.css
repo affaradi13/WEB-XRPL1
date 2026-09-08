@@ -3711,6 +3711,17 @@ code {
   transform: scale(0.92);
 }
 
+.chatbot-send-btn.is-streaming {
+  background: linear-gradient(135deg, #ef4444, #f43f5e) !important;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+  animation: pulseStopBtn 1.2s infinite ease-in-out;
+}
+
+@keyframes pulseStopBtn {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.08); }
+}
+
 /* Responsive Mobile Chatbot */
 @media (max-width: 600px) {
   .caprice-chatbot-widget {

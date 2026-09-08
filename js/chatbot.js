@@ -128,11 +128,11 @@
     ],
 
     shortcuts: [
+      { label: "🗓️ Hari Ini", query: "hari ini" },
       { label: "📅 Jadwal Hari Ini", query: "jadwal hari ini" },
       { label: "🧹 Piket Hari Ini", query: "siapa piket hari ini" },
       { label: "👑 Pengurus Kelas", query: "siapa pengurus kelas" },
       { label: "👥 Daftar 38 Siswa", query: "daftar 38 anak" },
-      { label: "🎮 Info Lab Game", query: "bagaimana main game" },
       { label: "💻 Projek RPL", query: "apa saja projek rpl" }
     ]
   };
@@ -200,38 +200,161 @@
     return isInPages ? pageName : `pages/${pageName}`;
   }
 
+  // --- TEMPORAL CONTEXT & REALTIME CALENDAR ENGINE ---
+  const TemporalContextEngine = {
+    getNow() {
+      return new Date();
+    },
+
+    getDayData(offsetDays = 0) {
+      const d = new Date();
+      d.setDate(d.getDate() + offsetDays);
+      const dayIndex = d.getDay();
+      const dayKeys = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
+      const dayKey = dayKeys[dayIndex];
+      const dayNamesId = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      return {
+        date: d,
+        dayKey: dayKey,
+        dayName: dayNamesId[dayIndex],
+        isWeekend: dayKey === 'sabtu' || dayKey === 'minggu'
+      };
+    },
+
+    getContext() {
+      const today = this.getDayData(0);
+      const tomorrow = this.getDayData(1);
+      const yesterday = this.getDayData(-1);
+      const now = this.getNow();
+
+      let timeStr = "";
+      let fullDateStr = "";
+      try {
+        timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }) + " WIB";
+        fullDateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+      } catch (e) {
+        timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')} WIB`;
+        fullDateStr = `${today.dayName}, ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+      }
+
+      return {
+        now,
+        timeStr,
+        fullDateStr,
+        today: {
+          ...today,
+          schedule: KNOWLEDGE_BASE.jadwalPelajaran[today.dayKey] || [],
+          piket: KNOWLEDGE_BASE.jadwalPiket[today.dayKey] || []
+        },
+        tomorrow: {
+          ...tomorrow,
+          schedule: KNOWLEDGE_BASE.jadwalPelajaran[tomorrow.dayKey] || [],
+          piket: KNOWLEDGE_BASE.jadwalPiket[tomorrow.dayKey] || []
+        },
+        yesterday: {
+          ...yesterday,
+          schedule: KNOWLEDGE_BASE.jadwalPelajaran[yesterday.dayKey] || [],
+          piket: KNOWLEDGE_BASE.jadwalPiket[yesterday.dayKey] || []
+        }
+      };
+    },
+
+    buildTodayBriefing() {
+      const ctx = this.getContext();
+      const { today, timeStr, fullDateStr } = ctx;
+
+      let res = `🗓️ **Rangkuman Hari Ini — ${fullDateStr}** (${timeStr})\n\n`;
+
+      if (today.isWeekend) {
+        res += `🎉 **Hari ini (${today.dayName.toUpperCase()}) adalah hari libur sekolah!** Tidak ada kegiatan KBM ataupun tugas piket kelas.\n\n🎮 *Kamu bisa santai, belajar mandiri koding, atau bermain di <a href="${getPageLink('lab-game.html')}" class="chat-link">Lab Game RPL</a>!*`;
+      } else {
+        res += `📅 **Jadwal Pelajaran Hari Ini (${today.dayName}):**\n` +
+          (today.schedule.length > 0 ? today.schedule.map(s => `• ${s}`).join('\n') : '• Tidak ada jadwal aktif') +
+          `\n\n🧹 **Petugas Piket & Pengambilan MBG:**\n` +
+          (today.piket.length > 0 ? `👥 **Anggota:** ${today.piket.join(', ')}` : '• Tidak ada jadwal piket') +
+          `\n\n💡 *Ketik "jadwal besok" untuk melihat jadwal esok hari, atau tanyakan pelajaran tertentu.*`;
+      }
+
+      return res;
+    },
+
+    buildTomorrowBriefing() {
+      const ctx = this.getContext();
+      const { tomorrow } = ctx;
+
+      let res = `🌅 **Jadwal & Agenda Besok (${tomorrow.dayName}):**\n\n`;
+      if (tomorrow.isWeekend) {
+        res += `🎉 **Besok (${tomorrow.dayName}) adalah hari libur akhir pekan!** Tidak ada kegiatan KBM atau piket di sekolah.`;
+      } else {
+        res += `📅 **Pelajaran:**\n` +
+          (tomorrow.schedule.length > 0 ? tomorrow.schedule.map(s => `• ${s}`).join('\n') : '• Tidak ada jadwal KBM') +
+          `\n\n🧹 **Petugas Piket:** ${tomorrow.piket.length > 0 ? tomorrow.piket.join(', ') : 'Tidak ada piket'}`;
+      }
+      return res;
+    },
+
+    buildYesterdayBriefing() {
+      const ctx = this.getContext();
+      const { yesterday } = ctx;
+
+      let res = `⏮️ **Informasi Hari Kemarin (${yesterday.dayName}):**\n\n`;
+      if (yesterday.isWeekend) {
+        res += `Hari kemarin (${yesterday.dayName}) adalah hari libur sekolah.`;
+      } else {
+        res += `📅 **Pelajaran Kemarin:**\n` +
+          (yesterday.schedule.length > 0 ? yesterday.schedule.map(s => `• ${s}`).join('\n') : '• Tidak ada') +
+          `\n\n🧹 **Piket Kemarin:** ${yesterday.piket.length > 0 ? yesterday.piket.join(', ') : 'Tidak ada'}`;
+      }
+      return res;
+    },
+
+    buildPromptInjection() {
+      const ctx = this.getContext();
+      return `WAKTU & KALENDER REAL-TIME SAAT INI (ZONA WAKTU INDONESIA / WIB):
+- Tanggal & Waktu Sekarang: ${ctx.fullDateStr}, Pukul ${ctx.timeStr}
+- Hari Ini: ${ctx.today.dayName} (${ctx.today.isWeekend ? 'LIBUR AKHIR PEKAN' : 'HARI EFEKTIF SEKOLAH'})
+  * Pelajaran Hari Ini: ${ctx.today.isWeekend ? 'Libur (Tidak ada KBM)' : ctx.today.schedule.join(' | ')}
+  * Petugas Piket Hari Ini: ${ctx.today.isWeekend ? 'Libur (Tidak ada piket)' : ctx.today.piket.join(', ')}
+- Besok: ${ctx.tomorrow.dayName} (${ctx.tomorrow.isWeekend ? 'Libur' : ctx.tomorrow.schedule.join(' | ')})
+  * Petugas Piket Besok: ${ctx.tomorrow.isWeekend ? 'Libur' : ctx.tomorrow.piket.join(', ')}
+- Kemarin: ${ctx.yesterday.dayName} (${ctx.yesterday.isWeekend ? 'Libur' : ctx.yesterday.schedule.join(' | ')})
+
+INSTRUKSI TEMPORAL KHUSUS:
+1. Kamu SELALU memiliki akses real-time ke jam, hari, dan tanggal saat ini berdasarkan metadata di atas.
+2. Jika pengguna bertanya "hari ini", "hari ini hari apa", "sekarang jam berapa", "jadwal hari ini", "piket hari ini", "besok", atau "kemarin", jawablah langsung dengan data real-time yang presisi dan relevan.
+3. JANGAN PERNAH menyatakan bahwa kamu tidak mengetahui tanggal, hari, atau waktu saat ini.`;
+    }
+  };
+
   function getDayName(dayIndex) {
     const days = ['minggu', 'senin', 'selasa', 'rabu', 'kamis', 'jumat', 'sabtu'];
     return days[dayIndex] || 'senin';
   }
 
   function getTodaySchedule() {
-    const today = new Date().getDay();
-    const dayKey = getDayName(today);
-    if (dayKey === 'sabtu' || dayKey === 'minggu') {
+    const ctx = TemporalContextEngine.getContext();
+    const today = ctx.today;
+    if (today.isWeekend) {
       return {
         isHoliday: true,
-        text: `🎉 **Hari ini (${dayKey.toUpperCase()}) adalah hari libur sekolah!** Tidak ada jadwal KBM aktif. Kamu bisa istirahat, belajar mandiri koding, atau mengasah skill di <a href="${getPageLink('lab-game.html')}" class="chat-link">🎮 Lab Game RPL</a>.`
+        text: `🎉 **Hari ini (${today.dayName.toUpperCase()}) adalah hari libur sekolah!** Tidak ada jadwal KBM aktif. Kamu bisa istirahat, belajar mandiri koding, atau mengasah skill di <a href="${getPageLink('lab-game.html')}" class="chat-link">🎮 Lab Game RPL</a>.`
       };
     }
-    const schedule = KNOWLEDGE_BASE.jadwalPelajaran[dayKey];
-    if (!schedule) return { isHoliday: true, text: "Jadwal tidak ditemukan." };
     return {
       isHoliday: false,
-      day: dayKey,
-      text: `📅 **Jadwal Pelajaran Hari Ini (${dayKey.toUpperCase()}):**\n` + schedule.map(s => `• ${s}`).join('\n') + `\n\n🔗 Lihat jadwal lengkap di <a href="${getPageLink('jadwal.html')}" class="chat-link">Halaman Jadwal</a>.`
+      day: today.dayKey,
+      text: `📅 **Jadwal Pelajaran Hari Ini (${today.dayName.toUpperCase()}):**\n` + today.schedule.map(s => `• ${s}`).join('\n') + `\n\n🔗 Lihat jadwal lengkap di <a href="${getPageLink('jadwal.html')}" class="chat-link">Halaman Jadwal</a>.`
     };
   }
 
   function getTodayPiket() {
-    const today = new Date().getDay();
-    const dayKey = getDayName(today);
-    if (dayKey === 'sabtu' || dayKey === 'minggu') {
-      return `🎉 Hari ini (${dayKey.toUpperCase()}) libur, tidak ada tugas piket maupun pengambilan MBG!`;
+    const ctx = TemporalContextEngine.getContext();
+    const today = ctx.today;
+    if (today.isWeekend) {
+      return `🎉 Hari ini (${today.dayName.toUpperCase()}) libur, tidak ada tugas piket maupun pengambilan MBG!`;
     }
-    const piket = KNOWLEDGE_BASE.jadwalPiket[dayKey];
-    if (!piket) return "Tidak ada data piket untuk hari ini.";
-    return `🧹 **Petugas Piket & Pengambilan MBG Hari Ini (${dayKey.toUpperCase()}):**\n👥 **Anggota:** ${piket.join(', ')}\n\n💡 *Catatan:* Petugas piket bertanggung jawab menjaga kebersihan kelas dan mengambil MBG tepat waktu!`;
+    if (!today.piket || today.piket.length === 0) return "Tidak ada data piket untuk hari ini.";
+    return `🧹 **Petugas Piket & Pengambilan MBG Hari Ini (${today.dayName.toUpperCase()}):**\n👥 **Anggota:** ${today.piket.join(', ')}\n\n💡 *Catatan:* Petugas piket bertanggung jawab menjaga kebersihan kelas dan mengambil MBG tepat waktu!`;
   }
 
   // --- MATHEMATICAL & LOGIC ARITHMETIC EVALUATOR ---
@@ -330,10 +453,61 @@
       return `🤖 Saya adalah **${KNOWLEDGE_BASE.identity.name}**, asisten virtual resmi untuk **${KNOWLEDGE_BASE.identity.class}** di **${KNOWLEDGE_BASE.identity.school}**.\n\n🌟 **Misi Kami:** ${KNOWLEDGE_BASE.identity.motto}.\nSaya dirancang untuk membantu memberikan informasi seputar kelas secara cepat dan interaktif!`;
     }
 
-    // 3. Jadwal Hari Ini
-    if (q.includes('jadwal hari ini') || q.includes('pelajaran hari ini') || q.includes('mapel hari ini') || q.includes('sekarang belajar apa') || q.includes('jadwal sekarang')) {
+    // 3a. Rangkuman Lengkap "Hari Ini" (Today's Briefing)
+    if (/^(hari ini|ada apa hari ini|info hari ini|kegiatan hari ini|hari ini ada apa|rangkuman hari ini|tentang hari ini|agenda hari ini|kabar hari ini)[\s\?\!\.]*$/i.test(q) || (q.startsWith('hari ini') && q.split(' ').length <= 3 && !q.includes('jadwal') && !q.includes('piket') && !q.includes('hari apa') && !q.includes('tanggal'))) {
+      return TemporalContextEngine.buildTodayBriefing();
+    }
+
+    // 3b. Pertanyaan Nama Hari & Tanggal Real-Time
+    if (q.includes('hari ini hari apa') || q.includes('sekarang hari apa') || q.includes('hari apa sekarang') || q.includes('hari apa hari ini')) {
+      const ctx = TemporalContextEngine.getContext();
+      return `📅 **Hari Ini adalah hari ${ctx.today.dayName.toUpperCase()}** (${ctx.fullDateStr}).\nSaat ini menunjukkan pukul **${ctx.timeStr}**.\n\n💡 Ketik *"hari ini"* untuk melihat rangkuman jadwal & piket aktif kelas!`;
+    }
+    if (q.includes('tanggal berapa') || q.includes('sekarang tanggal') || q.includes('tanggal hari ini') || q.includes('tanggal sekarang')) {
+      const ctx = TemporalContextEngine.getContext();
+      return `🗓️ **Tanggal Real-Time:** Hari ini adalah **${ctx.fullDateStr}** (Pukul ${ctx.timeStr}).`;
+    }
+    if (q.includes('jam berapa') || q.includes('pukul berapa') || q.includes('waktu sekarang') || q.includes('jam sekarang')) {
+      const ctx = TemporalContextEngine.getContext();
+      return `⏰ **Waktu Real-Time:** Saat ini pukul **${ctx.timeStr}** (${ctx.fullDateStr}).`;
+    }
+
+    // 3c. Jadwal Hari Ini
+    if (q.includes('jadwal hari ini') || q.includes('pelajaran hari ini') || q.includes('mapel hari ini') || q.includes('sekarang belajar apa') || q.includes('jadwal sekarang') || q.includes('pelajaran sekarang')) {
       const todayRes = getTodaySchedule();
       return todayRes.text;
+    }
+
+    // 3d. Pertanyaan "Besok" (Jadwal, Piket, atau Informasi Hari Esok)
+    if (q.includes('besok hari apa') || q.includes('hari apa besok')) {
+      const ctx = TemporalContextEngine.getContext();
+      return `🌅 **Besok adalah hari ${ctx.tomorrow.dayName.toUpperCase()}** (${ctx.tomorrow.isWeekend ? 'Libur Akhir Pekan' : 'Hari Sekolah Aktif'}).`;
+    }
+    if (/^(besok|jadwal besok|besok belajar apa|mapel besok|pelajaran besok|ada apa besok|info besok|agenda besok)[\s\?\!\.]*$/i.test(q) || q.includes('jadwal besok') || q.includes('pelajaran besok') || q.includes('mapel besok') || q.includes('besok belajar') || q.includes('besok ada mapel apa')) {
+      return TemporalContextEngine.buildTomorrowBriefing();
+    }
+    if (q.includes('piket besok') || q.includes('siapa piket besok')) {
+      const ctx = TemporalContextEngine.getContext();
+      if (ctx.tomorrow.isWeekend) {
+        return `🎉 Besok (${ctx.tomorrow.dayName}) libur akhir pekan, tidak ada tugas piket kelas!`;
+      }
+      return `🧹 **Petugas Piket & MBG BESOK (${ctx.tomorrow.dayName.toUpperCase()}):**\n👥 **Anggota:** ${ctx.tomorrow.piket.join(', ')}`;
+    }
+
+    // 3e. Pertanyaan "Kemarin" (Jadwal, Piket, atau Informasi Hari Kemarin)
+    if (q.includes('kemarin hari apa') || q.includes('hari apa kemarin')) {
+      const ctx = TemporalContextEngine.getContext();
+      return `⏮️ **Kemarin adalah hari ${ctx.yesterday.dayName.toUpperCase()}**.`;
+    }
+    if (/^(kemarin|jadwal kemarin|pelajaran kemarin|info kemarin)[\s\?\!\.]*$/i.test(q) || q.includes('jadwal kemarin') || q.includes('pelajaran kemarin')) {
+      return TemporalContextEngine.buildYesterdayBriefing();
+    }
+    if (q.includes('piket kemarin') || q.includes('siapa piket kemarin')) {
+      const ctx = TemporalContextEngine.getContext();
+      if (ctx.yesterday.isWeekend) {
+        return `Kemarin (${ctx.yesterday.dayName}) adalah hari libur sekolah.`;
+      }
+      return `🧹 **Petugas Piket Hari KEMARIN (${ctx.yesterday.dayName.toUpperCase()}):**\n👥 **Anggota:** ${ctx.yesterday.piket.join(', ')}`;
     }
 
     // 4. Jadwal Hari Tertentu (Senin - Jumat)
@@ -366,7 +540,7 @@
     if (q.includes('mcl') || q.includes('max cleaning')) {
       return `🧹 **MCL** adalah singkatan dari **Max Cleaning**, yaitu waktu pembersihan dan perapian kelas secara menyeluruh di akhir jam pelajaran.`;
     }
-    if (q.includes('mbg') || q.includes('MBG')) {
+    if (q.includes('mbg') || q.includes('mbg')) {
       return `🍱 **MBG** adalah program makan bergizi / konsumsi sekolah yang diambil oleh regu piket kelas sesuai jadwal harian.`;
     }
 
@@ -594,8 +768,11 @@
       const studentsSummary = kb.studentsList.map(s => 
         `${s.no}. ${s.name} (${s.nick}) - ${s.role} [Keahlian: ${s.skills}]`
       ).join("\n");
+      const temporalContext = TemporalContextEngine.buildPromptInjection();
 
       return `Kamu adalah Caprice AI (CapriceBot ⚡), asisten virtual kecerdasan buatan resmi untuk kelas X Rekayasa Perangkat Lunak 1 (X RPL 1 / Caprice 26) di SMK Negeri 1 Kota Probolinggo.
+
+${temporalContext}
 
 Motto Kelas: "${kb.identity.motto}".
 Jumlah Siswa: 38 siswa.
@@ -726,6 +903,130 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       return text;
     },
 
+    async generateStream(userPrompt, conversationHistory = [], onChunk, signal) {
+      const apiKey = this.getApiKey();
+      if (!apiKey) {
+        throw new Error("NO_API_KEY");
+      }
+
+      let model = this.getModel();
+      let endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+
+      // Prepare conversation payload
+      const contents = [];
+      const recentHistory = conversationHistory.slice(-10);
+      recentHistory.forEach(item => {
+        if (item.role === 'user' || item.role === 'model') {
+          contents.push({
+            role: item.role,
+            parts: [{ text: item.text }]
+          });
+        }
+      });
+
+      contents.push({
+        role: "user",
+        parts: [{ text: userPrompt }]
+      });
+
+      const body = {
+        contents: contents,
+        systemInstruction: {
+          parts: [{ text: this.buildSystemInstruction() }]
+        },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 1200
+        }
+      };
+
+      let response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: signal
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        const errMsg = errData.error?.message || `HTTP Error ${response.status} (${response.statusText})`;
+
+        if (model !== "gemini-3.6-flash" && (errMsg.includes("no longer available") || errMsg.includes("gemini-3.6-flash") || response.status === 404)) {
+          console.warn(`Model ${model} tidak tersedia (${errMsg}). Mengalihkan ke gemini-3.6-flash stream...`);
+          model = "gemini-3.6-flash";
+          this.setModel("gemini-3.6-flash");
+          endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:streamGenerateContent?alt=sse&key=${encodeURIComponent(apiKey)}`;
+          response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+            signal: signal
+          });
+          if (!response.ok) {
+            const retryErr = await response.json().catch(() => ({}));
+            throw new Error(retryErr.error?.message || `HTTP Error ${response.status}`);
+          }
+        } else {
+          throw new Error(errMsg);
+        }
+      }
+
+      if (!response.body) {
+        throw new Error("ReadableStream tidak didukung browser ini.");
+      }
+
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder("utf-8");
+      let buffer = "";
+      let fullCollectedText = "";
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() || "";
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (trimmed.startsWith("data: ")) {
+              const jsonStr = trimmed.slice(6).trim();
+              if (jsonStr) {
+                try {
+                  const data = JSON.parse(jsonStr);
+                  const chunkText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                  if (chunkText) {
+                    fullCollectedText += chunkText;
+                    if (onChunk) onChunk(chunkText, fullCollectedText);
+                  }
+                } catch (e) {
+                  // Baris JSON belum selesai, abaikan
+                }
+              }
+            }
+          }
+        }
+
+        // Tangani sisa buffer jika ada
+        if (buffer.trim().startsWith("data: ")) {
+          try {
+            const data = JSON.parse(buffer.trim().slice(6).trim());
+            const chunkText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+            if (chunkText) {
+              fullCollectedText += chunkText;
+              if (onChunk) onChunk(chunkText, fullCollectedText);
+            }
+          } catch (e) {}
+        }
+      } finally {
+        reader.releaseLock();
+      }
+
+      return fullCollectedText;
+    },
+
     async testConnection(testKey, testModel) {
       const key = (testKey || this.getApiKey() || "").trim();
       let model = testModel || this.getModel() || this.DEFAULT_MODEL;
@@ -793,6 +1094,9 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
     constructor() {
       this.isOpen = false;
       this.isTyping = false;
+      this.isStreaming = false;
+      this.currentAbortController = null;
+      this.activeStream = null;
       this.isWide = false;
       this.conversationHistory = [];
       this.init();
@@ -966,6 +1270,7 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       this.typingIndicator = document.getElementById('chatbot-typing-indicator');
       this.form = document.getElementById('chatbot-form');
       this.input = document.getElementById('chatbot-input');
+      this.sendBtn = document.getElementById('chatbot-send-btn');
       this.chipsContainer = document.getElementById('chatbot-chips');
 
       // Settings Elements
@@ -981,6 +1286,24 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
     }
 
     bindEvents() {
+      // Tombol Send berfungsi ganda: Kirim pesan ATAU Hentikan streaming (Barge-in / Stop)
+      if (this.sendBtn) {
+        this.sendBtn.addEventListener('click', (e) => {
+          if (this.isStreaming) {
+            e.preventDefault();
+            e.stopPropagation();
+            this.abortStreaming("Dihentikan oleh pengguna (klik tombol Stop)");
+          }
+        });
+      }
+
+      // Tombol Escape keyboard untuk menghentikan streaming
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.isStreaming) {
+          this.abortStreaming("Dihentikan dengan tombol Escape");
+        }
+      });
+
       // Toggle Open/Close
       if (this.toggleBtn) this.toggleBtn.addEventListener('click', () => this.toggleChat());
       if (this.closeBtn) this.closeBtn.addEventListener('click', () => this.closeChat());
@@ -1222,9 +1545,7 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       this.chatWindow.setAttribute('aria-hidden', 'false');
       ChatAudio.playBeep('open');
       setTimeout(() => {
-        if (this.input && window.innerWidth > 600) {
-          this.input.focus();
-        }
+        if (this.input) this.input.focus();
         this.scrollToBottom();
       }, 150);
     }
@@ -1261,60 +1582,238 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       this.addBotMessage(welcome, false);
     }
 
+    setStreamingState(streaming) {
+      this.isStreaming = streaming;
+      this.isTyping = streaming;
+      if (!this.sendBtn) return;
+      if (streaming) {
+        this.sendBtn.classList.add('is-streaming');
+        this.sendBtn.setAttribute('title', 'Hentikan respons (Barge-in / Stop)');
+        this.sendBtn.setAttribute('aria-label', 'Hentikan respons');
+        this.sendBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+            <rect x="5" y="5" width="14" height="14" rx="2"></rect>
+          </svg>
+        `;
+      } else {
+        this.sendBtn.classList.remove('is-streaming');
+        this.sendBtn.setAttribute('title', 'Kirim Pesan');
+        this.sendBtn.setAttribute('aria-label', 'Kirim Pesan');
+        this.sendBtn.innerHTML = `
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+            <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"></path>
+          </svg>
+        `;
+      }
+    }
+
+    abortStreaming(reason = "Dihentikan oleh pengguna") {
+      if (this.currentAbortController) {
+        this.currentAbortController.abort();
+        this.currentAbortController = null;
+      }
+      if (this.activeStream) {
+        this.activeStream.finalize(this.activeStream.fullText, true);
+        this.activeStream = null;
+      }
+      this.showTyping(false);
+      this.setStreamingState(false);
+      console.log(`[CapriceChatbot] Streaming dibatalkan: ${reason}`);
+    }
+
+    createStreamingBotMessage() {
+      if (!this.messagesBody) return null;
+      const time = this.getCurrentTime();
+      const row = document.createElement('div');
+      row.className = 'chat-bubble-row bot-row animate-pop';
+      row.innerHTML = `
+        <div class="chat-bot-avatar">⚡</div>
+        <div class="chat-bubble bot-bubble">
+          <div class="bubble-content"><span class="stream-text"></span><span class="streaming-cursor"></span></div>
+          <span class="bubble-time">${time}</span>
+        </div>
+      `;
+      this.messagesBody.insertBefore(row, this.typingIndicator);
+      this.scrollToBottom();
+
+      const textEl = row.querySelector('.stream-text');
+      const cursorEl = row.querySelector('.streaming-cursor');
+      const bubbleContent = row.querySelector('.bubble-content');
+
+      return {
+        row,
+        textEl,
+        cursorEl,
+        bubbleContent,
+        fullText: '',
+        finalize: (finalText, interrupted = false) => {
+          const cursor = row.querySelector('.streaming-cursor');
+          if (cursor) cursor.remove();
+          const content = row.querySelector('.bubble-content');
+          if (content) {
+            let formatted = formatMessageText(finalText || '(Respon kosong)');
+            if (interrupted) {
+              formatted += ` <span style="display:inline-block; font-size:0.75rem; opacity:0.65; font-style:italic; margin-left:4px; color:#f43f5e;">(⚠️ Terpotong)</span>`;
+            }
+            content.innerHTML = formatted;
+          }
+          this.scrollToBottom();
+        }
+      };
+    }
+
+    async streamLocalWords(fullText, onChunk, signal) {
+      const words = fullText.split(' ');
+      let accumulated = '';
+      for (let i = 0; i < words.length; i++) {
+        if (signal?.aborted) break;
+        const chunk = words[i] + (i === words.length - 1 ? '' : ' ');
+        accumulated += chunk;
+        if (onChunk) onChunk(chunk, accumulated);
+        // Jeda waktu pembuatan kata demi kata (25ms)
+        await new Promise((r) => setTimeout(r, 25));
+      }
+      return accumulated;
+    }
+
     async handleUserSubmit() {
       const text = this.input ? this.input.value.trim() : '';
-      if (!text || this.isTyping) return;
+      if (!text) return;
+
+      // Fitur BARGE-IN: Jika bot sedang streaming kata dan user mengirim chat baru,
+      // langsung hentikan respons bot yang lama dan fokus menjawab pesan baru!
+      if (this.isStreaming) {
+        this.abortStreaming("Interupsi oleh pesan baru pengguna (Barge-in)");
+      }
 
       if (this.input) this.input.value = '';
       this.addUserMessage(text);
       ChatAudio.playBeep('send');
 
-      // Record user turn in conversation history
+      // Simpan riwayat percakapan
       this.conversationHistory.push({ role: 'user', text: text });
 
-      // Cek apakah query adalah operasi matematika langsung
+      // 1. Cek operasi matematika presisi langsung
       const directMath = trySolveMath(text);
       if (directMath) {
         this.conversationHistory.push({ role: 'model', text: directMath });
-        this.showTyping(true);
-        setTimeout(() => {
-          this.showTyping(false);
-          this.streamBotMessage(directMath);
+        this.setStreamingState(true);
+
+        const abortCtrl = new AbortController();
+        this.currentAbortController = abortCtrl;
+        const streamObj = this.createStreamingBotMessage();
+        this.activeStream = streamObj;
+
+        await this.streamLocalWords(directMath, (chunk, full) => {
+          streamObj.fullText = full;
+          if (streamObj.textEl) streamObj.textEl.innerHTML = formatMessageText(full);
+          this.scrollToBottom();
+        }, abortCtrl.signal);
+
+        if (!abortCtrl.signal.aborted) {
+          streamObj.finalize(directMath, false);
+          this.activeStream = null;
+          this.setStreamingState(false);
           ChatAudio.playBeep('receive');
-        }, 220);
+        }
         return;
       }
 
-      // Show Typing Animation
-      this.showTyping(true);
-
       const hasKey = GeminiClient.hasApiKey();
 
+      // 2. Jika API Key tersedia: gunakan REAL-TIME STREAMING dari Google AI Studio (SSE)
       if (hasKey) {
+        const abortCtrl = new AbortController();
+        this.currentAbortController = abortCtrl;
+        this.setStreamingState(true);
+        this.showTyping(true);
+
+        const streamObj = this.createStreamingBotMessage();
+        this.activeStream = streamObj;
+
         try {
-          const aiResponse = await GeminiClient.generateResponse(text, this.conversationHistory);
-          this.conversationHistory.push({ role: 'model', text: aiResponse });
-          this.showTyping(false);
-          this.streamBotMessage(aiResponse);
-          ChatAudio.playBeep('receive');
+          let firstChunkReceived = false;
+
+          const completeText = await GeminiClient.generateStream(
+            text,
+            this.conversationHistory,
+            (chunk, full) => {
+              // Begitu token pertama tiba, matikan typing indicator
+              if (!firstChunkReceived) {
+                firstChunkReceived = true;
+                this.showTyping(false);
+              }
+              streamObj.fullText = full;
+              if (streamObj.textEl) {
+                streamObj.textEl.innerHTML = formatMessageText(full);
+              }
+              this.scrollToBottom();
+            },
+            abortCtrl.signal
+          );
+
+          if (!abortCtrl.signal.aborted) {
+            this.conversationHistory.push({ role: 'model', text: completeText });
+            streamObj.finalize(completeText, false);
+            this.activeStream = null;
+            this.setStreamingState(false);
+            this.showTyping(false);
+            ChatAudio.playBeep('receive');
+          }
         } catch (err) {
-          console.warn("Gemini API error, falling back to local engine:", err);
-          // Graceful fallback to local rule-based processing
-          const localReply = processQuery(text);
+          if (abortCtrl.signal.aborted) {
+            console.log("Streaming dihentikan pengguna.");
+            return;
+          }
+          console.warn("Gemini Stream error, fallback ke local engine:", err);
           this.showTyping(false);
-          const notice = `*(Catatan: Terjadi kendala saat menghubungi Google AI Studio: ${escapeHTML(err.message)}. Menampilkan jawaban dari basis pengetahuan lokal:)*\n\n${localReply}`;
-          this.addBotMessage(notice, true);
-          ChatAudio.playBeep('receive');
+
+          // Graceful fallback ke database lokal dengan streaming kata
+          const localReply = processQuery(text);
+          const notice = `*(Catatan: Terjadi kendala streaming Google AI Studio: ${escapeHTML(err.message)}. Menampilkan dari basis data lokal:)*\n\n${localReply}`;
+
+          await this.streamLocalWords(notice, (chunk, full) => {
+            streamObj.fullText = full;
+            if (streamObj.textEl) streamObj.textEl.innerHTML = formatMessageText(full);
+            this.scrollToBottom();
+          }, abortCtrl.signal);
+
+          if (!abortCtrl.signal.aborted) {
+            this.conversationHistory.push({ role: 'model', text: notice });
+            streamObj.finalize(notice, false);
+            this.activeStream = null;
+            this.setStreamingState(false);
+            ChatAudio.playBeep('receive');
+          }
         }
       } else {
-        // Fallback to local rule-based engine
-        const thinkTime = Math.floor(Math.random() * 250) + 300;
-        setTimeout(() => {
-          const reply = processQuery(text);
+        // 3. Mode Lokal: Streaming kata per kata dengan interruptibility
+        const abortCtrl = new AbortController();
+        this.currentAbortController = abortCtrl;
+        this.setStreamingState(true);
+        this.showTyping(true);
+
+        const reply = processQuery(text);
+        const streamObj = this.createStreamingBotMessage();
+        this.activeStream = streamObj;
+
+        // Simulasi jeda berpikir sebentar (120ms)
+        setTimeout(async () => {
           this.showTyping(false);
-          this.streamBotMessage(reply);
-          ChatAudio.playBeep('receive');
-        }, thinkTime);
+          await this.streamLocalWords(reply, (chunk, full) => {
+            streamObj.fullText = full;
+            if (streamObj.textEl) streamObj.textEl.innerHTML = formatMessageText(full);
+            this.scrollToBottom();
+          }, abortCtrl.signal);
+
+          if (!abortCtrl.signal.aborted) {
+            this.conversationHistory.push({ role: 'model', text: reply });
+            streamObj.finalize(reply, false);
+            this.activeStream = null;
+            this.setStreamingState(false);
+            ChatAudio.playBeep('receive');
+          }
+        }, 120);
       }
     }
 
@@ -1347,45 +1846,6 @@ PANDUAN KEPRIBADIAN & GAYA MENJAWAB:
       `;
       this.messagesBody.insertBefore(row, this.typingIndicator);
       this.scrollToBottom();
-    }
-
-    streamBotMessage(fullText) {
-      if (!this.messagesBody) return;
-      const time = this.getCurrentTime();
-      const row = document.createElement('div');
-      row.className = 'chat-bubble-row bot-row animate-pop';
-      row.innerHTML = `
-        <div class="chat-bot-avatar">⚡</div>
-        <div class="chat-bubble bot-bubble">
-          <div class="bubble-content"><span class="stream-text"></span><span class="streaming-cursor"></span></div>
-          <span class="bubble-time">${time}</span>
-        </div>
-      `;
-      this.messagesBody.insertBefore(row, this.typingIndicator);
-      this.scrollToBottom();
-
-      const textEl = row.querySelector('.stream-text');
-      const cursorEl = row.querySelector('.streaming-cursor');
-      const bubbleContent = row.querySelector('.bubble-content');
-
-      // Words stream animation
-      const words = fullText.split(' ');
-      let currentIdx = 0;
-      const streamBatchSize = Math.max(1, Math.floor(words.length / 40));
-
-      const interval = setInterval(() => {
-        currentIdx += streamBatchSize;
-        if (currentIdx >= words.length) {
-          clearInterval(interval);
-          if (cursorEl) cursorEl.remove();
-          if (bubbleContent) bubbleContent.innerHTML = formatMessageText(fullText);
-          this.scrollToBottom();
-        } else {
-          const partial = words.slice(0, currentIdx).join(' ');
-          if (textEl) textEl.innerHTML = formatMessageText(partial);
-          this.scrollToBottom();
-        }
-      }, 35);
     }
 
     showTyping(show) {
